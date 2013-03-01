@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>391</width>
-    <height>927</height>
+    <width>504</width>
+    <height>1051</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -137,6 +137,16 @@
         </property>
         <property name="minMaxVisible">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="qMRMLTransformSliders" name="ScaleSliders">
+        <property name="Title">
+         <string>Scale</string>
+        </property>
+        <property name="TypeOfTransform">
+         <enum>qMRMLTransformSliders::SCALE</enum>
         </property>
        </widget>
       </item>
@@ -686,6 +696,54 @@
     <hint type="destinationlabel">
      <x>60</x>
      <y>131</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>ScaleSliders</receiver>
+   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>314</x>
+     <y>14</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>251</x>
+     <y>614</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>ScaleSliders</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>314</x>
+     <y>14</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>251</x>
+     <y>614</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ScaleSliders</sender>
+   <signal>valuesChanged()</signal>
+   <receiver>RotationSliders</receiver>
+   <slot>resetUnactiveSliders()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>251</x>
+     <y>614</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>251</x>
+     <y>453</y>
     </hint>
    </hints>
   </connection>

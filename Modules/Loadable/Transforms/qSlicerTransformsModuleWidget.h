@@ -59,6 +59,7 @@ protected slots:
   void onCoordinateReferenceButtonPressed(int id);
   void onNodeSelected(vtkMRMLNode* node);
   void onTranslationRangeChanged(double newMin, double newMax);
+  void onScaleRangeChanged(double newMin, double newMax);
 
   void transformSelectedNodes();
   void untransformSelectedNodes();

@@ -122,6 +122,15 @@ void qSlicerTransformsModuleWidget::setup()
   this->onTranslationRangeChanged(d->TranslationSliders->minimum(),
                                   d->TranslationSliders->maximum());
 
+  // Connect minimum and maximum from the scale sliders to the matrix
+  this->connect(d->ScaleSliders,
+                SIGNAL(rangeChanged(double,double)),
+                SLOT(onScaleRangeChanged(double,double)));
+
+  // Notify the matrix of the current scale min/max values
+  this->onScaleRangeChanged(d->ScaleSliders->minimum(),
+                            d->ScaleSliders->maximum());
+
   // Transform nodes connection
   this->connect(d->TransformToolButton, SIGNAL(clicked()),
                 SLOT(transformSelectedNodes()));
@@ -151,6 +160,7 @@ void qSlicerTransformsModuleWidget::onCoordinateReferenceButtonPressed(int id)
     (id == qMRMLTransformSliders::GLOBAL) ? qMRMLTransformSliders::GLOBAL : qMRMLTransformSliders::LOCAL;
   d->TranslationSliders->setCoordinateReference(ref);
   d->RotationSliders->setCoordinateReference(ref);
+  d->ScaleSliders->setCoordinateReference(ref);
 }
 
 //-----------------------------------------------------------------------------
@@ -201,6 +211,7 @@ void qSlicerTransformsModuleWidget::identity()
     }
 
   d->RotationSliders->resetUnactiveSliders();
+  d->ScaleSliders->resetUnactiveSliders();
   d->MRMLTransformNode->GetMatrixTransformToParent()->Identity();
 }
 
@@ -218,6 +229,14 @@ void qSlicerTransformsModuleWidget::invert()
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::onTranslationRangeChanged(double newMin,
                                                               double newMax)
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  d->MatrixWidget->setRange(newMin, newMax);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::onScaleRangeChanged(double newMin,
+                                                        double newMax)
 {
   Q_D(qSlicerTransformsModuleWidget);
   d->MatrixWidget->setRange(newMin, newMax);

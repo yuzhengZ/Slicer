@@ -54,7 +54,8 @@ public:
   enum TransformType
   {
     TRANSLATION_LR, TRANSLATION_PA, TRANSLATION_IS,
-    ROTATION_LR, ROTATION_PA, ROTATION_IS
+    ROTATION_LR, ROTATION_PA, ROTATION_IS,
+    SCALE_LR, SCALE_PA, SCALE_IS
   };
   void setTypeOfTransform(TransformType typeOfTransform);
   TransformType typeOfTransform() const;
@@ -63,6 +64,7 @@ public:
   /// Convenience method allowing to get which familly of transform is set
   bool isRotation()const;
   bool isTranslation()const;
+  bool isScale()const;
 
   /// 
   /// Set/Get Coordinate system

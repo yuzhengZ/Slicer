@@ -94,6 +94,14 @@ bool qMRMLLinearTransformSlider::isTranslation()const
 }
 
 // --------------------------------------------------------------------------
+bool qMRMLLinearTransformSlider::isScale()const
+{
+  return (this->typeOfTransform() == SCALE_LR ||
+          this->typeOfTransform() == SCALE_PA ||
+          this->typeOfTransform() == SCALE_IS);
+}
+
+// --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::
 setCoordinateReference(CoordinateReferenceType _coordinateReference)
 {
@@ -167,6 +175,18 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
     {
     _value = matrix->GetElement(2,3);
     }
+  else if (this->typeOfTransform() == SCALE_LR)
+    {
+    _value = matrix->GetElement(0,0);
+    }
+  else if (this->typeOfTransform() == SCALE_PA)
+    {
+    _value = matrix->GetElement(1,1);
+    }
+  else if (this->typeOfTransform() == SCALE_IS)
+    {
+    _value = matrix->GetElement(2,2);
+    }
 
   if (this->isTranslation())
     {
@@ -224,6 +244,30 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
     double vector[] = {0., 0., 0.};
     vector[2] = _sliderPosition - matrix->GetElement(2,3);
     transform->Translate(vector);
+    }
+  else if (this->typeOfTransform() == SCALE_LR)
+    {
+    double vector[] = {0., 0., 0.};
+    transform->GetScale(vector);
+    transform->Scale(1/vector[0], 1, 1);
+    double scaleFactor = 1.1;
+    transform->Scale(pow(scaleFactor,_sliderPosition), 1, 1);
+    }
+  else if (this->typeOfTransform() == SCALE_PA)
+    {
+    double vector[] = {0., 0., 0.};
+    transform->GetScale(vector);
+    transform->Scale(1, 1/vector[1], 1);
+    double scaleFactor = 1.1;
+    transform->Scale(1, pow(scaleFactor,_sliderPosition), 1);
+    }
+  else if (this->typeOfTransform() == SCALE_IS)
+    {
+    double vector[] = {0., 0., 0.};
+    transform->GetScale(vector);
+    transform->Scale(1, 1, 1/vector[2]);
+    double scaleFactor = 1.1;
+    transform->Scale(1, 1, pow(scaleFactor, _sliderPosition));
     }
   d->OldPosition = _sliderPosition;
 

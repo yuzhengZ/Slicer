@@ -140,6 +140,15 @@ void qMRMLTransformSliders::setTypeOfTransform(TransformType _typeOfTransform)
     // Range of Rotation sliders should be fixed to (-180,180)
     this->setRange(-180.00, 180.00);
     }
+  else if (_typeOfTransform == qMRMLTransformSliders::SCALE)
+    {
+    d->LRSlider->setTypeOfTransform(qMRMLLinearTransformSlider::SCALE_LR);
+    d->PASlider->setTypeOfTransform(qMRMLLinearTransformSlider::SCALE_PA);
+    d->ISSlider->setTypeOfTransform(qMRMLLinearTransformSlider::SCALE_IS);
+
+    // Set the default range of the Scale sliders
+    this->setRange(-10, 10);
+    }
   d->TypeOfTransform = _typeOfTransform;
 }
 
@@ -189,6 +198,10 @@ void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
 
   // If the type of transform is ROTATION, do not modify
   if(this->typeOfTransform() == qMRMLTransformSliders::ROTATION)
+    {
+    return;
+    }
+  if(this->typeOfTransform() == qMRMLTransformSliders::SCALE)
     {
     return;
     }
