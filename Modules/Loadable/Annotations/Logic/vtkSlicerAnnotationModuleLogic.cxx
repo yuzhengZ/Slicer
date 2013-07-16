@@ -3526,7 +3526,7 @@ const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotat
       {
       
       QString tempPath =
-        qSlicerCoreApplication::application()->temporaryPath();
+        QString::fromLatin1(this->GetApplicationLogic()->GetTemporaryPath());
       tempPath.append(annotationNode->GetID());
       tempPath.append(".png");
       
