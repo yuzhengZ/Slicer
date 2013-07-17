@@ -21,8 +21,6 @@
 #include "vtkMRMLAnnotationSnapshotStorageNode.h"
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 
-#include "qSlicerCoreApplication.h"
-
 // MRML includes
 #include <vtkMRMLFiducialListNode.h>
 #include <vtkMRMLInteractionNode.h>
@@ -3525,19 +3523,17 @@ const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotat
     if (image)
       {
       
-      QString tempPath =
-        QString::fromLatin1(this->GetApplicationLogic()->GetTemporaryPath());
+      vtkStdString tempPath = vtkStdString(this->GetApplicationLogic()->GetTemporaryPath());
       tempPath.append(annotationNode->GetID());
       tempPath.append(".png");
       
-      QByteArray tempPathArray = tempPath.toLatin1();
       vtkNew<vtkPNGWriter> w;
       w->SetInput(image);
-      w->SetFileName(tempPathArray.data());
+      w->SetFileName(tempPath.c_str());
       w->Write();
       
       html += "<img src='";
-      html += tempPathArray.data();
+      html += tempPath;
       html += "' width='400'>";
       
       }
