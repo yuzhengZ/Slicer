@@ -869,13 +869,13 @@ const char* vtkMRMLApplicationLogic::GetTemporaryPath()
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::SetTemporaryPath(const char* path)
 {
-    if (this->Internal->TemporaryPath == std::string(path))
-      {
-      return;
-      }
-    else if (path == NULL)
+    if (path == NULL)
       {
       this->Internal->TemporaryPath.clear();
+      }
+    else if (this->Internal->TemporaryPath == std::string(path))
+      {
+      return;
       }
     else
       {
