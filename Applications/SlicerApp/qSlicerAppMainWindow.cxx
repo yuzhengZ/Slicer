@@ -746,7 +746,10 @@ void qSlicerAppMainWindow::disclaimer()
     return;
     }
   QString message = QString("Thank you for using %1!\n\n"
-                            "This software is not intended for clinical use.")
+      "This software is not intended for clinical use.\n\n"
+      "Your feedback is very important to us. Tell us how we are doing! "
+      "Share your stories with us and let us know about how 3D slicer has enabled your research.\n"
+      "Please send your feedback to jchris.fillionr@kitware.com.")
     .arg(app->applicationName() + " " + app->applicationVersion());
 
   ctkMessageBox* disclaimerMessage = new ctkMessageBox(this);
