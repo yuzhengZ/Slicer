@@ -115,6 +115,9 @@ endif()
 
 # Create the instantiator for DisplayableManager classes.
 set(VTK_USE_INSTANTIATOR_NEW 1)
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  include(${VTK_CMAKE_DIR}/vtkMakeInstantiator.cmake)
+endif()
 VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}Instantiator"
   DisplayableManagerInstantiator_SRCS
   "${DisplayableManager_SRCS}"
