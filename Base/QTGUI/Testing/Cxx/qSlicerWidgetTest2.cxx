@@ -43,6 +43,7 @@
 #include <vtkImageMapper.h>
 #include <vtkProperty2D.h>
 #include <vtkActor2D.h>
+#include <vtkVersion.h>
 
 // STD includes
 
@@ -105,7 +106,11 @@ vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, c
   vtkImageMapper *mapper = vtkImageMapper::New();
   mapper->SetColorWindow( 255. );
   mapper->SetColorLevel ( 127.5 );
+#if (VTK_MAJOR_VERSION <= 5)
   mapper->SetInput( slice );
+#else
+  mapper->SetInputData( slice );
+#endif
   vtkActor2D *actor = vtkActor2D::New();
   actor->SetMapper( mapper );
   actor->GetProperty()->SetDisplayLocationToBackground();

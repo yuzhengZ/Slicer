@@ -693,7 +693,7 @@ int TestAnnAngleWidget3D( int argc, char *argv[] )
   // Create a test pipeline
   //
   vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
-  mapper->SetInput(ss->GetOutput());
+  mapper->SetInputConnection(ss->GetOutputPort());
   vtkActor *actor = vtkActor::New();
   actor->SetMapper(mapper);
 

@@ -25,6 +25,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkTransform.h>
+#include <vtkVersion.h>
 
 #include <vtkTemplateAliasMacro.h>
 // turn off 64-bit ints when templating over all types
@@ -247,7 +248,11 @@ void vtkImageResliceMask::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkImageResliceMask::SetStencil(vtkImageStencilData *stencil)
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->SetInput(1, stencil);
+#else
+  this->SetInputData(1, stencil);
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -694,6 +699,7 @@ vtkImageData *vtkImageResliceMask::GetBackgroundMask()
 {
   return this->GetOutput(1);
 }
+
 
 /*
 {// cout <<"//----------------------------------------------------------------------------Calling vtkImageResliceMask::GetBackgroundMask"<<endl;

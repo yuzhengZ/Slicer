@@ -36,12 +36,12 @@ int DoIt( int argc, char * argv[], T )
   reader->SetFileName( inputVolume.c_str() );
 
   typename FilterType::Pointer filter = FilterType::New();
-  filter->SetInput( reader->GetOutput() );
+  filter->SetInputConnection( reader->GetOutputPort() );
   filter->SetSigma( sigma );
 
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputVolume.c_str() );
-  writer->SetInput( filter->GetOutput() );
+  writer->SetInputConnection( filter->GetOutput() );
   writer->SetUseCompression(1);
   writer->Update();
 

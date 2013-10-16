@@ -31,19 +31,19 @@ int main( int argc, char * argv[] )
 
   vtkXMLPolyDataReader *readerXMLPD = vtkXMLPolyDataReader::New();
   vtkPolyDataReader *readerVTKPD = vtkPolyDataReader::New();
-  vtkPolyData* polyDataRead = NULL;
+  //  vtkPolyData* polyDataRead = NULL;
 
   if (readerXMLPD->CanReadFile(InputModel.c_str()))
   {
     readerXMLPD->SetFileName(InputModel.c_str() );
     readerXMLPD->Update();
-    polyDataRead = readerXMLPD->GetOutput();
+  // polyDataRead = readerXMLPD->GetOutputPort();
   }
   else if (readerVTKPD->IsFileValid(InputModel.c_str()))
   {
     readerVTKPD->SetFileName(InputModel.c_str() );
     readerVTKPD->Update();
-    polyDataRead = readerVTKPD->GetOutput();
+  // polyDataRead = readerVTKPD->GetOutputPort();
   } else {
     return -1;
   }
@@ -51,7 +51,7 @@ int main( int argc, char * argv[] )
   vtkProbeFilter *probe = vtkProbeFilter::New();
 
   // 1. Probe's source is region of interest volume
-  probe->SetSource(readerVol->GetOutput() );
+  probe->SetSourceConnection(readerVol->GetOutputPort() );
 
   // 2. Set up matrices to put fibers into ijk space of volume
   // This assumes fibers are in RAS space of volume (i.e. RAS==world)
@@ -75,11 +75,18 @@ int main( int argc, char * argv[] )
   // 3. Transform fibers
   vtkTransformPolyDataFilter *transformer = vtkTransformPolyDataFilter::New();
   transformer->SetTransform( trans );
-  transformer->SetInput( polyDataRead );
+  if( readerXMLPD->CanReadFile(InputModel.c_str()))
+  {
+    transformer->SetInputConnection( readerXMLPD->GetOutputPort() );
+  }
+  else if (readerVTKPD->IsFileValid(InputModel.c_str()))
+  {
+    transformer->SetInputConnection( readerVTKPD->GetOutputPort() );
+  }
   transformer->Update();
 
   // 4. Probe's input data is polydata (fibers)
-  probe->SetInput( transformer->GetOutput() );
+  probe->SetInputConnection( transformer->GetOutputPort() );
 
   // 5. Do the probing
   probe->Update();
@@ -90,13 +97,13 @@ int main( int argc, char * argv[] )
   trans2->Inverse();
   vtkTransformPolyDataFilter *transformer2 = vtkTransformPolyDataFilter::New();
   transformer2->SetTransform( trans2 );
-  transformer2->SetInput( probe->GetOutput() );
+  transformer2->SetInputConnection( probe->GetOutputPort() );
   transformer2->Update();
 
   // 7. Save the output
   vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
   writer->SetFileName(OutputModel.c_str() );
-  writer->SetInput( transformer2->GetOutput() );
+  writer->SetInputConnection( transformer2->GetOutputPort() );
   writer->Write();
 
   // 8. Delete everything

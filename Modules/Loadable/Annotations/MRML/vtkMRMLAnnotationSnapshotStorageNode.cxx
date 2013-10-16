@@ -29,6 +29,7 @@
 #include <vtkStringArray.h>
 #include <vtkTIFFReader.h>
 #include <vtkTIFFWriter.h>
+#include <vtkVersion.h>
 
 // ITKsys includes
 #include <itksys/SystemTools.hxx>
@@ -173,7 +174,11 @@ int vtkMRMLAnnotationSnapshotStorageNode::WriteDataInternal(vtkMRMLNode *refNode
     {
     vtkNew<vtkPNGWriter> writer;
     writer->SetFileName(fullName.c_str());
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( sceneViewNode->GetScreenShot() );
+#else
+    writer->SetInputData( sceneViewNode->GetScreenShot() );
+#endif
     try
       {
       writer->Write();
@@ -187,7 +192,11 @@ int vtkMRMLAnnotationSnapshotStorageNode::WriteDataInternal(vtkMRMLNode *refNode
     {
     vtkNew<vtkJPEGWriter> writer;
     writer->SetFileName(fullName.c_str());
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( sceneViewNode->GetScreenShot() );
+#else
+    writer->SetInputData( sceneViewNode->GetScreenShot() );
+#endif
     try
       {
       writer->Write();
@@ -201,7 +210,11 @@ int vtkMRMLAnnotationSnapshotStorageNode::WriteDataInternal(vtkMRMLNode *refNode
     {
     vtkNew<vtkTIFFWriter> writer;
     writer->SetFileName(fullName.c_str());
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( sceneViewNode->GetScreenShot() );
+#else
+    writer->SetInputData( sceneViewNode->GetScreenShot() );
+#endif
     try
       {
       writer->Write();
@@ -215,7 +228,11 @@ int vtkMRMLAnnotationSnapshotStorageNode::WriteDataInternal(vtkMRMLNode *refNode
     {
     vtkNew<vtkBMPWriter> writer;
     writer->SetFileName(fullName.c_str());
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( sceneViewNode->GetScreenShot() );
+#else
+    writer->SetInputData( sceneViewNode->GetScreenShot() );
+#endif
     try
       {
       writer->Write();

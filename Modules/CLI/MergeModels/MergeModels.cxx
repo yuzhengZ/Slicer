@@ -113,7 +113,7 @@ int main( int argc, char * argv[] )
     {
     vtkPolyDataWriter *pdWriter = vtkPolyDataWriter::New();
     pdWriter->SetFileName(ModelOutput.c_str() );
-    pdWriter->SetInput(add->GetOutput() );
+    pdWriter->SetInputConnection(add->GetOutputPort() );
     pdWriter->Write();
     pdWriter->Delete();
     }
@@ -122,7 +122,7 @@ int main( int argc, char * argv[] )
     vtkXMLPolyDataWriter *pdWriter = vtkXMLPolyDataWriter::New();
     pdWriter->SetIdTypeToInt32();
     pdWriter->SetFileName(ModelOutput.c_str() );
-    pdWriter->SetInput(add->GetOutput() );
+    pdWriter->SetInputConnection(add->GetOutputPort() );
     pdWriter->Write();
     pdWriter->Delete();
     }

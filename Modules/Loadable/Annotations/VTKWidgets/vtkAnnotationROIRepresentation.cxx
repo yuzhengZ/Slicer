@@ -38,6 +38,7 @@
 #include "vtkRenderer.h"
 #include "vtkSphereSource.h"
 #include "vtkTransform.h"
+#include <vtkVersion.h>
 #include "vtkWindow.h"
 
 
@@ -63,7 +64,11 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
   // Construct the poly data representing the hex
   this->HexPolyData = vtkPolyData::New();
   this->HexMapper = vtkPolyDataMapper::New();
+#if (VTK_MAJOR_VERSION <= 5)
   this->HexMapper->SetInput(HexPolyData);
+#else
+  this->HexMapper->SetInputData(HexPolyData);
+#endif
   this->HexActor = vtkActor::New();
   this->HexActor->SetMapper(this->HexMapper);
   this->HexActor->SetProperty(this->OutlineProperty);
@@ -103,7 +108,11 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
   this->HexFacePolyData->SetPoints(this->Points);
   this->HexFacePolyData->SetPolys(cells);
   this->HexFaceMapper = vtkPolyDataMapper::New();
+#if (VTK_MAJOR_VERSION <= 5)
   this->HexFaceMapper->SetInput(HexFacePolyData);
+#else
+  this->HexFaceMapper->SetInputData(HexFacePolyData);
+#endif
   this->HexFace = vtkActor::New();
   this->HexFace->SetMapper(this->HexFaceMapper);
   this->HexFace->SetProperty(this->FaceProperty);
@@ -113,7 +122,11 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
   this->OutlinePolyData = vtkPolyData::New();
   this->OutlinePolyData->SetPoints(this->Points);
   this->OutlineMapper = vtkPolyDataMapper::New();
+#if (VTK_MAJOR_VERSION <= 5)
   this->OutlineMapper->SetInput(this->OutlinePolyData);
+#else
+  this->OutlineMapper->SetInputData(this->OutlinePolyData);
+#endif
   this->HexOutline = vtkActor::New();
   this->HexOutline->SetMapper(this->OutlineMapper);
   this->HexOutline->SetProperty(this->OutlineProperty);
@@ -135,7 +148,7 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
     this->HandleGeometry[i]->SetThetaResolution(16);
     this->HandleGeometry[i]->SetPhiResolution(8);
     this->HandleMapper[i] = vtkPolyDataMapper::New();
-    this->HandleMapper[i]->SetInput(this->HandleGeometry[i]->GetOutput());
+    this->HandleMapper[i]->SetInputConnection(this->HandleGeometry[i]->GetOutputPort());
     this->Handle[i] = vtkActor::New();
     this->Handle[i]->SetProperty(this->HandleProperties[i]);
     this->Handle[i]->SetMapper(this->HandleMapper[i]);

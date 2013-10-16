@@ -42,6 +42,7 @@
 #include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <cassert>
@@ -427,7 +428,11 @@ void vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtk
 
 
   vtkNew<vtkImageClip> imageClip;
+#if (VTK_MAJOR_VERSION <= 5)
   imageClip->SetInput(imageDataWorkingCopy.GetPointer());
+#else
+  imageClip->SetInputData(imageDataWorkingCopy.GetPointer());
+#endif
   imageClip->SetOutputWholeExtent(outputWholeExtent);
   imageClip->SetClipData(true);
 

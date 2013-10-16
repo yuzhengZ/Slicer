@@ -41,6 +41,7 @@
 #include <vtkSphereSource.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkVersion.h>
 #include <vtkWindow.h>
 
 
@@ -63,7 +64,11 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
 
   // The face of the hexahedra
   this->HexFaceMapper2D = vtkPolyDataMapper2D::New();
+#if (VTK_MAJOR_VERSION <= 5)
   this->HexFaceMapper2D->SetInput(HexFacePolyData);
+#else
+  this->HexFaceMapper2D->SetInputData(HexFacePolyData);
+#endif
   this->HexFace2D = vtkActor2D::New();
   this->HexFace2D->SetMapper(this->HexFaceMapper2D);
   //this->HexFace2D->SetProperty(this->FaceProperty);
@@ -93,11 +98,11 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
     this->HandleGeometry[i]->SetRadius(0);
 
     this->HandleToPlaneTransformFilters[i] = vtkTransformPolyDataFilter::New();
-    this->HandleToPlaneTransformFilters[i]->SetInput(this->HandleGeometry[i]->GetOutput());
+    this->HandleToPlaneTransformFilters[i]->SetInputConnection(this->HandleGeometry[i]->GetOutputPort());
     this->HandleToPlaneTransformFilters[i]->SetTransform(this->IntersectionPlaneTransform);
 
     this->HandleMapper2D[i] = vtkPolyDataMapper2D::New();
-    this->HandleMapper2D[i]->SetInput(this->HandleToPlaneTransformFilters[i]->GetOutput());
+    this->HandleMapper2D[i]->SetInputConnection(this->HandleToPlaneTransformFilters[i]->GetOutputPort());
     this->Handle2D[i] = vtkActor2D::New();
     //this->Handle2D[i]->SetProperty(this->HandleProperties[i]);
     this->Handle2D[i]->SetMapper(this->HandleMapper2D[i]);
@@ -185,15 +190,19 @@ void vtkAnnotationROIRepresentation2D::CreateFaceIntersections()
     cells->Delete();
 
     this->IntersectionCutters[i] = vtkCutter::New();
+#if (VTK_MAJOR_VERSION <= 5)
     this->IntersectionCutters[i]->SetInput(this->IntersectionFaces[i]);
+#else
+    this->IntersectionCutters[i]->SetInputData(this->IntersectionFaces[i]);
+#endif
     this->IntersectionCutters[i]->SetCutFunction(this->IntersectionPlane);
 
     this->IntersectionPlaneTransformFilters[i] = vtkTransformPolyDataFilter::New();
-    this->IntersectionPlaneTransformFilters[i]->SetInput(this->IntersectionCutters[i]->GetOutput());
+    this->IntersectionPlaneTransformFilters[i]->SetInputConnection(this->IntersectionCutters[i]->GetOutputPort());
     this->IntersectionPlaneTransformFilters[i]->SetTransform(this->IntersectionPlaneTransform);
 
     this->IntersectionMappers[i] = vtkPolyDataMapper2D::New();
-    this->IntersectionMappers[i]->SetInput(this->IntersectionPlaneTransformFilters[i]->GetOutput());
+    this->IntersectionMappers[i]->SetInputConnection(this->IntersectionPlaneTransformFilters[i]->GetOutputPort());
 
     this->IntersectionActors[i] = vtkActor2D::New();
     this->IntersectionActors[i]->SetMapper(this->IntersectionMappers[i]);

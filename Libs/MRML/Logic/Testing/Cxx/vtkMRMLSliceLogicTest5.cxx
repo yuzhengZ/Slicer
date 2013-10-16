@@ -36,6 +36,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkTimerLog.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itkConfigure.h>
@@ -141,9 +142,14 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
               << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
     }
   vtkNew<vtkImageViewer2> viewer;
+#if (VTK_MAJOR_VERSION <= 5)
   //viewer->SetInput(sliceLogic->GetImageData());
   viewer->SetInput(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageData());
-  //viewer->SetInput(appendComponents->GetOutput());
+#else
+  //viewer->SetInputData(sliceLogic->GetImageData());
+  viewer->SetInputData(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageData());
+#endif
+  //viewer->SetInputConnection(appendComponents->GetOutputPort());
   
   // Renderer, RenderWindow and Interactor
   vtkRenderWindow* rw = viewer->GetRenderWindow();

@@ -24,6 +24,7 @@
 #include <vtkPolyDataWriter.h>
 #include <vtkTimerLog.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <sstream>
@@ -429,7 +430,11 @@ void vtkSeedTracts::SeedStreamlineFromPoint(double x,
   newStreamline=(vtkHyperStreamlineDTMRI *)this->CreateHyperStreamline();
                       
   // Set its input information.
+#if (VTK_MAJOR_VERSION <= 5)
   newStreamline->SetInput(this->InputTensorField);
+#else
+  newStreamline->SetInputData(this->InputTensorField);
+#endif
   newStreamline->SetStartPosition(point[0],point[1],point[2]);
   //newStreamline->DebugOn();
 
@@ -672,7 +677,11 @@ void vtkSeedTracts::SeedStreamlinesInROI()
                         this->CreateHyperStreamline();
                       
                       // Set its input information.
+#if (VTK_MAJOR_VERSION <= 5)
                       newStreamline->SetInput(this->InputTensorField);
+#else
+                      newStreamline->SetInputData(this->InputTensorField);
+#endif
                       newStreamline->SetStartPosition(point[0],point[1],point[2]);
                       //newStreamline->DebugOn();
 
@@ -700,10 +709,10 @@ void vtkSeedTracts::SeedStreamlinesInROI()
                             this->SetFilePrefix("line");
                             }
                           // transform model
-                          transformer->SetInput(newStreamline->GetOutput());
+                          transformer->SetInputConnection(newStreamline->GetOutputPort());
                           
                           // Save the model to disk
-                          writer->SetInput(transformer->GetOutput());
+                          writer->SetInputConnection(transformer->GetOutputPort());
                           writer->SetFileType(2);
 
                           std::stringstream fileNameStr;
@@ -839,7 +848,7 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
   for (int i=0; i<this->Streamlines->GetNumberOfItems(); i++)
     {
     streamline = static_cast<vtkHyperStreamline*> (this->Streamlines->GetItemAsObject(i));
-    transformer->SetInput(streamline->GetOutput());
+    transformer->SetInputConnection(streamline->GetOutputPort());
     transformer->Update();
 
     // Fill points and cells
@@ -1050,7 +1059,11 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
                       newStreamline=(vtkHyperStreamlineDTMRI *) this->CreateHyperStreamline();
 
                       // Set its input information.
+#if (VTK_MAJOR_VERSION <= 5)
                       newStreamline->SetInput(this->InputTensorField);
+#else
+                      newStreamline->SetInputData(this->InputTensorField);
+#endif
                       newStreamline->SetStartPosition(point[0],point[1],point[2]);
                       
                       // Force it to update to access the path points
@@ -1124,10 +1137,10 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
                             this->SetFilePrefix("line");
                             }
                           // transform model
-                          transformer->SetInput(newStreamline->GetOutput());
+                          transformer->SetInputConnection(newStreamline->GetOutputPort());
                           
                           // Save the model to disk
-                          writer->SetInput(transformer->GetOutput());
+                          writer->SetInputConnection(transformer->GetOutputPort());
                           writer->SetFileType(2);
                           
                           std::stringstream fileNameStr;

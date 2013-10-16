@@ -13,6 +13,7 @@
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itkGrowCutSegmentationImageFilter.h>
@@ -381,7 +382,11 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
       {
 
       vtkImageCast *imageCaster = vtkImageCast::New();
+#if (VTK_MAJOR_VERSION <= 5)
       imageCaster->SetInput( input3 );
+#else
+      imageCaster->SetInputData( input3 );
+#endif
 
       if((input2->GetScalarType() != VTK_UNSIGNED_SHORT) ||
       (input2->GetScalarType() != VTK_UNSIGNED_CHAR) ||
@@ -398,7 +403,11 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
         imageCaster->SetOutputScalarTypeToShort();
 
         vtkImageCast *imageCaster1 = vtkImageCast::New();
+#if (VTK_MAJOR_VERSION <= 5)
         imageCaster1->SetInput(input2);
+#else
+        imageCaster1->SetInputData(input2);
+#endif
         imageCaster1->SetOutputScalarTypeToShort();
 
         vtkITKImageGrowCutExecute3D(input1,
@@ -486,11 +495,19 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
       outData->SetScalarType(VTK_SHORT);
 
       vtkImageCast *imageCaster = vtkImageCast::New();
+#if (VTK_MAJOR_VERSION <= 5)
       imageCaster->SetInput( input2 );
+#else
+      imageCaster->SetInputData( input2 );
+#endif
       imageCaster->SetOutputScalarTypeToShort();
 
       vtkImageCast *imageCaster1 = vtkImageCast::New();
+#if (VTK_MAJOR_VERSION <= 5)
       imageCaster1->SetInput(input3);
+#else
+      imageCaster1->SetInputData(input3);
+#endif
       imageCaster1->SetOutputScalarTypeToShort();
 
       vtkITKImageGrowCutExecute3D(input1,

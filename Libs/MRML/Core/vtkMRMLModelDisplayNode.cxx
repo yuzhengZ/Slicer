@@ -21,6 +21,7 @@ Version:   $Revision: 1.3 $
 #include <vtkObjectFactory.h>
 #include <vtkPassThrough.h>
 #include <vtkPolyData.h>
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLModelDisplayNode);
@@ -68,8 +69,13 @@ void vtkMRMLModelDisplayNode::SetInputPolyData(vtkPolyData* polyData)
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::SetInputToPolyDataPipeline(vtkPolyData* polyData)
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->PassThrough->SetInput(polyData);
   this->AssignAttribute->SetInput(polyData);
+#else
+  this->PassThrough->SetInputData(polyData);
+  this->AssignAttribute->SetInputData(polyData);
+#endif
 }
 
 //---------------------------------------------------------------------------

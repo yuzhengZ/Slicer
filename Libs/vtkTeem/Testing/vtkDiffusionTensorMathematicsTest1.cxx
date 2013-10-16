@@ -27,6 +27,7 @@
 #include <vtkMultiThreader.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
 int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
@@ -92,7 +93,11 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
 
   // Execute the filter
   vtkNew<vtkDiffusionTensorMathematics> filter;
+#if (VTK_MAJOR_VERSION <= 5)
   filter->SetInput(tensorImage.GetPointer());
+#else
+  filter->SetInputData(tensorImage.GetPointer());
+#endif
   filter->SetScalarMask(maskImage.GetPointer());
   filter->SetMaskLabelValue(0);  // mask all the labels different from 0
   filter->SetMaskWithScalars(1); // turn on masking

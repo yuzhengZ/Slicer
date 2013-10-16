@@ -21,6 +21,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageMapToColors.h>
 #include <vtkLookupTable.h>
 #include <vtkObjectFactory.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <cassert>
@@ -67,7 +68,11 @@ void vtkMRMLLabelMapVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->MapToColors->SetInput(imageData);
+#else
+  this->MapToColors->SetInputData(imageData);
+#endif
 }
 
 //---------------------------------------------------------------------------

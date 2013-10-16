@@ -33,6 +33,7 @@
 #include <vtkImageMapToColors.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkNew.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itkConfigure.h>
@@ -105,10 +106,14 @@ int vtkMRMLSliceLogicTest4(int argc, char * argv [] )
   
   vtkNew<vtkImageReslice> resliceMask;
   resliceMask->SetOutputExtent(0, 400, 0, 500, 0, 0);
+#if (VTK_MAJOR_VERSION <= 5)
   resliceMask->SetInput(img);
+#else
+  resliceMask->SetInputData(img);
+#endif
 
   vtkNew<vtkImageMapToColors> colors;
-  colors->SetInput(resliceMask->GetOutput());
+  colors->SetInputConnection(resliceMask->GetOutputPort());
   vtkNew<vtkColorTransferFunction> ctf;
   ctf->AddRGBPoint(0, 1., 0., 0.);
   colors->SetLookupTable(ctf.GetPointer());

@@ -22,6 +22,7 @@
 #include <vtkITKUtility.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
+#include <vtkVersion.h>
 
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
@@ -144,7 +145,11 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
 
 
   // set pipeline for the image
+#if (VTK_MAJOR_VERSION <= 5)
   vtkFlip->SetInput( inputImage );
+#else
+  vtkFlip->SetInputData( inputImage );
+#endif
   vtkFlip->SetFilteredAxis(1);
   vtkFlip->FlipAboutOriginOn();
 

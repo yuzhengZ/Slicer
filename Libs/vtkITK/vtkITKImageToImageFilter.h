@@ -23,6 +23,7 @@
 #include "vtkImageAlgorithm.h"
 #include "vtkImageCast.h"
 #include "vtkImageData.h"
+#include <vtkVersion.h>
 
 #include "vtkITK.h"
 
@@ -137,7 +138,11 @@ public:
   /// Set the Input of the filter.
   virtual void SetInput(vtkImageData *Input)
   {
+#if (VTK_MAJOR_VERSION <= 5)
     this->vtkCast->SetInput(Input);
+#else
+    this->vtkCast->SetInputData(Input);
+#endif
   };
 
   /// 

@@ -134,10 +134,10 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     
     reader->SetFileName(fullName.c_str());
     normals->SetSplitting(0);
-    normals->SetInput( reader->GetOutput() );
+    normals->SetInputConnection( reader->GetOutputPort() );
     if ( this->GetUseStripper() )
       {
-      stripper->SetInput( normals->GetOutput() );
+      stripper->SetInputConnection( normals->GetOutputPort() );
       stripper->Update();
       if (stripper->GetOutput() == NULL ||
           stripper->GetOutput()->GetNumberOfCells() == 0)

@@ -21,6 +21,7 @@
 #include <vtkImageThreshold.h>
 #include <vtkImageToImageStencil.h>
 #include <vtkNew.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itkGDCMImageIO.h>
@@ -1367,7 +1368,11 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
   // --- find the max and min label in mask
   vtkImageAccumulate *stataccum = vtkImageAccumulate::New();
+#if (VTK_MAJOR_VERSION <= 5)
   stataccum->SetInput( voiVolume );
+#else
+  stataccum->SetInputData( voiVolume );
+#endif
   stataccum->Update();
   int lo = static_cast<int>(stataccum->GetMin()[0]);
   int hi = static_cast<int>(stataccum->GetMax()[0]);
@@ -1399,7 +1404,11 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
     // create the binary volume of the label
     vtkImageThreshold *thresholder = vtkImageThreshold::New();
+#if (VTK_MAJOR_VERSION <= 5)
     thresholder->SetInput(voiVolume);
+#else
+    thresholder->SetInputData(voiVolume);
+#endif
     thresholder->SetInValue(1);
     thresholder->SetOutValue(0);
     thresholder->ReplaceOutOn();
@@ -1409,11 +1418,15 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
     // use vtk's statistics class with the binary labelmap as a stencil
     vtkImageToImageStencil *stencil = vtkImageToImageStencil::New();
-    stencil->SetInput(thresholder->GetOutput() );
+    stencil->SetInputConnection(thresholder->GetOutputPort() );
     stencil->ThresholdBetween(1, 1);
 
     vtkImageAccumulate *labelstat = vtkImageAccumulate::New();
+#if (VTK_MAJOR_VERSION <= 5)
     labelstat->SetInput(petVolume);
+#else
+    labelstat->SetInputData(petVolume);
+#endif
     labelstat->SetStencil(stencil->GetOutput() );
     labelstat->Update();
 

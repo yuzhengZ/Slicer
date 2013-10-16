@@ -23,6 +23,7 @@ Version:   $Revision: 1.3 $
 #include <vtkPlanes.h>
 #include <vtkSelection.h>
 #include <vtkSelectionNode.h>
+#include <vtkVersion.h>
 
 // TractographyMRML includes
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
@@ -389,7 +390,11 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddGlyphDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleNode::SetAndObservePolyData(vtkPolyData* polyData)
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->ExtractSelectedPolyDataIds->SetInput(0, polyData);
+#else
+  this->ExtractSelectedPolyDataIds->SetInputData(0, polyData);
+#endif
   this->Superclass::SetAndObservePolyData(polyData);
 
   if (polyData)
@@ -550,7 +555,11 @@ void vtkMRMLFiberBundleNode::PrepareSubsampling()
   arr->SetNumberOfTuples(0);
   node->SetSelectionList(arr);
 
+#if (VTK_MAJOR_VERSION <= 5)
   this->ExtractSelectedPolyDataIds->SetInput(1, sel);
+#else
+  this->ExtractSelectedPolyDataIds->SetInputData(1, sel);
+#endif
 
   this->CleanPolyDataPostSubsampling = vtkCleanPolyData::New();
   this->CleanPolyDataPostSubsampling->ConvertLinesToPointsOff();

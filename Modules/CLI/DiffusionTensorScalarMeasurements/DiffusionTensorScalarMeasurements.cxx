@@ -31,7 +31,7 @@ int main( int argc, char * argv[] )
     }
   vtkDiffusionTensorMathematics *math = vtkDiffusionTensorMathematics::New();
 
-  math->SetInput(0, reader->GetOutput() );
+  math->SetInputConnection(0, reader->GetOutputPort() );
 
   if( operation == std::string("Trace") )
     {
@@ -152,7 +152,7 @@ int main( int argc, char * argv[] )
 
   // Save result
   vtkNRRDWriter *writer = vtkNRRDWriter::New();
-  writer->SetInput(math->GetOutput() );
+  writer->SetInputConnection(math->GetOutputPort() );
   writer->SetFileName( outputScalar.c_str() );
   writer->UseCompressionOn();
   // Compute IjkToRas (used by Writer)

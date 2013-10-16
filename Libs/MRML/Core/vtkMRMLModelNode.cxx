@@ -34,6 +34,7 @@ Version:   $Revision: 1.3 $
 #include <vtkSmartPointer.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTrivialProducer.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <cassert>
@@ -493,7 +494,12 @@ bool vtkMRMLModelNode::CanApplyNonLinearTransforms()const
 void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
 {
   vtkTransformPolyDataFilter* transformFilter = vtkTransformPolyDataFilter::New();
+#if (VTK_MAJOR_VERSION <= 5)
   transformFilter->SetInput(this->GetPolyData());
+#else
+  transformFilter->SetInputData(this->GetPolyData());
+#endif
+
   transformFilter->SetTransform(transform);
   transformFilter->Update();
 

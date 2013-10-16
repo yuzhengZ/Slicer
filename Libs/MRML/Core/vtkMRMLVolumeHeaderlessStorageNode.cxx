@@ -33,6 +33,7 @@ Version:   $Revision: 1.3 $
 #include <vtkImageAppend.h>
 #include <vtkImageFlip.h>
 #include <vtkNew.h>
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLVolumeHeaderlessStorageNode);
@@ -341,7 +342,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   reader->SetDataByteOrder(this->GetFileLittleEndian());
 
   vtkNew<vtkImageFlip> flip;
-  flip->SetInput(reader->GetOutput());
+  flip->SetInputConnection(reader->GetOutputPort());
   flip->SetFilteredAxes(1);
 
   int dims[3];
@@ -385,15 +386,23 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       }
     else
       {
+#if (VTK_MAJOR_VERSION <= 5)
       appender->SetInput(0, image.GetPointer());
-      appender->SetInput(1, flip->GetOutput());
+#else
+      appender->SetInputData(0, image.GetPointer());
+#endif
+      appender->SetInputConnection(1, flip->GetOutputPort());
       appender->Update();  
       image ->DeepCopy(appender->GetOutput());
       }
     }
 
   vtkNew<vtkImageChangeInformation> ici;
+#if (VTK_MAJOR_VERSION <= 5)
   ici->SetInput(image.GetPointer());
+#else
+  ici->SetInputData(image.GetPointer());
+#endif
   ici->SetOutputSpacing( 1, 1, 1 );
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();

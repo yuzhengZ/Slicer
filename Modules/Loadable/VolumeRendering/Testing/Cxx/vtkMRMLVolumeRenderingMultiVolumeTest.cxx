@@ -46,6 +46,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkVersion.h>
 #include <vtkWindowToImageFilter.h>
 
 // STD includes
@@ -276,7 +277,11 @@ int vtkMRMLVolumeRenderingMultiVolumeTest(int vtkNotUsed(argc),
       screenShots->GetItemAsObject(i));
 
     vtkNew<vtkImageDifference> diff;
+#if (VTK_MAJOR_VERSION <= 5)
     diff->SetInput(referenceScreenShot.GetPointer());
+#else
+    diff->SetInputData(referenceScreenShot.GetPointer());
+#endif
     diff->SetImage(screenShotImage);
     diff->Update();
     double error = diff->GetThresholdedError();

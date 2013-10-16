@@ -15,6 +15,7 @@ Version:   $Revision: 1.3 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include <vtkImageData.h>
+#include <vtkVersion.h>
 
 #include "vtkDiffusionTensorGlyph.h"
 
@@ -41,7 +42,11 @@ vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceD
 
 
   this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
+#if (VTK_MAJOR_VERSION <= 5)
   this->DiffusionTensorGlyphFilter->SetInput(this->SliceImage);
+#else
+  this->DiffusionTensorGlyphFilter->SetInputData(this->SliceImage);
+#endif
   this->DiffusionTensorGlyphFilter->SetResolution (1);
 
   this->ColorMode = this->colorModeScalar;
@@ -144,7 +149,11 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMat
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceImage(vtkImageData *image)
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->DiffusionTensorGlyphFilter->SetInput(image);
+#else
+  this->DiffusionTensorGlyphFilter->SetInputData(image);
+#endif
   //this->DiffusionTensorGlyphFilter->SetDimensions(image ? image->GetDimensions(): 0);
 
   Superclass::SetSliceImage(image);
@@ -184,7 +193,11 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline()
   this->DiffusionTensorGlyphFilter->SetDimensionResolution( DiffusionTensorDisplayNode->GetLineGlyphResolution(), DiffusionTensorDisplayNode->GetLineGlyphResolution());
   this->DiffusionTensorGlyphFilter->SetScaleFactor( DiffusionTensorDisplayNode->GetGlyphScaleFactor( ) );
 
+#if (VTK_MAJOR_VERSION <= 5)
   this->DiffusionTensorGlyphFilter->SetSource( DiffusionTensorDisplayNode->GetGlyphSource( ) );
+#else
+  this->DiffusionTensorGlyphFilter->SetSourceData( DiffusionTensorDisplayNode->GetGlyphSource( ) );
+#endif
 
   vtkDebugMacro("setting glyph geometry" << DiffusionTensorDisplayNode->GetGlyphGeometry( ) );
 

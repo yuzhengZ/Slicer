@@ -52,6 +52,7 @@
 #include <vtkProperty.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
+#include <vtkVersion.h>
 
 // for picking
 #include <vtkCellPicker.h>
@@ -937,7 +938,11 @@ void vtkMRMLModelDisplayableManager
           vtkPolyDataMapper *mapper = vtkPolyDataMapper::SafeDownCast(actor->GetMapper());
           if (mapper && mapper->GetInput() != polyData && !(this->Internal->ClippingOn && clipping))
             {
+#if (VTK_MAJOR_VERSION <= 5)
             mapper->SetInput(polyData);
+#else
+            mapper->SetInputData(polyData);
+#endif
             }
           }
         vtkMRMLTransformNode* tnode = displayableNode->GetParentTransformNode();
@@ -962,13 +967,21 @@ void vtkMRMLModelDisplayableManager
 
       if (clipper)
         {
+#if (VTK_MAJOR_VERSION <= 5)
         clipper->SetInput(polyData);
+#else
+        clipper->SetInputData(polyData);
+#endif
         clipper->Update();
-        mapper->SetInput(clipper->GetOutput());
+        mapper->SetInputConnection(clipper->GetOutputPort());
         }
       else
         {
+#if (VTK_MAJOR_VERSION <= 5)
         mapper->SetInput(polyData);
+#else
+        mapper->SetInputData(polyData);
+#endif
         }
 
       actor->SetMapper(mapper);
@@ -1508,7 +1521,11 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
             actor->SetTexture(texture);
             texture->Delete();
             }
+#if (VTK_MAJOR_VERSION <= 5)
           actor->GetTexture()->SetInput(modelDisplayNode->GetTextureImageData());
+#else
+          actor->GetTexture()->SetInputData(modelDisplayNode->GetTextureImageData());
+#endif
           actor->GetTexture()->SetInterpolate(modelDisplayNode->GetInterpolateTexture());
           actor->GetProperty()->SetColor(1., 1., 1.);
           }
@@ -1521,11 +1538,19 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         {
         if (modelDisplayNode->GetTextureImageData() != 0)
           {
+#if (VTK_MAJOR_VERSION <= 5)
           imageActor->SetInput(modelDisplayNode->GetTextureImageData());
+#else
+          imageActor->SetInputData(modelDisplayNode->GetTextureImageData());
+#endif
           }
         else
           {
+#if (VTK_MAJOR_VERSION <= 5)
           imageActor->SetInput(0);
+#else
+          imageActor->SetInputData(0);
+#endif
           }
         imageActor->SetDisplayExtent(-1, 0, 0, 0, 0, 0);
         }

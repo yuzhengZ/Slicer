@@ -721,7 +721,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     screenshootFilename += "/Baseline/vtkMRMLCameraDisplayableManagerTest1.png";
     vtkNew<vtkPNGWriter> writer;
     writer->SetFileName(screenshootFilename.c_str());
-    writer->SetInput(windowToImageFilter->GetOutput());
+    writer->SetInputConnection(windowToImageFilter->GetOutputPort());
     writer->Write();
     std::cout << "Saved screenshot: " << screenshootFilename << std::endl;
     }

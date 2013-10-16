@@ -34,6 +34,7 @@ Version:   $Revision: 1.2 $
 #include <vtkObjectFactory.h>
 #include <vtkLookupTable.h>
 #include <vtkImageMathematics.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <cassert>
@@ -167,14 +168,23 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *imageData)
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->Threshold->SetInput(imageData);
   this->MapToWindowLevelColors->SetInput(imageData);
+#else
+  this->Threshold->SetInputData(imageData);
+  this->MapToWindowLevelColors->SetInputData(imageData);
+#endif
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageData)
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->ResliceAlphaCast->SetInput(imageData);
+#else
+  this->ResliceAlphaCast->SetInputData(imageData);
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -736,9 +746,12 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     this->Accumulate->SetComponentExtent(extent);
     double origin[3] = {-32768, 0, 0};
     this->Accumulate->SetComponentOrigin(origin);
-
+#if (VTK_MAJOR_VERSION <= 5)
     this->Accumulate->SetInput(imageDataScalar);
-    this->Bimodal->SetInput(this->Accumulate->GetOutput());
+#else
+    this->Accumulate->SetInputData(imageDataScalar);
+#endif
+    this->Bimodal->SetInputConnection(this->Accumulate->GetOutputPort());
     this->Bimodal->Update();
     // Workaround for image data where all accumulate samples fall
     // within the same histogram bin

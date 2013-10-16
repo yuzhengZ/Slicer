@@ -44,6 +44,7 @@
 #include <vtkPolyDataCollection.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
+#include <vtkVersion.h>
 
 // STD includes
 
@@ -83,7 +84,7 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
 
   this->ExtractModelTexture = vtkImageReslice::New();
   this->ExtractModelTexture->SetOutputDimensionality (2);
-  this->ExtractModelTexture->SetInput(BlendUVW->GetOutput());
+  this->ExtractModelTexture->SetInputConnection(BlendUVW->GetOutputPort());
 
   this->ActiveSliceTransform = vtkTransform::New();
   this->PolyDataCollection = vtkPolyDataCollection::New();
@@ -804,12 +805,12 @@ void vtkMRMLSliceLogic::UpdateImageData ()
 {
   if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
     {
-    this->ExtractModelTexture->SetInput( this->Blend->GetOutput() );
+    this->ExtractModelTexture->SetInputConnection( this->Blend->GetOutputPort() );
     this->ImageData = this->Blend->GetOutput();
     }
   else
     {
-    this->ExtractModelTexture->SetInput( this->BlendUVW->GetOutput() );
+    this->ExtractModelTexture->SetInputConnection( this->BlendUVW->GetOutputPort() );
     }
 
   // It seems very strange that the imagedata can be null.
@@ -831,7 +832,7 @@ void vtkMRMLSliceLogic::UpdateImageData ()
       //  {
       //  this->ImageData = vtkImageData::New();
       //  }
-      //this->ImageData->DeepCopy( this->Blend->GetOutput());
+      //this->ImageData->DeepCopy( this->Blend->GetOutputPort());
       this->ImageData = this->Blend->GetOutput();
       //this->ExtractModelTexture->SetInput( this->ImageData );
       // Doesn't seem needed, not sure though.
@@ -849,11 +850,15 @@ void vtkMRMLSliceLogic::UpdateImageData ()
     this->ImageData=0;
     if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
       {
+#if (VTK_MAJOR_VERSION <= 5)
       this->ExtractModelTexture->SetInput( this->ImageData );
+#else
+      this->ExtractModelTexture->SetInputData( this->ImageData );
+#endif
       }
     else
       {
-      this->ExtractModelTexture->SetInput( this->BlendUVW->GetOutput() );
+      this->ExtractModelTexture->SetInputConnection( this->BlendUVW->GetOutputPort() );
       }
     }
 }
@@ -982,16 +987,20 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         // subtract the foreground and background
         tempMath->SetOperationToSubtract();
         }
-
+#if (VTK_MAJOR_VERSION <= 5)
       tempMath->SetInput1( foregroundImage );
       tempMath->SetInput2( backgroundImage );
+#else
+      tempMath->SetInput1Data( foregroundImage );
+      tempMath->SetInput2Data( backgroundImage );
+#endif
       tempMath->GetOutput()->SetScalarType(VTK_SHORT);
 
       vtkImageCast *tempCast = vtkImageCast::New();
-      tempCast->SetInput( tempMath->GetOutput() );
+      tempCast->SetInputConnection( tempMath->GetOutputPort() );
       tempCast->SetOutputScalarTypeToUnsignedChar();
 
-      this->Blend->SetInput( layerIndex, tempCast->GetOutput() );
+      this->Blend->SetInputConnection( layerIndex, tempCast->GetOutputPort() );
       this->Blend->SetOpacity( layerIndex++, 1.0 );
 
       tempMath->Delete();  // Blend may still be holding a reference
@@ -1010,15 +1019,20 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         tempMathUVW->SetOperationToSubtract();
         }
 
+#if (VTK_MAJOR_VERSION <= 5)
       tempMathUVW->SetInput1( foregroundImageUVW );
       tempMathUVW->SetInput2( backgroundImageUVW );
+#else
+      tempMathUVW->SetInput1Data( foregroundImageUVW );
+      tempMathUVW->SetInput2Data( backgroundImageUVW );
+#endif
       tempMathUVW->GetOutput()->SetScalarType(VTK_SHORT);
 
       vtkImageCast *tempCastUVW = vtkImageCast::New();
-      tempCastUVW->SetInput( tempMathUVW->GetOutput() );
+      tempCastUVW->SetInputConnection( tempMathUVW->GetOutputPort() );
       tempCastUVW->SetOutputScalarTypeToUnsignedChar();
 
-      this->BlendUVW->SetInput( layerIndexUVW, tempCastUVW->GetOutput() );
+      this->BlendUVW->SetInputConnection( layerIndexUVW, tempCastUVW->GetOutputPort() );
       this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
 
       tempMathUVW->Delete();  // Blend may still be holding a reference
@@ -1030,22 +1044,38 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         {
         if ( backgroundImage )
           {
+#if (VTK_MAJOR_VERSION <= 5)
           this->Blend->SetInput( layerIndex, backgroundImage );
+#else
+          this->Blend->SetInputData( layerIndex, backgroundImage );
+#endif
           this->Blend->SetOpacity( layerIndex++, 1.0 );
           }
         if ( foregroundImage )
           {
+#if (VTK_MAJOR_VERSION <= 5)
           this->Blend->SetInput( layerIndex, foregroundImage );
+#else
+          this->Blend->SetInputData( layerIndex, foregroundImage );
+#endif
           this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
         if ( backgroundImageUVW )
           {
+#if (VTK_MAJOR_VERSION <= 5)
           this->BlendUVW->SetInput( layerIndexUVW, backgroundImageUVW );
+#else
+          this->BlendUVW->SetInputData( layerIndexUVW, backgroundImageUVW );
+#endif
           this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
           }
         if ( foregroundImageUVW )
           {
+#if (VTK_MAJOR_VERSION <= 5)
           this->BlendUVW->SetInput( layerIndexUVW, foregroundImageUVW );
+#else
+          this->BlendUVW->SetInputData( layerIndexUVW, foregroundImageUVW );
+#endif
           this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
         }
@@ -1053,22 +1083,38 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         {
         if ( foregroundImage )
           {
+#if (VTK_MAJOR_VERSION <= 5)
           this->Blend->SetInput( layerIndex, foregroundImage );
+#else
+          this->Blend->SetInputData( layerIndex, foregroundImage );
+#endif
           this->Blend->SetOpacity( layerIndex++, 1.0 );
           }
         if ( backgroundImage )
           {
+#if (VTK_MAJOR_VERSION <= 5)
           this->Blend->SetInput( layerIndex, backgroundImage );
+#else
+          this->Blend->SetInputData( layerIndex, backgroundImage );
+#endif
           this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
         if ( foregroundImageUVW )
           {
+#if (VTK_MAJOR_VERSION <= 5)
           this->BlendUVW->SetInput( layerIndexUVW, foregroundImageUVW );
+#else
+          this->BlendUVW->SetInputData( layerIndexUVW, foregroundImageUVW );
+#endif
           this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
           }
         if ( backgroundImageUVW )
           {
+#if (VTK_MAJOR_VERSION <= 5)
           this->BlendUVW->SetInput( layerIndexUVW, backgroundImageUVW );
+#else
+          this->BlendUVW->SetInputData( layerIndexUVW, backgroundImageUVW );
+#endif
           this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
 
@@ -1079,23 +1125,39 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     vtkImageData* labelImageUVW = this->LabelLayer ? this->LabelLayer->GetImageDataUVW() : 0;
     if ( labelImage )
       {
+#if (VTK_MAJOR_VERSION <= 5)
       this->Blend->SetInput( layerIndex, labelImage );
+#else
+      this->Blend->SetInputData( layerIndex, labelImage );
+#endif
       this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
       }
     if ( labelImageUVW )
       {
+#if (VTK_MAJOR_VERSION <= 5)
       this->BlendUVW->SetInput( layerIndexUVW, labelImageUVW );
+#else
+      this->BlendUVW->SetInputData( layerIndexUVW, labelImageUVW );
+#endif
       this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetLabelOpacity() );
       }
     while (this->Blend->GetNumberOfInputs() > layerIndex)
       {
       // it decreases the number of inputs
+#if (VTK_MAJOR_VERSION <= 5)
       this->Blend->SetInput(this->Blend->GetNumberOfInputs() - 1, 0);
+#else
+      this->Blend->SetInputData(this->Blend->GetNumberOfInputs() - 1, 0);
+#endif
       }
     while (this->BlendUVW->GetNumberOfInputs() > layerIndexUVW)
       {
       // it decreases the number of inputs
+#if (VTK_MAJOR_VERSION <= 5)
       this->BlendUVW->SetInput(this->BlendUVW->GetNumberOfInputs() - 1, 0);
+#else
+      this->BlendUVW->SetInputData(this->BlendUVW->GetNumberOfInputs() - 1, 0);
+#endif
       }
     if (this->Blend->GetMTime() > oldBlendMTime)
       {

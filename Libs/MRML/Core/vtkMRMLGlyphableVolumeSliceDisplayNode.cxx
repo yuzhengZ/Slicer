@@ -43,7 +43,7 @@ vtkMRMLGlyphableVolumeSliceDisplayNode::vtkMRMLGlyphableVolumeSliceDisplayNode()
   this->SliceToXYTransform->PreMultiply();
   this->SliceToXYTransform->SetMatrix(this->SliceToXYMatrix);
 
-  //this->SliceToXYTransformer->SetInput(this->GlyphGlyphFilter->GetOutput());
+  //this->SliceToXYTransformer->SetInputConnection(this->GlyphGlyphFilter->GetOutputPort());
   this->SliceToXYTransformer->SetTransform(this->SliceToXYTransform);
 
   // don't backface cull the glyphs - they may not be geometrically consistent

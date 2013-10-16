@@ -46,6 +46,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtksys/SystemTools.hxx>
+#include <vtkVersion.h>
 #include <vtkWeakPointer.h>
 
 //----------------------------------------------------------------------------
@@ -765,7 +766,11 @@ vtkSlicerVolumesLogic::CreateAndAddLabelVolume(vtkMRMLScene *scene,
   thresh->SetInValue(0);
   thresh->SetOutValue(0);
   thresh->SetOutputScalarType (VTK_SHORT);
+#if (VTK_MAJOR_VERSION <= 5)
   thresh->SetInput( volumeNode->GetImageData() );
+#else
+  thresh->SetInputData( volumeNode->GetImageData() );
+#endif
   thresh->GetOutput()->Update();
 
   vtkNew<vtkImageData> imageData;
@@ -844,7 +849,11 @@ vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
   thresh->SetInValue(0);
   thresh->SetOutValue(0);
   thresh->SetOutputScalarType (VTK_SHORT);
+#if (VTK_MAJOR_VERSION <= 5)
   thresh->SetInput( templateNode->GetImageData() );
+#else
+  thresh->SetInputData( templateNode->GetImageData() );
+#endif
   thresh->GetOutput()->Update();
   labelNode->SetAndObserveImageData( thresh->GetOutput() );
 

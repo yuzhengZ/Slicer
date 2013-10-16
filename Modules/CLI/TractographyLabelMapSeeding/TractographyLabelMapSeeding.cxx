@@ -19,6 +19,7 @@
 #include <vtkSmartPointer.h>
 #include <vtksys/SystemTools.hxx>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <string>
@@ -69,7 +70,7 @@ int main( int argc, char * argv[] )
 
       // cast roi to short data type
       imageCast->SetOutputScalarTypeToShort();
-      imageCast->SetInput(reader2->GetOutput() );
+      imageCast->SetInputConnection(reader2->GetOutputPort() );
       imageCast->Update();
 
       ROI = imageCast->GetOutput();
@@ -82,7 +83,7 @@ int main( int argc, char * argv[] )
       //
       ROIRASToIJK->DeepCopy(reader2->GetRasToIjkMatrix() );
     } else { // If the mask does not exist, create one
-      math->SetInput(0, reader->GetOutput());
+      math->SetInputConnection(0, reader->GetOutputPort());
 
       if( StoppingMode == std::string("LinearMeasurement") || StoppingMode == std::string("LinearMeasure") )
         {
@@ -103,7 +104,7 @@ int main( int argc, char * argv[] )
         }
       math->Update();
 
-      th->SetInput(math->GetOutput());
+      th->SetInputConnection(math->GetOutputPort());
       th->ThresholdBetween(ClTh,1);
       th->SetInValue(ROIlabel);
       th->SetOutValue(0);
@@ -270,7 +271,11 @@ int main( int argc, char * argv[] )
           seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
           writer->SetFileName(OutputFibers.c_str());
           writer->SetFileTypeToBinary();
+#if (VTK_MAJOR_VERSION <= 5)
           writer->SetInput(outFibers.GetPointer());
+#else
+          writer->SetInputData(outFibers.GetPointer());
+#endif
           writer->Write();
         }
       else 
@@ -282,7 +287,11 @@ int main( int argc, char * argv[] )
         vtkNew<vtkXMLPolyDataWriter> writer;
         seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
         writer->SetFileName(OutputFibers.c_str() );
+#if (VTK_MAJOR_VERSION <= 5)
         writer->SetInput(outFibers.GetPointer());
+#else
+        writer->SetInputData(outFibers.GetPointer());
+#endif
         writer->Write();
         }
       }

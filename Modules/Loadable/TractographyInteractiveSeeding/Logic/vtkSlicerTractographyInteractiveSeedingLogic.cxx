@@ -41,6 +41,7 @@
 #include <vtkPointData.h>
 #include <vtkSeedTracts.h>
 #include <vtkSmartPointer.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <algorithm>
@@ -364,7 +365,11 @@ void vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForOneSeed(vtkSee
     }
   else if (modelNode)
     {
+#if (VTK_MAJOR_VERSION <= 5)
     this->MaskPoints->SetInput(modelNode->GetPolyData());
+#else
+    this->MaskPoints->SetInputData(modelNode->GetPolyData());
+#endif
     this->MaskPoints->SetRandomMode(1);
     this->MaskPoints->SetMaximumNumberOfPoints(maxNumberOfSeeds);
     this->MaskPoints->Update();
@@ -439,7 +444,11 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
   volumeNode->GetSpacing(sp);
   vtkNew<vtkImageChangeInformation> ici;
   ici->SetOutputSpacing(sp);
+#if (VTK_MAJOR_VERSION <= 5)
   ici->SetInput(volumeNode->GetImageData());
+#else
+  ici->SetInputData(volumeNode->GetImageData());
+#endif
   ici->GetOutput()->Update();
 
   seed->SetInputTensorField(ici->GetOutput());
@@ -814,7 +823,11 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
     {
     // cast roi to short data type
     imageCast->SetOutputScalarTypeToShort();
+#if (VTK_MAJOR_VERSION <= 5)
     imageCast->SetInput(seedingNode->GetImageData() );
+#else
+    imageCast->SetInputData(seedingNode->GetImageData() );
+#endif
     imageCast->Update();
 
     //Do scale IJK
@@ -822,7 +835,7 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
     seedingNode->GetSpacing(sp);
     vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
     ici->SetOutputSpacing(sp);
-    ici->SetInput(imageCast->GetOutput());
+    ici->SetInputConnection(imageCast->GetOutputPort());
     ici->GetOutput()->Update();
 
     ROI = ici->GetOutput();
@@ -837,7 +850,11 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
     }
   else
     {
+#if (VTK_MAJOR_VERSION <= 5)
     math->SetInput(0, volumeNode->GetImageData());
+#else
+    math->SetInputData(0, volumeNode->GetImageData());
+#endif
     if ( stoppingMode == 0 )
       {
       math->SetOperationToLinearMeasure();
@@ -848,7 +865,7 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
       }
     math->Update();
 
-    th->SetInput(math->GetOutput());
+    th->SetInputConnection(math->GetOutputPort());
     th->ThresholdBetween(linearMeasureStart,1);
     th->SetInValue(ROIlabel);
     th->SetOutValue(0);
@@ -928,26 +945,31 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
 
   // Create Cl mask
   /**
-  iwriter->SetInput(imageCast->GetOutput());
+  iwriter->SetInputConnection(imageCast->GetOutputPort());
   iwriter->SetFileName("C:/Temp/cast.nhdr");
   iwriter->Write();
 
 
   vtkNew<vtkDiffusionTensorMathematicsSimple> math;
+#if (VTK_MAJOR_VERSION <= 5)
   math->SetInput(0, volumeNode->GetImageData());
   // math->SetInput(1, volumeNode->GetImageData());
+#else
+  math->SetInputData(0, volumeNode->GetImageData());
+  // math->SetInputData(1, volumeNode->GetImageData());
+#endif
   math->SetScalarMask(imageCast->GetOutput());
   math->MaskWithScalarsOn();
   math->SetMaskLabelValue(ROIlabel);
   math->SetOperationToLinearMeasure();
   math->Update();
 
-  iwriter->SetInput(math->GetOutput());
+  iwriter->SetInputConnection(math->GetOutputPort());
   iwriter->SetFileName("C:/Temp/math.nhdr");
   iwriter->Write();
 
   vtkNew<vtkImageThreshold> th;
-  th->SetInput(math->GetOutput());
+  th->SetInputConnection(math->GetOutputPort());
   th->ThresholdBetween(linearMeasureStart,1);
   th->SetInValue(1);
   th->SetOutValue(0);
@@ -956,7 +978,7 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
   th->SetOutputScalarTypeToShort();
   th->Update();
 
-  iwriter->SetInput(th->GetOutput());
+  iwriter->SetInputConnection(th->GetOutputPort());
   iwriter->SetFileName("C:/Temp/th.nhdr");
   iwriter->Write();
   **/

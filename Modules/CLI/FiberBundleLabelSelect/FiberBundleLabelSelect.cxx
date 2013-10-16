@@ -30,6 +30,7 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <iostream>
@@ -86,7 +87,7 @@ int main( int argc, char * argv[] )
   readerLabel_A->Update();
 
   imageCastLabel_A->SetOutputScalarTypeToShort();
-  imageCastLabel_A->SetInput(readerLabel_A->GetOutput() );
+  imageCastLabel_A->SetInputConnection(readerLabel_A->GetOutputPort() );
   imageCastLabel_A->Update();
 
   // Read in fiber bundle input to be selected.
@@ -306,7 +307,11 @@ int main( int argc, char * argv[] )
   //3. Save the output
   vtkNew<vtkXMLPolyDataWriter> writer;
   writer->SetFileName(OutputFibers.c_str());
+#if (VTK_MAJOR_VERSION <= 5)
   writer->SetInput(outFibers.GetPointer());
+#else
+  writer->SetInputData(outFibers.GetPointer());
+#endif
   writer->Write();
   }
   catch ( ... )

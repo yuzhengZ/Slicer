@@ -22,6 +22,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageMapToWindowLevelColors.h>
 #include <vtkImageThreshold.h>
 #include <vtkObjectFactory.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <sstream>
@@ -109,7 +110,11 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent
 void vtkMRMLDiffusionWeightedVolumeDisplayNode
 ::SetInputToImageDataPipeline(vtkImageData *imageData)
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->ExtractComponent->SetInput(imageData);
+#else
+  this->ExtractComponent->SetInputData(imageData);
+#endif
 }
 
 //----------------------------------------------------------------------------

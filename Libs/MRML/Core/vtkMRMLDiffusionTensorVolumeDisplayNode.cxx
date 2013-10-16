@@ -34,6 +34,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageThreshold.h>
 #include <vtkObjectFactory.h>
 #include <vtkSphereSource.h>
+#include <vtkVersion.h>
 
 // STD includes
 
@@ -194,18 +195,18 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
       this->DTIMathematics->SetScaleFactor(1000.0);
       this->DTIMathematicsAlpha->SetOperation(
         vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
-      this->ImageMath->SetInput( this->DTIMathematicsAlpha->GetOutput());
-      this->ImageCast->SetInput( this->ImageMath->GetOutput());
-      this->Threshold->SetInput( this->ImageCast->GetOutput());
+      this->ImageMath->SetInputConnection( this->DTIMathematicsAlpha->GetOutputPort());
+      this->ImageCast->SetInputConnection( this->ImageMath->GetOutputPort());
+      this->Threshold->SetInputConnection( this->ImageCast->GetOutputPort());
 
       // window/level
-      this->ShiftScale->SetInput(this->DTIMathematics->GetOutput());
+      this->ShiftScale->SetInputConnection(this->DTIMathematics->GetOutputPort());
       double halfWindow = (this->GetWindow() / 2.);
       double min = this->GetLevel() - halfWindow;
       this->ShiftScale->SetShift ( -min );
       this->ShiftScale->SetScale ( 255. / (this->GetWindow()) );
 
-      this->ExtractComponents->SetInput(this->ShiftScale->GetOutput());
+      this->ExtractComponents->SetInputConnection(this->ShiftScale->GetOutputPort());
       if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutput()->GetProducerPort() ||
           this->AppendComponents->GetInputConnection(0, 1) != this->Threshold->GetOutput()->GetProducerPort())
         {
@@ -217,8 +218,8 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
       }
     default:
       this->DTIMathematics->SetScaleFactor(1.0);
-      this->Threshold->SetInput( this->DTIMathematics->GetOutput());
-      this->MapToWindowLevelColors->SetInput( this->DTIMathematics->GetOutput());
+      this->Threshold->SetInputConnection( this->DTIMathematics->GetOutputPort());
+      this->MapToWindowLevelColors->SetInputConnection( this->DTIMathematics->GetOutputPort());
       this->ExtractComponents->SetInputConnection(this->MapToColors->GetOutput()->GetProducerPort());
       if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutput()->GetProducerPort() ||
           this->AppendComponents->GetInputConnection(0, 1) != this->AlphaLogic->GetOutput()->GetProducerPort())
@@ -304,9 +305,15 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRML
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *imageData)
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->DTIMathematics->SetInput(imageData);
   this->DTIMathematicsAlpha->SetInput(0, imageData);
   //this->ShiftScale->SetInput(0, imageData );
+#else
+  this->DTIMathematics->SetInputData(imageData);
+  this->DTIMathematicsAlpha->SetInputData(0, imageData);
+  //this->ShiftScale->SetInputData(0, imageData );
+#endif
 };
 
 //----------------------------------------------------------------------------
