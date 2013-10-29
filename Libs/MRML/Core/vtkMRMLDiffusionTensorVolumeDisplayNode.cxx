@@ -207,12 +207,12 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
       this->ShiftScale->SetScale ( 255. / (this->GetWindow()) );
 
       this->ExtractComponents->SetInputConnection(this->ShiftScale->GetOutputPort());
-      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutput()->GetProducerPort() ||
-          this->AppendComponents->GetInputConnection(0, 1) != this->Threshold->GetOutput()->GetProducerPort())
+      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutputPort() ||
+          this->AppendComponents->GetInputConnection(0, 1) != this->Threshold->GetOutputPort())
         {
         this->AppendComponents->RemoveAllInputs();
-        this->AppendComponents->SetInputConnection(0, this->ExtractComponents->GetOutput()->GetProducerPort());
-        this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutput()->GetProducerPort() );
+        this->AppendComponents->SetInputConnection(0, this->ExtractComponents->GetOutputPort());
+        this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutputPort() );
         }
       break;
       }
@@ -220,13 +220,13 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
       this->DTIMathematics->SetScaleFactor(1.0);
       this->Threshold->SetInputConnection( this->DTIMathematics->GetOutputPort());
       this->MapToWindowLevelColors->SetInputConnection( this->DTIMathematics->GetOutputPort());
-      this->ExtractComponents->SetInputConnection(this->MapToColors->GetOutput()->GetProducerPort());
-      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutput()->GetProducerPort() ||
-          this->AppendComponents->GetInputConnection(0, 1) != this->AlphaLogic->GetOutput()->GetProducerPort())
+      this->ExtractComponents->SetInputConnection(this->MapToColors->GetOutputPort());
+      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutputPort() ||
+          this->AppendComponents->GetInputConnection(0, 1) != this->AlphaLogic->GetOutputPort())
         {
         this->AppendComponents->RemoveAllInputs();
-        this->AppendComponents->SetInputConnection(0, this->ExtractComponents->GetOutput()->GetProducerPort() );
-        this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutput()->GetProducerPort() );
+        this->AppendComponents->SetInputConnection(0, this->ExtractComponents->GetOutputPort() );
+        this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutputPort() );
         }
       break;
     }

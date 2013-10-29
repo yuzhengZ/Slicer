@@ -198,8 +198,8 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   
   vtkNew<vtkImageAppendComponents> appendComponents;
   appendComponents->RemoveAllInputs();
-  appendComponents->AddInputConnection(0, mapToColors->GetOutput()->GetProducerPort() );
-  appendComponents->AddInputConnection(0, alphaLogic->GetOutput()->GetProducerPort() );
+  appendComponents->AddInputConnection(0, mapToColors->GetOutputPort() );
+  appendComponents->AddInputConnection(0, alphaLogic->GetOutputPort() );
   
   //displayNode2->GetInput()->SetScalarComponentFromFloat(0, 0, 0, 0, 10.);
   vtkNew<vtkTimerLog> timerLog;

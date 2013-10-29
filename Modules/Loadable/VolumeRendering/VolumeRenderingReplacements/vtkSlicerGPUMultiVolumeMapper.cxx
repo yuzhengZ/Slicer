@@ -26,6 +26,7 @@
 #include "vtkVolumeProperty.h"
 #include "vtkCommand.h"
 #include "vtkExecutive.h"
+#include <vtkVersion.h>
 
 
 //----------------------------------------------------------------------------
@@ -1195,7 +1196,11 @@ void vtkSlicerGPUMultiVolumeMapper::SetNthInput( int index, vtkImageData *input 
     this->SetNumberOfInputPorts(index + 1);
   
   if(input)
+#if (VTK_MAJOR_VERSION <= 5)
     this->SetInputConnection(index, input->GetProducerPort());
+#else
+    this->SetInputData(index, input);
+#endif
   else
     this->SetInputConnection(index, 0);
 }

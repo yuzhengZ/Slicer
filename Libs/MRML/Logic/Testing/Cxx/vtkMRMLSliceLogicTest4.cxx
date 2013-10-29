@@ -119,7 +119,7 @@ int vtkMRMLSliceLogicTest4(int argc, char * argv [] )
   colors->SetLookupTable(ctf.GetPointer());
 
   vtkNew<vtkImageAppendComponents> append;
-  append->SetInputConnection(0, colors->GetOutput()->GetProducerPort());
+  append->SetInputConnection(0, colors->GetOutputPort());
 
   //vtkImageBlend* blend = vtkImageBlend::New();
   //blend->AddInput(append->GetOutput());
