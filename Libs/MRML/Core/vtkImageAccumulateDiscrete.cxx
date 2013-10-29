@@ -12,7 +12,10 @@
 
 =========================================================================auto=*/
 #include "vtkImageAccumulateDiscrete.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkImageData.h"
 
 
@@ -27,9 +30,14 @@ vtkImageAccumulateDiscrete::vtkImageAccumulateDiscrete()
 
 #define  MAX_ACCUMULATION_BIN 65535
 //----------------------------------------------------------------------------
-void vtkImageAccumulateDiscrete::ExecuteInformation(vtkImageData *vtkNotUsed(input), 
-                                                    vtkImageData *output)
+int vtkImageAccumulateDiscrete::RequestInformation(
+  vtkInformation * vtkNotUsed(request),
+  vtkInformationVector **vtkNotUsed(inputVector),
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+
   int ext[6];
   memset(ext, 0, 6*sizeof(int));
 
@@ -40,23 +48,31 @@ void vtkImageAccumulateDiscrete::ExecuteInformation(vtkImageData *vtkNotUsed(inp
   origin[0] = -32768;
   origin[1] = origin[2] = 0;
 
-  output->SetWholeExtent(ext);
-  output->SetOrigin(origin);
-  output->SetSpacing(spacing);
-  output->SetNumberOfScalarComponents(1);
-  output->SetScalarType(VTK_INT);
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext, 6);
+  outInfo->Set(vtkDataObject::ORIGIN(), origin, 3);
+  outInfo->Set(vtkDataObject::SPACING(), spacing, 3);
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_INT, 1);
+  return 1;
 }
 
 //----------------------------------------------------------------------------
 // Get ALL of the input.
-void vtkImageAccumulateDiscrete::ComputeInputUpdateExtent(int inExt[6],
-                                                          int outExt[6])
+int vtkImageAccumulateDiscrete::RequestUpdateExtent (
+  vtkInformation * vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-  int *wholeExtent;
+  // get the info objects
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
 
-  outExt = outExt;
-  wholeExtent = this->GetInput()->GetWholeExtent();
-  memcpy(inExt, wholeExtent, 6*sizeof(int));
+  int inExt[6], outExt[6];
+  outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), outExt);
+
+  inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
+  inInfo->Set(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), inExt, 6);
+
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -129,7 +145,7 @@ static void vtkImageAccumulateDiscreteExecute(vtkImageAccumulateDiscrete *self,
 // the Datas data types.
 void vtkImageAccumulateDiscrete::ExecuteData(vtkDataObject *)
 {
-  vtkImageData *inData = this->GetInput();
+  vtkImageData *inData = vtkImageData::SafeDownCast(this->GetInput());
   vtkImageData *outData = this->GetOutput();
   outData->SetExtent(this->GetOutput()->GetWholeExtent());
   outData->AllocateScalars();

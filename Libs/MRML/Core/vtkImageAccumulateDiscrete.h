@@ -19,7 +19,7 @@
 #include "vtkMRML.h"
 
 // VTK includes
-#include <vtkImageToImageFilter.h>
+#include <vtkImageAlgorithm.h>
 
 /// \brief Generalized histograms up to 4 dimensions.
 ///
@@ -27,20 +27,19 @@
 /// discrete bins.  It then counts the number of pixels associated
 /// with each bin.  The output is this "scatter plot".
 /// The input can be any type, but the output is always int.
-class VTK_MRML_EXPORT vtkImageAccumulateDiscrete : public vtkImageToImageFilter
+class VTK_MRML_EXPORT vtkImageAccumulateDiscrete : public vtkImageAlgorithm
 {
 public:
   static vtkImageAccumulateDiscrete *New();
-  vtkTypeMacro(vtkImageAccumulateDiscrete,vtkImageToImageFilter);
+  vtkTypeMacro(vtkImageAccumulateDiscrete,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
   vtkImageAccumulateDiscrete();
   ~vtkImageAccumulateDiscrete() {};
 
-  void ExecuteInformation(vtkImageData *input, vtkImageData *output);
-  void ExecuteInformation(){this->Superclass::ExecuteInformation();};
-  void ComputeInputUpdateExtent(int inExt[6], int outExt[6]);
+  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestUpdateExtent (vtkInformation *, vtkInformationVector **, vtkInformationVector *);
   void ExecuteData(vtkDataObject *);
 
 private:
