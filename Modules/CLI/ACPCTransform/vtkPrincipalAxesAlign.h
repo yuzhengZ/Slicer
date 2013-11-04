@@ -15,6 +15,7 @@
 #define __vtk_principal_axes_align_h
 #include <vtkPolyDataAlgorithm.h>
 #include <vtkSetGet.h>
+#include <vtkVersion.h>
 // ---------------------------------------------------------
 // Author: Axel Krauth
 //
@@ -33,7 +34,11 @@ public:
   vtkGetVector3Macro(XAxis, double);
   vtkGetVector3Macro(YAxis, double);
   vtkGetVector3Macro(ZAxis, double);
+#if (VTK_MAJOR_VERSION <= 5)
   void Execute();
+#else
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+#endif
 
   void PrintSelf(ostream& os, vtkIndent indent);
 

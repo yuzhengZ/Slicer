@@ -19,6 +19,7 @@
 
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkInitialValueProblemSolver.h" /// to get the function set
+#include <vtkVersion.h>
 
 #define VTK_INTEGRATE_FORWARD 0
 #define VTK_INTEGRATE_BACKWARD 1
@@ -293,7 +294,11 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
   ~vtkPreciseHyperStreamline();
 
   /// Integrate data
+#if (VTK_MAJOR_VERSION <= 5)
   void Execute();
+#else
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+#endif
   void BuildTube();
 
   /// Flag indicates where streamlines start from (either position or location)

@@ -4,6 +4,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkImageData.h"
+#include <vtkVersion.h>
 
 
 vtkStandardNewMacro(vtkHyperStreamlineTeem);
@@ -18,8 +19,13 @@ vtkHyperStreamlineTeem::~vtkHyperStreamlineTeem()
 }
 
 
-
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkHyperStreamlineTeem::Execute()
+#else
+int vtkHyperStreamlineTeem::RequestData(vtkInformation* vtkNotUsed(request),
+                                        vtkInformationVector** vtkNotUsed(inInfoVec),
+                                        vtkInformationVector* vtkNotUsed(outInfoVec))
+#endif
 {
   this->DebugOn();
   
@@ -43,6 +49,9 @@ void vtkHyperStreamlineTeem::Execute()
   
   vtkDebugMacro( << "Done!");
   this->DebugOff();
+#if (VTK_MAJOR_VERSION > 5)
+  return 1;
+#endif
 }
 
 

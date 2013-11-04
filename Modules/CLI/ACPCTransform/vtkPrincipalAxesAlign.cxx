@@ -15,15 +15,26 @@
 #include "vtkPrincipalAxesAlign.h"
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkMath.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkPrincipalAxesAlign::Execute()
 {
   vtkPolyData *         input = (vtkPolyData *)this->GetExecutive()->GetInputData(0,0);
+#else
+int vtkPrincipalAxesAlign::RequestData(vtkInformation* vtkNotUsed(request),
+      vtkInformationVector** inInfoVec,
+      vtkInformationVector* vtkNotUsed(outInfoVec))
+{
+  vtkPolyData *         input = (vtkPolyData *)vtkImageData::GetData(inInfoVec[0]);
+#endif
+
   vtkIdType             nr_points = input->GetNumberOfPoints();
   double* x;
 
@@ -109,6 +120,9 @@ void vtkPrincipalAxesAlign::Execute()
   ZAxis[0] = eigenvectors[0][2];
   ZAxis[1] = eigenvectors[1][2];
   ZAxis[2] = eigenvectors[2][2];
+#if (VTK_MAJOR_VERSION > 5)
+  return 1;
+#endif
 }
 
 //----------------------------------------------------------------------------
