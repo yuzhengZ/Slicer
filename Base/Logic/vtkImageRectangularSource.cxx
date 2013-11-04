@@ -5,6 +5,7 @@
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "assert.h"
 #include "vtkImageData.h"
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkImageRectangularSource);
@@ -410,10 +411,14 @@ void vtkImageRectangularSource::ExecuteData(vtkDataObject *output)
 {
   int *extent;
   void *ptr;
-  
+
   vtkImageData *data = this->AllocateOutputData(output);
-  
+
+#if (VTK_MAJOR_VERSION <= 5)
   extent = this->GetOutput()->GetUpdateExtent();
+#else
+  extent = this->GetUpdateExtent();
+#endif
   ptr = data->GetScalarPointerForExtent(extent);
   
   if (this->Corners ) {

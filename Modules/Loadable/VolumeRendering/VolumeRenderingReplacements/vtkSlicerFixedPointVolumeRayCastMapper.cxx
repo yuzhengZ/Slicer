@@ -39,6 +39,7 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkTransform.h"
 #include "vtkVolumeProperty.h"
 #include "vtkSlicerFixedPointRayCastImage.h"
+#include <vtkVersion.h>
 
 
 vtkStandardNewMacro(vtkSlicerFixedPointVolumeRayCastMapper);
@@ -1196,9 +1197,15 @@ void vtkSlicerFixedPointVolumeRayCastMapper::PerVolumeInitialization( vtkRendere
     }
     else
     {
+#if (VTK_MAJOR_VERSION <= 5)
         input->UpdateInformation();
         input->SetUpdateExtentToWholeExtent();
         input->Update();
+#else
+        this->UpdateInformation();
+        this->SetUpdateExtentToWholeExtent();
+        this->Update();
+#endif
     }
 
     // Compute some matrices from voxels to view and vice versa based

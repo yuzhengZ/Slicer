@@ -16,6 +16,7 @@
 #include "vtkFloatArray.h"
 #include "vtkImageData.h"
 #include "vtkPointData.h"
+#include <vtkVersion.h>
 
 
 //----------------------------------------------------------------------------
@@ -201,7 +202,11 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
   vtkIdType outInc[3];
   int outFullUpdateExt[6];
   self->GetOutput()->GetIncrements(outInc);
+#if (VTK_MAJOR_VERSION <= 5)
   self->GetOutput()->GetUpdateExtent(outFullUpdateExt); //We are only working over the update extent
+#else
+  self->GetUpdateExtent(outFullUpdateExt); //We are only working over the update extent
+#endif
   ptId = ((ext[0] - outFullUpdateExt[0]) * outInc[0]
          + (ext[2] - outFullUpdateExt[2]) * outInc[1]
          + (ext[4] - outFullUpdateExt[4]) * outInc[2]);

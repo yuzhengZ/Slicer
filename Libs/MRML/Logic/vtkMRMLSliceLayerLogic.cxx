@@ -785,7 +785,11 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
       if (volumeDisplayNode->GetBackgroundImageData() == 0 &&
           this->Reslice->GetBackgroundMask() != 0)
         {
+#if (VTK_VERSION_MAJOR <= 5)
         this->Reslice->GetBackgroundMask()->SetUpdateExtentToWholeExtent();
+#else
+        this->Reslice->SetUpdateExtentToWholeExtent(1);
+#endif
         }
       //volumeDisplayNode->EndModify(wasModifying);
       }

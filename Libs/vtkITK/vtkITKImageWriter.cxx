@@ -335,9 +335,13 @@ void vtkITKImageWriter::Write()
     return;
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   inputImage->UpdateInformation();
   inputImage->SetUpdateExtent(inputImage->GetWholeExtent());
-
+#else
+  this->UpdateInformation();
+  this->SetUpdateExtent(inputImage->GetWholeExtent());
+#endif
   int inputNumberOfScalarComponents = inputImage->GetNumberOfScalarComponents();
 
   if (inputNumberOfScalarComponents == 1)
@@ -478,7 +482,9 @@ void vtkITKImageWriter::Write()
         typedef itk::DiffusionTensor3D<float> TensorPixelType;
         vtkNew<vtkImageData> outImage;
         outImage->SetDimensions(inputImage->GetDimensions());
+#if (VTK_MAJOR_VERSION <= 5)
         outImage->SetWholeExtent(inputImage->GetWholeExtent());
+#endif
         outImage->SetOrigin(0, 0, 0);
         outImage->SetSpacing(1, 1, 1);
         outImage->SetNumberOfScalarComponents(6);
