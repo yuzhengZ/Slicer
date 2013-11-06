@@ -69,8 +69,12 @@ int vtkTensorRotate::RequestInformation (
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
-{
+#else
+vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out, vtkInformation *vtkNotUsed(outInfo))
+#endif
+{ 
   vtkImageData *output = vtkImageData::SafeDownCast(out);
   vtkImageData *input = vtkImageData::SafeDownCast(this->GetInput());
   int inExt[6];
@@ -80,7 +84,11 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
   vtkDataArray *outArray;
 
   input->GetExtent(inExt);
+#if (VTK_MAJOR_VERSION <= 5)
   output->SetExtent(output->GetUpdateExtent());
+#else
+  output->SetExtent(this->GetUpdateExtent());
+#endif
   output->GetExtent(outExt);
 
   // Do not copy the array we will be generating.

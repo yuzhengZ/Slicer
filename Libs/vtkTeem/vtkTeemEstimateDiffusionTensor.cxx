@@ -251,7 +251,11 @@ void vtkTeemEstimateDiffusionTensor::ExecuteData(vtkDataObject *out)
     }  
   
   // set extent so we know how many tensors to allocate
+#if (VTK_MAJOR_VERSION <= 5)
   output->SetExtent(output->GetUpdateExtent());
+#else
+  output->SetExtent(this->GetUpdateExtent());
+#endif
 
   // allocate output tensors
   vtkFloatArray* data = vtkFloatArray::New();
@@ -263,8 +267,13 @@ void vtkTeemEstimateDiffusionTensor::ExecuteData(vtkDataObject *out)
   data->Delete();
 
   // Allocate baseline and averageDWI images
+#if (VTK_MAJOR_VERSION <= 5)
   this->Baseline->SetExtent(output->GetUpdateExtent());
   this->AverageDWI->SetExtent(output->GetUpdateExtent());
+#else
+  this->Baseline->SetExtent(this->GetUpdateExtent());
+  this->AverageDWI->SetExtent(this->GetUpdateExtent());
+#endif
   this->Baseline->AllocateScalars();
   this->AverageDWI->AllocateScalars();
   this->Baseline->GetPointData()->GetScalars()->SetName("Baseline");

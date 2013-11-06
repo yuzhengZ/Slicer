@@ -39,12 +39,15 @@
 #include "vtkUnsignedShortArray.h"
 #include "vtkShortArray.h"
 #include "vtkUnsignedIntArray.h"
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
 #include "vtkIntArray.h"
 #include "vtkUnsignedLongArray.h"
 #include "vtkLongArray.h"
 #include "vtkDoubleArray.h"
 #include "vtkFloatArray.h"
 #include <vtksys/SystemTools.hxx>
+#include <vtkStreamingDemandDrivenPipeline.h>
 
 #include "teem/ten.h"
 
@@ -428,9 +431,9 @@ void vtkNRRDReader::ExecuteInformation()
 
    // Set axis information
    int dataExtent[6];
-   vtkFloatingPointType spacings[3];
+   double spacings[3];
    double spacing;
-   vtkFloatingPointType origin[3];
+   double origin[3];
 
    double spaceDir[NRRD_SPACE_DIM_MAX];
    int spacingStatus;
@@ -636,9 +639,11 @@ void vtkNRRDReader::ExecuteInformation()
    nio = nrrdIoStateNix(nio);
 }
 
-
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData *vtkNRRDReader::AllocateOutputData(vtkDataObject *out) {
-
+#else
+vtkImageData *vtkNRRDReader::AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo){
+#endif
  vtkImageData *res = vtkImageData::SafeDownCast(out);
   if (!res)
     {
@@ -653,13 +658,21 @@ vtkImageData *vtkNRRDReader::AllocateOutputData(vtkDataObject *out) {
   this->ExecuteInformation();
 
   res->SetExtent(res->GetUpdateExtent());
+#if (VTK_MAJOR_VERSION <= 5)
   this->AllocatePointData(res);
+#else
+  this->AllocatePointData(res, outInfo);
+#endif
 
   return res;
 
 }
 
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkNRRDReader::AllocatePointData(vtkImageData *out) {
+#else
+void vtkNRRDReader::AllocatePointData(vtkImageData *out, vtkInformation* outInfo) {
+#endif
 
  vtkDataArray *pd = NULL;
  int Extent[6];
@@ -744,7 +757,12 @@ void vtkNRRDReader::AllocatePointData(vtkImageData *out) {
       vtkErrorMacro("Could not allocate data type.");
       return;
     }
+#if (VTK_MAJOR_VERSION <= 5)
   out->SetScalarType(this->DataType);
+#else
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo,
+    this->DataType, this->GetNumberOfComponents());
+#endif
   pd->SetNumberOfComponents(this->GetNumberOfComponents());
 
   // allocate enough memors
@@ -848,11 +866,19 @@ vtkNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkNRRDReader::ExecuteData(vtkDataObject *output)
+#else
+void vtkNRRDReader::ExecuteData(vtkDataObject *output, vtkInformation* outInfo)
+#endif
 {
 
   output->SetUpdateExtentToWholeExtent();
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *data = this->AllocateOutputData(output);
+#else
+  vtkImageData *data = this->AllocateOutputData(output, outInfo);
+#endif
 
   if (this->GetFileName() == NULL)
     {

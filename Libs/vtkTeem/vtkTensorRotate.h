@@ -18,6 +18,7 @@
 #include "vtkTeemConfigure.h"
 #include "vtkThreadedImageAlgorithm.h"
 #include "vtkTransform.h"
+#include <vtkVersion.h>
 
 class vtkFloatArray;
 class vtkImageData;
@@ -56,9 +57,13 @@ protected:
         int extent[6], int id);
 
   /// This also copies other arrays from point and cell data from input to output.
-  vtkImageData *AllocateOutputData(vtkDataObject *out);
-  virtual void AllocateOutputData(vtkImageData *out, int *uExtent)
-    { Superclass::AllocateOutputData(out, uExtent); }
+#if (VTK_MAJOR_VERSION <= 5)
+  virtual vtkImageData *AllocateOutputData(vtkDataObject *out);
+#else
+  virtual void AllocateOutputData(vtkImageData *out, vtkInformation* outInfo, int *uExtent){
+      vtkThreadedImageAlgorithm::AllocateOutputData(out, outInfo, uExtent);};
+  virtual vtkImageData *AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo);
+#endif
   void AllocateTensors(vtkImageData *data);
 
   int TensorType;

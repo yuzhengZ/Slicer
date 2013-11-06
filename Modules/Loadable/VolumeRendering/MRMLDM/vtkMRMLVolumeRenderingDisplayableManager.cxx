@@ -771,7 +771,7 @@ void vtkMRMLVolumeRenderingDisplayableManager
   if (volumeMapper &&
       volumeMapper->GetNumberOfInputPorts() > index)
     {
-#if (VTK_VERSION_MAJOR <= 5)
+#if (VTK_MAJOR_VERSION <= 5)
     volumeMapper->SetInputConnection(index, imageData ? imageData->GetProducerPort() : 0);
 #else
     volumeMapper->SetInputData(index, imageData ? imageData : 0);

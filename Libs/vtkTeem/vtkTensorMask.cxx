@@ -45,7 +45,11 @@ void vtkTensorMask::ExecuteData(vtkDataObject *out)
   vtkImageData *output = vtkImageData::SafeDownCast(out);
 
   // set extent so we know how many tensors to allocate
+#if (VTK_MAJOR_VERSION <= 5)
   output->SetExtent(output->GetUpdateExtent());
+#else
+  output->SetExtent(this->GetUpdateExtent());
+#endif
 
   // allocate output tensors
   vtkFloatArray* data = vtkFloatArray::New();
