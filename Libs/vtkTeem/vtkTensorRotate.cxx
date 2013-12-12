@@ -194,7 +194,7 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out, vtkInforma
     }
 
   // Now create the scalars and tensors array that will hold the output data.
-  output->CopyTypeSpecificInformation( input );
+//  output->CopyTypeSpecificInformation( input );
   output->AllocateScalars();
   this->AllocateTensors(output);
 

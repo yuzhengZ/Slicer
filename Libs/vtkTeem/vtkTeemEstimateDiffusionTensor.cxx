@@ -217,12 +217,18 @@ int vtkTeemEstimateDiffusionTensor::RequestInformation(
   // We output one scalar components: baseline (for legacy issues)
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, scalarType, 1);
 
+#if (VTK_MAJOR_VERSION <= 5)
   this->Baseline->CopyTypeSpecificInformation( this->GetInput() );
   this->AverageDWI->CopyTypeSpecificInformation( this->GetInput() );
   this->Baseline->SetScalarType(scalarType);
   this->AverageDWI->SetScalarType(scalarType);
   this->Baseline->SetNumberOfScalarComponents(1);
   this->AverageDWI->SetNumberOfScalarComponents(1);
+#else
+//  this->Baseline->CopyTypeSpecificInformation( this->GetInput() );
+//  this->Baseline->CopyTypeSpecificInformation( this->GetInput() );
+#endif
+
   return 1;
 
 }
