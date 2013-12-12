@@ -19,7 +19,6 @@
 #include <vtkObjectFactory.h>
 
 
-vtkCxxRevisionMacro(vtkImageSlicePaint, "$Revision$");
 vtkStandardNewMacro(vtkImageSlicePaint);
 
 //----------------------------------------------------------------------------

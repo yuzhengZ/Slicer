@@ -63,7 +63,7 @@ class vtkPreciseHyperArray;
 class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
 {
  public:
-  vtkTypeRevisionMacro(vtkPreciseHyperStreamline,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkPreciseHyperStreamline,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 
@@ -108,13 +108,21 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
   /// 
   /// Set / get the maximum length of the hyperstreamline expressed as absolute
   /// distance (i.e., arc length) value.
+#if (VTK_MAJOR_VERSION <= 5)
   vtkSetClampMacro(MaximumPropagationDistance,vtkFloatingPointType,0.0,VTK_LARGE_FLOAT);
+#else
+  vtkSetClampMacro(MaximumPropagationDistance,vtkFloatingPointType,0.0,VTK_FLOAT_MAX);
+#endif
   vtkGetMacro(MaximumPropagationDistance,vtkFloatingPointType);
 
   /// 
   /// Set / get the maximum length of the hyperstreamline expressed as absolute
   /// distance (i.e., arc length) value.
+#if (VTK_MAJOR_VERSION <= 5)
   vtkSetClampMacro(MinimumPropagationDistance,vtkFloatingPointType,0.0,VTK_LARGE_FLOAT);
+#else
+  vtkSetClampMacro(MinimumPropagationDistance,vtkFloatingPointType,0.0,VTK_FLOAT_MAX);
+#endif
   vtkGetMacro(MinimumPropagationDistance,vtkFloatingPointType);
 
   /// 
@@ -197,7 +205,11 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
   /// 
   /// Set/get terminal eigenvalue.  If major eigenvalue falls below this
   /// value, hyperstreamline terminates propagation.
+#if (VTK_MAJOR_VERSION <= 5)
   vtkSetClampMacro(TerminalEigenvalue,vtkFloatingPointType,0.0,VTK_LARGE_FLOAT);
+#else
+  vtkSetClampMacro(TerminalEigenvalue,vtkFloatingPointType,0.0,VTK_FLOAT_MAX);
+#endif
   vtkGetMacro(TerminalEigenvalue,vtkFloatingPointType);
 
   /// 
@@ -208,12 +220,20 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
 
   /// 
   /// Set/Get Minimum step size the method must take.
+#if (VTK_MAJOR_VERSION <= 5)
   vtkSetClampMacro(MinStep,vtkFloatingPointType,0,VTK_LARGE_FLOAT);
+#else
+  vtkSetClampMacro(MinStep,vtkFloatingPointType,0,VTK_FLOAT_MAX);
+#endif
   vtkGetMacro(MinStep,vtkFloatingPointType);
 
   /// 
   /// Set/Get Maximum step size the method can take.
+#if (VTK_MAJOR_VERSION <= 5)
   vtkSetClampMacro(MaxStep,vtkFloatingPointType,0,VTK_LARGE_FLOAT);
+#else
+  vtkSetClampMacro(MaxStep,vtkFloatingPointType,0,VTK_FLOAT_MAX);
+#endif
   vtkGetMacro(MaxStep,vtkFloatingPointType);
 
   /// 
@@ -223,18 +243,30 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
 
   /// 
   /// Set/Get The length of the fibers when considering the max angle
+#if (VTK_MAJOR_VERSION <= 5)
   vtkSetClampMacro(LengthOfMaxAngle,vtkFloatingPointType,0,VTK_LARGE_FLOAT);
+#else
+  vtkSetClampMacro(LengthOfMaxAngle,vtkFloatingPointType,0,VTK_FLOAT_MAX);
+#endif
   vtkGetMacro(LengthOfMaxAngle,vtkFloatingPointType);
 
   /// 
   /// Set/Get Maximum error each step may have.
+#if (VTK_MAJOR_VERSION <= 5)
   vtkSetClampMacro(MaxError,vtkFloatingPointType,0.0000000001,VTK_LARGE_FLOAT);
+#else
+  vtkSetClampMacro(MaxError,vtkFloatingPointType,0.0000000001,VTK_FLOAT_MAX);
+#endif
   vtkGetMacro(MaxError,vtkFloatingPointType);
 
   /// 
   /// Set / get the number of sides for the hyperstreamlines. At a minimum,
   /// number of sides is 3.
+#if (VTK_MAJOR_VERSION <= 5)
   vtkSetClampMacro(NumberOfSides,int,3,VTK_LARGE_INTEGER);
+#else
+  vtkSetClampMacro(NumberOfSides,int,3,VTK_INT_MAX);
+#endif
   vtkGetMacro(NumberOfSides,int);
 
   /// 
@@ -242,7 +274,11 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
   /// radius at the beginning of the tube. Radius varies based on ratio of
   /// eigenvalues.  Note that tube section is actually elliptical and may
   /// become a point or line in cross section in some cases.
+#if (VTK_MAJOR_VERSION <= 5)
   vtkSetClampMacro(Radius,vtkFloatingPointType,0.0001,VTK_LARGE_FLOAT);
+#else
+  vtkSetClampMacro(Radius,vtkFloatingPointType,0.0001,VTK_FLOAT_MAX);
+#endif
   vtkGetMacro(Radius,vtkFloatingPointType);
 
   /// 

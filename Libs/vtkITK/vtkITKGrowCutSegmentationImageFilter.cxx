@@ -20,7 +20,6 @@
 #include <itkRegionOfInterestImageFilter.h>
 
 //-----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkITKGrowCutSegmentationImageFilter, "$Revision: 1.3 $");
 vtkStandardNewMacro(vtkITKGrowCutSegmentationImageFilter);
 
 //-----------------------------------------------------------------------------

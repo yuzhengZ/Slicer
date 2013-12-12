@@ -65,7 +65,6 @@ vtkSlicerCropVolumeLogic::vtkInternal::vtkInternal()
 }
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerCropVolumeLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerCropVolumeLogic);
 
 //----------------------------------------------------------------------------

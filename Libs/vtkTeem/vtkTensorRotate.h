@@ -32,7 +32,7 @@ class VTK_Teem_EXPORT vtkTensorRotate : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkTensorRotate *New();
-  vtkTypeRevisionMacro(vtkTensorRotate,vtkThreadedImageAlgorithm);
+  vtkTypeMacro(vtkTensorRotate,vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Set the tensor type for the filter

@@ -6,7 +6,6 @@
 #include "vtkImageData.h"
 
 
-vtkCxxRevisionMacro(vtkHyperStreamlineTeem, "$Revision: 1.5 $");
 vtkStandardNewMacro(vtkHyperStreamlineTeem);
 
 

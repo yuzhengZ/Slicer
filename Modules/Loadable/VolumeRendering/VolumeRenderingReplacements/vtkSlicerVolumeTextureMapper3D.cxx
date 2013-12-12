@@ -27,7 +27,6 @@
 #include "vtkMatrix4x4.h"
 #include "vtkCommand.h"
 
-vtkCxxRevisionMacro(vtkSlicerVolumeTextureMapper3D, "$Revision: 1.6 $");
 
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.

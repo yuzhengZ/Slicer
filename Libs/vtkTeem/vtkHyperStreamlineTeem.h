@@ -19,7 +19,7 @@ class VTK_Teem_EXPORT vtkHyperStreamlineTeem : public vtkHyperStreamlineDTMRI
 {
 
  public:
-  vtkTypeRevisionMacro(vtkHyperStreamlineTeem,vtkHyperStreamlineDTMRI);
+  vtkTypeMacro(vtkHyperStreamlineTeem,vtkHyperStreamlineDTMRI);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkHyperStreamlineTeem *New();

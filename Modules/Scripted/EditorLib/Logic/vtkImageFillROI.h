@@ -36,7 +36,7 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageFillROI : public vtkImage
 {
 public:
   static vtkImageFillROI *New();
-  vtkTypeRevisionMacro(vtkImageFillROI,vtkImageAlgorithm);
+  vtkTypeMacro(vtkImageFillROI,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkSetMacro(Value, vtkFloatingPointType);

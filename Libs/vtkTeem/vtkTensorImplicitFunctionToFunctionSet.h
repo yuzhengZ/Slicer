@@ -30,7 +30,7 @@ class VTK_Teem_EXPORT vtkTensorImplicitFunctionToFunctionSet : public vtkFunctio
 {
 public:
   static vtkTensorImplicitFunctionToFunctionSet *New();
-  vtkTypeRevisionMacro(vtkTensorImplicitFunctionToFunctionSet, vtkFunctionSet );
+  vtkTypeMacro(vtkTensorImplicitFunctionToFunctionSet, vtkFunctionSet );
   virtual void PrintSelf(ostream& os, vtkIndent indent);
   virtual int FunctionValues(vtkFloatingPointType* x, vtkFloatingPointType* f);
   int GetTensor(vtkFloatingPointType *x, vtkFloatingPointType * f);

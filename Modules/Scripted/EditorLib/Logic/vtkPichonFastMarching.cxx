@@ -36,7 +36,6 @@ int compareInt(const void *a, const void *b)
 ///////////////////////////////////////////////////////////////////////
 
 //------------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkPichonFastMarching, "$Revision$");
 vtkStandardNewMacro(vtkPichonFastMarching);
 
 //------------------------------------------------------------------------------

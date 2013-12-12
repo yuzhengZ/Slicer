@@ -10,7 +10,6 @@
 
 class AttributeMapType: public std::map<std::string, std::string> {};
 
-vtkCxxRevisionMacro(vtkNRRDWriter, "$Revision: 1.28 $");
 vtkStandardNewMacro(vtkNRRDWriter);
 
 //----------------------------------------------------------------------------

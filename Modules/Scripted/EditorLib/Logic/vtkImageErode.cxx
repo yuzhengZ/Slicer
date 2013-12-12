@@ -12,7 +12,6 @@
 #include <ctime>
 
 //------------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkImageErode, "$Revision$");
 vtkStandardNewMacro(vtkImageErode);
 
 //----------------------------------------------------------------------------

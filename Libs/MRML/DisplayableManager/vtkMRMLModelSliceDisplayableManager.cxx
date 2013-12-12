@@ -59,7 +59,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLModelSliceDisplayableManager );
-vtkCxxRevisionMacro(vtkMRMLModelSliceDisplayableManager, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 class vtkMRMLModelSliceDisplayableManager::vtkInternal

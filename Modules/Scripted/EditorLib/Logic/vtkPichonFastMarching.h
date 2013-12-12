@@ -61,7 +61,7 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkPichonFastMarching : public vt
 {
 public:
   static vtkPichonFastMarching *New();
-  vtkTypeRevisionMacro(vtkPichonFastMarching,vtkImageAlgorithm);
+  vtkTypeMacro(vtkPichonFastMarching,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   void vtkErrorWrapper( const char* s)

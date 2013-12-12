@@ -44,7 +44,6 @@
 #include <sstream>
 
 //-----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerAnnotationModuleLogic, "$Revision: 2.0$")
 vtkStandardNewMacro(vtkSlicerAnnotationModuleLogic)
 
 //-----------------------------------------------------------------------------

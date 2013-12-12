@@ -39,7 +39,7 @@ class  VTK_Teem_EXPORT vtkBSplineInterpolateImageFunction : public vtkImplicitFu
 {
  public:
   static vtkBSplineInterpolateImageFunction *New();
-  vtkTypeRevisionMacro(vtkBSplineInterpolateImageFunction, vtkImplicitFunction );
+  vtkTypeMacro(vtkBSplineInterpolateImageFunction, vtkImplicitFunction );
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkFloatingPointType EvaluateFunction (vtkFloatingPointType x[ImageDimension]);

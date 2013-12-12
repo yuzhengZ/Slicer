@@ -28,7 +28,7 @@ class VTK_ITK_EXPORT vtkITKGrowCutSegmentationImageFilter : public vtkImageAlgor
 public:
 
   static vtkITKGrowCutSegmentationImageFilter *New();
-  vtkTypeRevisionMacro(vtkITKGrowCutSegmentationImageFilter,vtkImageAlgorithm );
+  vtkTypeMacro(vtkITKGrowCutSegmentationImageFilter,vtkImageAlgorithm );
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Methods to set/get objectSize

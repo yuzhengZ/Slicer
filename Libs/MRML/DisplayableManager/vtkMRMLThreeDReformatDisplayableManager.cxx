@@ -54,7 +54,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLThreeDReformatDisplayableManager);
-vtkCxxRevisionMacro(vtkMRMLThreeDReformatDisplayableManager, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 class vtkMRMLThreeDReformatDisplayableManager::vtkInternal

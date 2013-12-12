@@ -207,7 +207,6 @@ public:
 class WriteDataQueue : public std::queue<WriteDataRequest> {} ;
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerApplicationLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerApplicationLogic);
 
 //----------------------------------------------------------------------------

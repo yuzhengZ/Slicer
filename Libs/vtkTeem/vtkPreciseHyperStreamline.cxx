@@ -26,7 +26,6 @@
 #include "vtkDiffusionTensorMathematics.h"
 
 
-vtkCxxRevisionMacro(vtkPreciseHyperStreamline, "$Revision: 1.10 $");
 vtkStandardNewMacro(vtkPreciseHyperStreamline);
 
 

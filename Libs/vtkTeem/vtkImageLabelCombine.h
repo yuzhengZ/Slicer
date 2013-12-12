@@ -29,7 +29,7 @@ class VTK_Teem_EXPORT vtkImageLabelCombine : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkImageLabelCombine *New();
-  vtkTypeRevisionMacro(vtkImageLabelCombine,vtkThreadedImageAlgorithm);
+  vtkTypeMacro(vtkImageLabelCombine,vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 

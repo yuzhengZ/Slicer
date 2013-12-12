@@ -44,7 +44,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLVolumeGlyphSliceDisplayableManager );
-vtkCxxRevisionMacro(vtkMRMLVolumeGlyphSliceDisplayableManager, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 class vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal

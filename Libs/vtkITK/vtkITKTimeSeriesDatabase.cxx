@@ -18,7 +18,6 @@
 #include <vtkInformationVector.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 
-vtkCxxRevisionMacro(vtkITKTimeSeriesDatabase, "$Revision: 6383 $");
 vtkStandardNewMacro(vtkITKTimeSeriesDatabase);
 int vtkITKTimeSeriesDatabase::RequestInformation(
   vtkInformation * vtkNotUsed(request),

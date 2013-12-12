@@ -16,7 +16,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkImageData.h"  // for storing output of vtk/itk filter
 
-vtkCxxRevisionMacro(vtkBSplineInterpolateImageFunction, "$Revision: 1.7 $");
 vtkStandardNewMacro(vtkBSplineInterpolateImageFunction);
 
 void vtkBSplineInterpolateImageFunction::SetInterpolationWeights(

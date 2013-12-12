@@ -55,7 +55,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLogic : public vtkMRMLAbstractLogic
 public:
   /// The Usual VTK class functions
   static vtkMRMLSliceLogic *New();
-  vtkTypeRevisionMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Convenient methods allowing to initialize SliceLogic given \a newSliceNode

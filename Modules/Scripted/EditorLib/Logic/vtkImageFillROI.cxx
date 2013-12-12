@@ -18,7 +18,6 @@
 vtkCxxSetObjectMacro(vtkImageFillROI,Points,vtkPoints);
 
 //------------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkImageFillROI, "$Revision$");
 vtkStandardNewMacro(vtkImageFillROI);
 
 //----------------------------------------------------------------------------

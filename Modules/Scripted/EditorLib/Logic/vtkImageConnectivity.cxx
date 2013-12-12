@@ -16,7 +16,6 @@
 #include <stddef.h>
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkImageConnectivity, "$Revision$");
 vtkStandardNewMacro(vtkImageConnectivity);
 
 //----------------------------------------------------------------------------

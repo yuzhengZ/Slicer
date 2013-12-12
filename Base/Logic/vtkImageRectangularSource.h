@@ -14,7 +14,7 @@ class  VTK_SLICER_BASE_LOGIC_EXPORT vtkImageRectangularSource : public vtkImageA
 {
 public:
   static vtkImageRectangularSource *New();
-  vtkTypeRevisionMacro(vtkImageRectangularSource,vtkImageAlgorithm);
+  vtkTypeMacro(vtkImageRectangularSource,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);   
   
   /// 

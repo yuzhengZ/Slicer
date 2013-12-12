@@ -30,7 +30,7 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageConnectivity : public vtk
 {
 public:
   static vtkImageConnectivity *New();
-  vtkTypeRevisionMacro(vtkImageConnectivity,vtkImageAlgorithm);
+  vtkTypeMacro(vtkImageConnectivity,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Function

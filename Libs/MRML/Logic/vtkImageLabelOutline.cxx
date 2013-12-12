@@ -19,7 +19,6 @@
 
 
 //------------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkImageLabelOutline, "$Revision$");
 vtkStandardNewMacro(vtkImageLabelOutline);
 
 //----------------------------------------------------------------------------

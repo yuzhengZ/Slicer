@@ -21,7 +21,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkAnnotationRulerRepresentation3D);
-vtkCxxRevisionMacro (vtkAnnotationRulerRepresentation3D, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 void vtkAnnotationRulerRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)

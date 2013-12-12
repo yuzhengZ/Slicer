@@ -43,7 +43,6 @@
 #include "vtkImageLabelOutline.h"
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkMRMLSliceLayerLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLSliceLayerLogic);
 
 bool AreMatricesEqual(const vtkMatrix4x4* first, const vtkMatrix4x4* second)

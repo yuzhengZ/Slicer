@@ -17,7 +17,6 @@
 #include "vtkImageData.h"
 #include "vtkPointData.h"
 
-vtkCxxRevisionMacro(vtkTensorMask, "$Revision: 1.28 $");
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkTensorMask);

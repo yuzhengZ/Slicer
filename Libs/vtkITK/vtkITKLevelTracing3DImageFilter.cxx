@@ -25,7 +25,6 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkSmartPointer.h"
 
 
-vtkCxxRevisionMacro(vtkITKLevelTracing3DImageFilter, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkITKLevelTracing3DImageFilter);
 
 // Description:

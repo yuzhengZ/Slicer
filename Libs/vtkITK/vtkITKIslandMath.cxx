@@ -24,7 +24,6 @@
 #include "itkRelabelComponentImageFilter.h"
 #include "itkCommand.h"
 
-vtkCxxRevisionMacro(vtkITKIslandMath, "$Revision: 1900 $");
 vtkStandardNewMacro(vtkITKIslandMath);
 
 vtkITKIslandMath::vtkITKIslandMath()

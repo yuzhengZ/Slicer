@@ -52,7 +52,7 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageSlicePaint : public vtkOb
 {
 public:
   static vtkImageSlicePaint *New();
-  vtkTypeRevisionMacro(vtkImageSlicePaint,vtkObject);
+  vtkTypeMacro(vtkImageSlicePaint,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 

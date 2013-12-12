@@ -36,7 +36,6 @@
 #include "gdcmGlobal.h"         /// access to dictionary
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesVectorReaderSeries);
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesVectorReaderSeries, "$Revision: 4068 $");
 
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesVectorReaderSeries::vtkITKArchetypeImageSeriesVectorReaderSeries()

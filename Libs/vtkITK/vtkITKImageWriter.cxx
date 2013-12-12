@@ -36,7 +36,6 @@
 
 
 vtkStandardNewMacro(vtkITKImageWriter);
-vtkCxxRevisionMacro(vtkITKImageWriter, "$Revision$")
 
 // helper function
 template <class  TPixelType, int Dimension>

@@ -62,7 +62,7 @@ public:
   
   /// The Usual vtk class functions
   static vtkMRMLSliceLayerLogic *New();
-  vtkTypeRevisionMacro(vtkMRMLSliceLayerLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLSliceLayerLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 

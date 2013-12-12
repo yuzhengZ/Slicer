@@ -24,7 +24,6 @@
 #include "vtkCellData.h"
 
 
-vtkCxxRevisionMacro(vtkTensorRotate, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkTensorRotate);
 
 

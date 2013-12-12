@@ -27,7 +27,6 @@
 #include <itkOrientImageFilter.h>
 #include <itkImageSeriesReader.h>
 
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesScalarReader, "$Revision$");
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
 
 

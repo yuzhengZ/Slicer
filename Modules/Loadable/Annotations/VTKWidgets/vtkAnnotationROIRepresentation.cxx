@@ -41,7 +41,6 @@
 #include "vtkWindow.h"
 
 
-vtkCxxRevisionMacro(vtkAnnotationROIRepresentation, "$Revision: 12141 $");
 vtkStandardNewMacro(vtkAnnotationROIRepresentation);
 
 //----------------------------------------------------------------------------

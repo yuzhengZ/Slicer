@@ -41,7 +41,6 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkSlicerFixedPointRayCastImage.h"
 
 
-vtkCxxRevisionMacro(vtkSlicerFixedPointVolumeRayCastMapper, "$Revision: 1.20.4.1 $");
 vtkStandardNewMacro(vtkSlicerFixedPointVolumeRayCastMapper);
 vtkCxxSetObjectMacro(vtkSlicerFixedPointVolumeRayCastMapper, RayCastImage, vtkSlicerFixedPointRayCastImage);
 

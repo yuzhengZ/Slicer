@@ -57,7 +57,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLCrosshairDisplayableManager );
-vtkCxxRevisionMacro(vtkMRMLCrosshairDisplayableManager, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 class vtkMRMLCrosshairDisplayableManager::vtkInternal

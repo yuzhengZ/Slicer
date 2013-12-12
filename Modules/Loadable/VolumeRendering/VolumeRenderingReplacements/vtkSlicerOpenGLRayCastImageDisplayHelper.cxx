@@ -26,7 +26,6 @@
 
 
 #ifndef VTK_IMPLEMENT_MESA_CXX
-vtkCxxRevisionMacro(vtkSlicerOpenGLRayCastImageDisplayHelper, "$Revision: 1.4 $");
 vtkStandardNewMacro(vtkSlicerOpenGLRayCastImageDisplayHelper);
 #endif
 

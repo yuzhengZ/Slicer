@@ -150,7 +150,6 @@ void vtkSlicerErrorSink::CallbackFunction(vtkObject* vtkNotUsed(caller),
 // vtkSlicerVolumesLogic methods
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerVolumesLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerVolumesLogic);
 
 //----------------------------------------------------------------------------

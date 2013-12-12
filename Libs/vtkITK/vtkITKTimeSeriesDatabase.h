@@ -43,7 +43,7 @@ public:
   /// vtkStandardNewMacro ( vtkITKTimeSeriesDatabase );
   static vtkITKTimeSeriesDatabase *New();
   void PrintSelf(ostream& os, vtkIndent indent){ Superclass::PrintSelf(os, indent);};
-  vtkTypeRevisionMacro(vtkITKTimeSeriesDatabase,vtkImageAlgorithm);
+  vtkTypeMacro(vtkITKTimeSeriesDatabase,vtkImageAlgorithm);
 
 public:
   /// Create a TimeSeriesDatabase from a series of volumes

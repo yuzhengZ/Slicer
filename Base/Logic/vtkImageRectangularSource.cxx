@@ -7,7 +7,6 @@
 #include "vtkImageData.h"
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkImageRectangularSource, "$Revision$");
 vtkStandardNewMacro(vtkImageRectangularSource);
 
 //----------------------------------------------------------------------------

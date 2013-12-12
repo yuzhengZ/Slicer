@@ -45,7 +45,6 @@
 // STD includes
 #include <algorithm>
 
-vtkCxxRevisionMacro(vtkSlicerTractographyInteractiveSeedingLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerTractographyInteractiveSeedingLogic);
 
 //----------------------------------------------------------------------------

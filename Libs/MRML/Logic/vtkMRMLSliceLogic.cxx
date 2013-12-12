@@ -64,7 +64,6 @@ const int vtkMRMLSliceLogic::SLICE_INDEX_NO_VOLUME=-3;
 const std::string vtkMRMLSliceLogic::SLICE_MODEL_NODE_NAME_SUFFIX = std::string("Volume Slice");
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkMRMLSliceLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLSliceLogic);
 
 //----------------------------------------------------------------------------

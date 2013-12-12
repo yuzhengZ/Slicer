@@ -80,7 +80,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLVolumeRenderingDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLVolumeRenderingDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 bool vtkMRMLVolumeRenderingDisplayableManager::First = true;

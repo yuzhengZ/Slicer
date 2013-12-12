@@ -515,7 +515,11 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   sliceSpacingManualMode->setIcon(QIcon(":/Icon/SlicerManualSliceSpacing.png"));
   this->SliceSpacingSpinBox = new ctkDoubleSpinBox(sliceSpacingManualMode);
   this->SliceSpacingSpinBox->setDecimals(3);
+#if (VTK_MAJOR_VERSION <= 5)
   this->SliceSpacingSpinBox->setRange(0.001, VTK_LARGE_FLOAT);
+#else
+  this->SliceSpacingSpinBox->setRange(0.001, VTK_FLOAT_MAX);
+#endif
   this->SliceSpacingSpinBox->setSingleStep(0.1);
   this->SliceSpacingSpinBox->setValue(1.);
   QObject::connect(this->SliceSpacingSpinBox, SIGNAL(valueChanged(double)),

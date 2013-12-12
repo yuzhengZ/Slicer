@@ -69,7 +69,7 @@ class VTK_MRML_LOGIC_EXPORT vtkImageResliceMask : public vtkThreadedImageAlgorit
 {
 public:
   static vtkImageResliceMask *New();
-  vtkTypeRevisionMacro(vtkImageResliceMask, vtkThreadedImageAlgorithm);
+  vtkTypeMacro(vtkImageResliceMask, vtkThreadedImageAlgorithm);
 
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
