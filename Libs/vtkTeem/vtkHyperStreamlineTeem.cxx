@@ -46,7 +46,7 @@ void vtkHyperStreamlineTeem::Execute()
 }
 
 
-void vtkHyperStreamlineTeem::StartFiberFrom( const vtkFloatingPointType position[3], tenFiberContext *context )
+void vtkHyperStreamlineTeem::StartFiberFrom( const double position[3], tenFiberContext *context )
 {
   vtkDebugMacro( << "Starting fiber from ("<< position[0] <<","<< position[1] <<"," << position[2] <<")");
   
@@ -87,7 +87,7 @@ void vtkHyperStreamlineTeem::VisualizeFibers( const Nrrd *fibers )
   for( size_t fiber = 0; fiber < fibercount; fiber++ )
   {
       pos[1] = fiber;
-      vtkFloatingPointType indexPoints[3];
+      double indexPoints[3];
       
       for( int axis = 0; axis < 3; axis++ )
       {
@@ -163,12 +163,12 @@ tenFiberContext *vtkHyperStreamlineTeem::ProduceFiberContext()
   vtkDataArray *array = dataset->GetPointData()->GetTensors();
   {
     int position[3];
-    vtkFloatingPointType tensor[3][3];
+    double tensor[3][3];
     for( position[2] = 0; position[2] < size[2]; position[2]++ )
       for( position[1] = 0; position[1] < size[1]; position[1]++ )
     for( position[0] = 0; position[0] < size[0]; position[0]++ )
       {
-        array->GetTuple( dataset->ComputePointId( position ), (vtkFloatingPointType*) tensor );
+        array->GetTuple( dataset->ComputePointId( position ), (double*) tensor );
             
         *(data++) = 1.0f; // Confidence mask
         

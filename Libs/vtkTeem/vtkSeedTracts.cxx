@@ -369,7 +369,7 @@ void vtkSeedTracts::UpdateHyperStreamlineTeemSettings( vtkHyperStreamlineTeem *c
 //----------------------------------------------------------------------------
 int vtkSeedTracts::PointWithinTensorData(double *point, double *pointw)
 {
-  vtkFloatingPointType *bounds;
+  double *bounds;
   int inbounds;
 
   bounds=this->InputTensorField->GetBounds();

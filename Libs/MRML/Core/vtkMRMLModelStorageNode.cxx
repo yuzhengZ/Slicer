@@ -42,8 +42,8 @@
 #include <itkSpatialObjectReader.h>
 #include <itkSpatialObjectWriter.h>
 
-typedef itk::DefaultDynamicMeshTraits< vtkFloatingPointType , 3, 3, double > MeshTrait;
-typedef itk::Mesh<vtkFloatingPointType,3,MeshTrait> floatMesh;
+typedef itk::DefaultDynamicMeshTraits< double , 3, 3, double > MeshTrait;
+typedef itk::Mesh<double,3,MeshTrait> floatMesh;
 
 /** Hold on to the type information specified by the template parameters. */
 typedef  floatMesh::Pointer             MeshPointer;
@@ -62,8 +62,8 @@ typedef  floatMesh::CellType             CellType;
 typedef  itk::TriangleCell<CellType>   TriangleType;
 
 typedef itk::MeshSpatialObject<floatMesh> MeshSpatialObjectType;
-typedef itk::SpatialObjectReader<3,vtkFloatingPointType,MeshTrait> MeshReaderType;
-typedef itk::SpatialObjectWriter<3,vtkFloatingPointType,MeshTrait> MeshWriterType;
+typedef itk::SpatialObjectReader<3,double,MeshTrait> MeshReaderType;
+typedef itk::SpatialObjectWriter<3,double,MeshTrait> MeshWriterType;
 
 
 
@@ -236,7 +236,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         {
         // Get the point index from the point container iterator
         int idx = i->Index();
-        vpoints->SetPoint(idx, const_cast<vtkFloatingPointType*>(i->Value().GetDataPointer()));
+        vpoints->SetPoint(idx, const_cast<double*>(i->Value().GetDataPointer()));
         }
       vtkMesh->SetPoints(vpoints.GetPointer());
 

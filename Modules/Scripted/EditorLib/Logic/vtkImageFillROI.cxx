@@ -668,7 +668,7 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
   int r = self->GetRadius();
   int i, j, x, y, z, nPts, nx, ny, outExt[6];
   int *xPts, *yPts;
-  vtkFloatingPointType *pt;
+  double *pt;
 
   vtkPoints *points = self->GetPoints();
   if (points == NULL)

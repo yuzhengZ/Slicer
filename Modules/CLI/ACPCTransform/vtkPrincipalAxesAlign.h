@@ -29,10 +29,10 @@ public:
 
   vtkTypeMacro(vtkPrincipalAxesAlign, vtkPolyDataAlgorithm);
 
-  vtkGetVector3Macro(Center, vtkFloatingPointType);
-  vtkGetVector3Macro(XAxis, vtkFloatingPointType);
-  vtkGetVector3Macro(YAxis, vtkFloatingPointType);
-  vtkGetVector3Macro(ZAxis, vtkFloatingPointType);
+  vtkGetVector3Macro(Center, double);
+  vtkGetVector3Macro(XAxis, double);
+  vtkGetVector3Macro(YAxis, double);
+  vtkGetVector3Macro(ZAxis, double);
   void Execute();
 
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -44,10 +44,10 @@ private:
   vtkPrincipalAxesAlign(vtkPrincipalAxesAlign &);
   void operator=(const vtkPrincipalAxesAlign &);
 
-  vtkFloatingPointType* Center;
-  vtkFloatingPointType* XAxis;
-  vtkFloatingPointType* YAxis;
-  vtkFloatingPointType* ZAxis;
+  double* Center;
+  double* XAxis;
+  double* YAxis;
+  double* ZAxis;
 
   // a matrix of the eigenvalue problem
   double* * eigenvalueProblem;

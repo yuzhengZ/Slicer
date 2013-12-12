@@ -76,54 +76,54 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
   /// 
   /// Specify the start of the hyperstreamline in the cell coordinate system. 
   /// That is, cellId and subId (if composite cell), and parametric coordinates.
-  void SetStartLocation(vtkIdType cellId, int subId, vtkFloatingPointType pcoords[3]);
+  void SetStartLocation(vtkIdType cellId, int subId, double pcoords[3]);
 
   /// 
   /// Specify the start of the hyperstreamline in the cell coordinate system. 
   /// That is, cellId and subId (if composite cell), and parametric coordinates.
-  void SetStartLocation(vtkIdType cellId, int subId, vtkFloatingPointType r, vtkFloatingPointType s,
-                        vtkFloatingPointType t);
+  void SetStartLocation(vtkIdType cellId, int subId, double r, double s,
+                        double t);
 
   /// 
   /// Get the starting location of the hyperstreamline in the cell coordinate
   /// system. Returns the cell that the starting point is in.
-  vtkIdType GetStartLocation(int& subId, vtkFloatingPointType pcoords[3]);
+  vtkIdType GetStartLocation(int& subId, double pcoords[3]);
 
   /// 
   /// Specify the start of the hyperstreamline in the global coordinate system. 
   /// Starting from position implies that a search must be performed to find 
   /// initial cell to start integration from.
-  void SetStartPosition(vtkFloatingPointType x[3]);
+  void SetStartPosition(double x[3]);
 
   /// 
   /// Specify the start of the hyperstreamline in the global coordinate system. 
   /// Starting from position implies that a search must be performed to find 
   /// initial cell to start integration from.
-  void SetStartPosition(vtkFloatingPointType x, vtkFloatingPointType y, vtkFloatingPointType z);
+  void SetStartPosition(double x, double y, double z);
 
   /// 
   /// Get the start position of the hyperstreamline in global x-y-z coordinates.
-  vtkFloatingPointType *GetStartPosition();
+  double *GetStartPosition();
 
   /// 
   /// Set / get the maximum length of the hyperstreamline expressed as absolute
   /// distance (i.e., arc length) value.
 #if (VTK_MAJOR_VERSION <= 5)
-  vtkSetClampMacro(MaximumPropagationDistance,vtkFloatingPointType,0.0,VTK_LARGE_FLOAT);
+  vtkSetClampMacro(MaximumPropagationDistance,double,0.0,VTK_LARGE_FLOAT);
 #else
-  vtkSetClampMacro(MaximumPropagationDistance,vtkFloatingPointType,0.0,VTK_FLOAT_MAX);
+  vtkSetClampMacro(MaximumPropagationDistance,double,0.0,VTK_FLOAT_MAX);
 #endif
-  vtkGetMacro(MaximumPropagationDistance,vtkFloatingPointType);
+  vtkGetMacro(MaximumPropagationDistance,double);
 
   /// 
   /// Set / get the maximum length of the hyperstreamline expressed as absolute
   /// distance (i.e., arc length) value.
 #if (VTK_MAJOR_VERSION <= 5)
-  vtkSetClampMacro(MinimumPropagationDistance,vtkFloatingPointType,0.0,VTK_LARGE_FLOAT);
+  vtkSetClampMacro(MinimumPropagationDistance,double,0.0,VTK_LARGE_FLOAT);
 #else
-  vtkSetClampMacro(MinimumPropagationDistance,vtkFloatingPointType,0.0,VTK_FLOAT_MAX);
+  vtkSetClampMacro(MinimumPropagationDistance,double,0.0,VTK_FLOAT_MAX);
 #endif
-  vtkGetMacro(MinimumPropagationDistance,vtkFloatingPointType);
+  vtkGetMacro(MinimumPropagationDistance,double);
 
   /// 
   /// Set / get the eigenvector field through which to ingrate. It is
@@ -170,15 +170,15 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
   /// 
   /// Set / get a nominal integration step size (expressed as a fraction of
   /// the size of each cell).
-  vtkSetClampMacro(IntegrationStepLength,vtkFloatingPointType,0.001,0.5);
-  vtkGetMacro(IntegrationStepLength,vtkFloatingPointType);
+  vtkSetClampMacro(IntegrationStepLength,double,0.001,0.5);
+  vtkGetMacro(IntegrationStepLength,double);
 
   /// 
   /// Set / get the length of a tube segment composing the
   /// hyperstreamline. The length is specified as a fraction of the
   /// diagonal length of the input bounding box.
-  vtkSetClampMacro(StepLength,vtkFloatingPointType,0.000001,1.0);
-  vtkGetMacro(StepLength,vtkFloatingPointType);
+  vtkSetClampMacro(StepLength,double,0.000001,1.0);
+  vtkGetMacro(StepLength,double);
 
 
   /// 
@@ -206,58 +206,58 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
   /// Set/get terminal eigenvalue.  If major eigenvalue falls below this
   /// value, hyperstreamline terminates propagation.
 #if (VTK_MAJOR_VERSION <= 5)
-  vtkSetClampMacro(TerminalEigenvalue,vtkFloatingPointType,0.0,VTK_LARGE_FLOAT);
+  vtkSetClampMacro(TerminalEigenvalue,double,0.0,VTK_LARGE_FLOAT);
 #else
-  vtkSetClampMacro(TerminalEigenvalue,vtkFloatingPointType,0.0,VTK_FLOAT_MAX);
+  vtkSetClampMacro(TerminalEigenvalue,double,0.0,VTK_FLOAT_MAX);
 #endif
-  vtkGetMacro(TerminalEigenvalue,vtkFloatingPointType);
+  vtkGetMacro(TerminalEigenvalue,double);
 
   /// 
   /// Set/get terminal fractional anisotropy.  If fractional anisotropy falls below this
   /// value, hyperstreamline terminates propagation.
-  vtkSetClampMacro(TerminalFractionalAnisotropy,vtkFloatingPointType,0.0,1.0);
-  vtkGetMacro(TerminalFractionalAnisotropy,vtkFloatingPointType);
+  vtkSetClampMacro(TerminalFractionalAnisotropy,double,0.0,1.0);
+  vtkGetMacro(TerminalFractionalAnisotropy,double);
 
   /// 
   /// Set/Get Minimum step size the method must take.
 #if (VTK_MAJOR_VERSION <= 5)
-  vtkSetClampMacro(MinStep,vtkFloatingPointType,0,VTK_LARGE_FLOAT);
+  vtkSetClampMacro(MinStep,double,0,VTK_LARGE_FLOAT);
 #else
-  vtkSetClampMacro(MinStep,vtkFloatingPointType,0,VTK_FLOAT_MAX);
+  vtkSetClampMacro(MinStep,double,0,VTK_FLOAT_MAX);
 #endif
-  vtkGetMacro(MinStep,vtkFloatingPointType);
+  vtkGetMacro(MinStep,double);
 
   /// 
   /// Set/Get Maximum step size the method can take.
 #if (VTK_MAJOR_VERSION <= 5)
-  vtkSetClampMacro(MaxStep,vtkFloatingPointType,0,VTK_LARGE_FLOAT);
+  vtkSetClampMacro(MaxStep,double,0,VTK_LARGE_FLOAT);
 #else
-  vtkSetClampMacro(MaxStep,vtkFloatingPointType,0,VTK_FLOAT_MAX);
+  vtkSetClampMacro(MaxStep,double,0,VTK_FLOAT_MAX);
 #endif
-  vtkGetMacro(MaxStep,vtkFloatingPointType);
+  vtkGetMacro(MaxStep,double);
 
   /// 
   /// Set/Get Maximum Angle Fibers can have.
-  vtkSetClampMacro(MaxAngle,vtkFloatingPointType,0,1);
-  vtkGetMacro(MaxAngle,vtkFloatingPointType);
+  vtkSetClampMacro(MaxAngle,double,0,1);
+  vtkGetMacro(MaxAngle,double);
 
   /// 
   /// Set/Get The length of the fibers when considering the max angle
 #if (VTK_MAJOR_VERSION <= 5)
-  vtkSetClampMacro(LengthOfMaxAngle,vtkFloatingPointType,0,VTK_LARGE_FLOAT);
+  vtkSetClampMacro(LengthOfMaxAngle,double,0,VTK_LARGE_FLOAT);
 #else
-  vtkSetClampMacro(LengthOfMaxAngle,vtkFloatingPointType,0,VTK_FLOAT_MAX);
+  vtkSetClampMacro(LengthOfMaxAngle,double,0,VTK_FLOAT_MAX);
 #endif
-  vtkGetMacro(LengthOfMaxAngle,vtkFloatingPointType);
+  vtkGetMacro(LengthOfMaxAngle,double);
 
   /// 
   /// Set/Get Maximum error each step may have.
 #if (VTK_MAJOR_VERSION <= 5)
-  vtkSetClampMacro(MaxError,vtkFloatingPointType,0.0000000001,VTK_LARGE_FLOAT);
+  vtkSetClampMacro(MaxError,double,0.0000000001,VTK_LARGE_FLOAT);
 #else
-  vtkSetClampMacro(MaxError,vtkFloatingPointType,0.0000000001,VTK_FLOAT_MAX);
+  vtkSetClampMacro(MaxError,double,0.0000000001,VTK_FLOAT_MAX);
 #endif
-  vtkGetMacro(MaxError,vtkFloatingPointType);
+  vtkGetMacro(MaxError,double);
 
   /// 
   /// Set / get the number of sides for the hyperstreamlines. At a minimum,
@@ -275,11 +275,11 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
   /// eigenvalues.  Note that tube section is actually elliptical and may
   /// become a point or line in cross section in some cases.
 #if (VTK_MAJOR_VERSION <= 5)
-  vtkSetClampMacro(Radius,vtkFloatingPointType,0.0001,VTK_LARGE_FLOAT);
+  vtkSetClampMacro(Radius,double,0.0001,VTK_LARGE_FLOAT);
 #else
-  vtkSetClampMacro(Radius,vtkFloatingPointType,0.0001,VTK_FLOAT_MAX);
+  vtkSetClampMacro(Radius,double,0.0001,VTK_FLOAT_MAX);
 #endif
-  vtkGetMacro(Radius,vtkFloatingPointType);
+  vtkGetMacro(Radius,double);
 
   /// 
   /// Turn on/off logarithmic scaling. If scaling is on, the log base 10
@@ -302,62 +302,62 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
   /// Starting from cell location
   vtkIdType StartCell;
   int StartSubId;
-  vtkFloatingPointType StartPCoords[3];
+  double StartPCoords[3];
 
   /// starting from global x-y-z position
-  vtkFloatingPointType StartPosition[3];
+  double StartPosition[3];
 
   /// initial value problem solver
   vtkInitialValueProblemSolver * method;
 
   /// Minimum step of integration
-  vtkFloatingPointType MinStep;
+  double MinStep;
 
   /// Maximum step of integration
-  vtkFloatingPointType MaxStep;
+  double MaxStep;
 
   /// Maximum error of each step
-  vtkFloatingPointType MaxError;
+  double MaxError;
   
   //array of hyperstreamlines
   vtkPreciseHyperArray *Streamers;
   int NumberOfStreamers;
 
   /// length of hyperstreamline in absolute distance
-  vtkFloatingPointType MaximumPropagationDistance;
+  double MaximumPropagationDistance;
 
   /// minimum length of hyperstreamline in absolute distance
-  vtkFloatingPointType MinimumPropagationDistance;
+  double MinimumPropagationDistance;
 
   /// integration direction
   int IntegrationDirection;
 
   /// the length (fraction of cell size) of integration steps
-  vtkFloatingPointType IntegrationStepLength;
+  double IntegrationStepLength;
 
   /// the length of the tube segments composing the hyperstreamline
-  vtkFloatingPointType StepLength;
+  double StepLength;
 
   /// the maximum angle before fiber is rejected
-  vtkFloatingPointType MaxAngle;
+  double MaxAngle;
 
   /// the length of the fibers when considering max angle 
-  vtkFloatingPointType LengthOfMaxAngle;
+  double LengthOfMaxAngle;
 
   /// terminal propagation speed
-  vtkFloatingPointType TerminalEigenvalue;
+  double TerminalEigenvalue;
 
   /// terminal fractional anisotropy
-  vtkFloatingPointType TerminalFractionalAnisotropy;
+  double TerminalFractionalAnisotropy;
 
   /// Regularization Bias added to the tracking method
-  vtkFloatingPointType RegularizationBias;
+  double RegularizationBias;
 
   /// number of sides of tube
   int NumberOfSides;
 
   /// maximum radius of tube
-  vtkFloatingPointType Radius;
+  double Radius;
 
   /// boolean controls whether scaling is clamped
   int LogScaling;

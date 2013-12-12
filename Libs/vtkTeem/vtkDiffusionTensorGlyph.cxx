@@ -379,9 +379,9 @@ int vtkDiffusionTensorGlyph::RequestData(
     // progress notification
     if ( ! (inPtId % 10000) ) 
       {
-      this->UpdateProgress ((vtkFloatingPointType)inPtId/numPts);
+      this->UpdateProgress ((double)inPtId/numPts);
 
-      vtkDebugMacro(<<"Generating diffusion tensor glyphs: PROGRESS" << (vtkFloatingPointType)inPtId/numPts);
+      vtkDebugMacro(<<"Generating diffusion tensor glyphs: PROGRESS" << (double)inPtId/numPts);
       if (this->GetAbortExecute())
         {
         break;

@@ -76,7 +76,7 @@ static void vtkTensorMaskExecute(vtkTensorMask *self, int ext[6],
   vtkIdType in2Inc0, in2Inc1, in2Inc2;
   vtkIdType outInc0, outInc1, outInc2;
   T *maskedValue;
-  vtkFloatingPointType *v;
+  double *v;
   int nv;
   int maskState;
   unsigned long count = 0;
@@ -175,8 +175,8 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
 
   vtkDataArray *inTensors;
   vtkDataArray *outTensors;
-  vtkFloatingPointType inT[3][3];
-  vtkFloatingPointType outT[3][3];
+  double inT[3][3];
+  double outT[3][3];
 
   int ptId;
 
@@ -232,7 +232,7 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
         }
       for (idx0 = 0; idx0 < num0; ++idx0)
         {
-          inTensors->GetTuple(ptId,(vtkFloatingPointType *)inT);
+          inTensors->GetTuple(ptId,(double *)inT);
           //outTensors->GetTuple(ptId,outT);
 
           // Pixel operation: clear or copy
@@ -271,7 +271,7 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
         }
 
           // set the output tensor to the calculated one
-          outTensors->SetTuple(ptId,(vtkFloatingPointType *)outT);
+          outTensors->SetTuple(ptId,(double *)outT);
           
           ptId += 1;
           in2Ptr += 1;

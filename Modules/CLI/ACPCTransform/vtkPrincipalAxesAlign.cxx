@@ -25,7 +25,7 @@ void vtkPrincipalAxesAlign::Execute()
 {
   vtkPolyData *         input = (vtkPolyData *)this->GetExecutive()->GetInputData(0,0);
   vtkIdType             nr_points = input->GetNumberOfPoints();
-  vtkFloatingPointType* x;
+  double* x;
 
   int i;
 
@@ -117,22 +117,22 @@ vtkStandardNewMacro(vtkPrincipalAxesAlign);
 //----------------------------------------------------------------------------
 vtkPrincipalAxesAlign::vtkPrincipalAxesAlign()
 {
-  Center = (vtkFloatingPointType *) malloc(3 * sizeof(vtkFloatingPointType) );
+  Center = (double *) malloc(3 * sizeof(double) );
   Center[0] = 0;
   Center[1] = 0;
   Center[2] = 0;
 
-  XAxis = (vtkFloatingPointType *) malloc(3 * sizeof(vtkFloatingPointType) );
+  XAxis = (double *) malloc(3 * sizeof(double) );
   XAxis[0] = 1;
   XAxis[1] = 0;
   XAxis[2] = 0;
 
-  YAxis = (vtkFloatingPointType *) malloc(3 * sizeof(vtkFloatingPointType) );
+  YAxis = (double *) malloc(3 * sizeof(double) );
   YAxis[0] = 0;
   YAxis[1] = 1;
   YAxis[2] = 0;
 
-  ZAxis = (vtkFloatingPointType *) malloc(3 * sizeof(vtkFloatingPointType) );
+  ZAxis = (double *) malloc(3 * sizeof(double) );
   ZAxis[0] = 0;
   ZAxis[1] = 0;
   ZAxis[2] = 1;

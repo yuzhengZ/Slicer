@@ -29,7 +29,7 @@ class VTK_Teem_EXPORT vtkHyperStreamlineTeem : public vtkHyperStreamlineDTMRI
   ~vtkHyperStreamlineTeem();
 
   void Execute();
-  void StartFiberFrom( const vtkFloatingPointType position[3], tenFiberContext *fibercontext );
+  void StartFiberFrom( const double position[3], tenFiberContext *fibercontext );
   void VisualizeFibers( const Nrrd *fibers );
 
  private:
