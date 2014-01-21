@@ -29,6 +29,7 @@
 #include <vtkDataSetAttributes.h>
 #include <vtkImageData.h>
 #include <vtkNew.h>
+#include <vtkTrivialProducer.h>
 
 // ITK includes
 #include <itkConfigure.h>
@@ -43,8 +44,15 @@ bool isImageDataValid(vtkImageData* imageData)
     {
     return false;
     }
+#if (VTK_MAJOR_VERSION <= 5)
   imageData->GetProducerPort();
   vtkInformation* info = imageData->GetPipelineInformation();
+#else
+  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+  tp->SetOutput(imageData);
+  vtkInformation* info = tp->GetOutputInformation(0);
+#endif
+
   if (!info)
     {
     return false;

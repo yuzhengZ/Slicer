@@ -671,6 +671,8 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
 #else
       this->AssignAttributeTensorsToScalars->SetInputData(image);
 #endif
+/*
+      Comment it out to see if VTK has fixed the issue
       /// HACK !
       /// vtkAssignAttribute is not able to set these values automatically,
       /// we do it manually instead.
@@ -680,6 +682,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
         tensors->GetName(), tensors->GetDataType(),
         tensors->GetNumberOfComponents(), tensors->GetNumberOfTuples());
       /// End of HACK !
+*/
       }
 #if (VTK_MAJOR_VERSION <= 5)
     this->Reslice->SetInput( this->AssignAttributeTensorsToScalars->GetImageDataOutput() );
