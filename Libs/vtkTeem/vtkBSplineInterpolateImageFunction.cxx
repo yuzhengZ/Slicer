@@ -15,6 +15,7 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkImageData.h"  // for storing output of vtk/itk filter
+#include <vtkVersion.h>
 
 vtkStandardNewMacro(vtkBSplineInterpolateImageFunction);
 

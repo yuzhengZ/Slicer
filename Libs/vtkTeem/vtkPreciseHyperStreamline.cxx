@@ -24,7 +24,6 @@
 #include "vtkTensorImplicitFunctionToFunctionSet.h"
 #include "vtkPreciseHyperArray.h"
 #include "vtkDiffusionTensorMathematics.h"
-#include <vtkVersion.h>
 
 
 vtkStandardNewMacro(vtkPreciseHyperStreamline);

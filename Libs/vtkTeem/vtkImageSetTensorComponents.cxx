@@ -55,7 +55,7 @@ void vtkImageSetTensorComponents::ExecuteData(vtkDataObject *out)
 #else
   output->SetExtent(this->GetUpdateExtent());
 #endif
-  
+
   // allocate output tensors
   vtkFloatArray* data = vtkFloatArray::New();
   int* dims = output->GetDimensions();
