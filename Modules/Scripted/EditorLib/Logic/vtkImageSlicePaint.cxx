@@ -17,6 +17,7 @@
 // VTK includes
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkVersion.h>
 
 
 vtkStandardNewMacro(vtkImageSlicePaint);
@@ -147,8 +148,12 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
   if ( extractImage != NULL )
     {
     extractImage->SetDimensions(maxColumnDelta+1, maxRowDelta+1, 1);
+#if (VTK_MAJOR_VERSION <= 5)
     extractImage->SetScalarType( self->GetWorkingImage()->GetScalarType() );
     extractImage->AllocateScalars();
+#else
+    extractImage->AllocateScalars(self->GetWorkingImage()->GetScalarType(), 1);
+#endif
     extracting = 1;
     }
 

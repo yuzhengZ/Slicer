@@ -424,6 +424,7 @@ class CalculateTensorScalars:
 
         self.single_pixel_image = vtk.vtkImageData()
         self.single_pixel_image.SetExtent(0, 0, 0, 0, 0, 0)
+        # need to use AllocateScalars(int dataType, int numComponents) to support VTK6
         self.single_pixel_image.AllocateScalars()
 
         self.tensor_data = vtk.vtkFloatArray()

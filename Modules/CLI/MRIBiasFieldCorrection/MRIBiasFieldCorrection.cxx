@@ -234,16 +234,24 @@ int L1BiasFieldCorrection( int argc, char *argv[],
     meanImage->SetDimensions(outDim);
     meanImage->SetOrigin(outOrigin);
     meanImage->SetSpacing(outSpacing);
+#if (VTK_MAJOR_VERSION <= 5)
     meanImage->SetScalarTypeToDouble();
     meanImage->AllocateScalars();
+#else
+    meanImage->AllocateScalars(VTK_DOUBLE, 1);
+#endif
     meanImage->Update();
 
     vtkImageData *stdDevImage = vtkImageData::New();
     stdDevImage->SetDimensions(outDim);
     stdDevImage->SetOrigin(outOrigin);
     stdDevImage->SetSpacing(outSpacing);
+#if (VTK_MAJOR_VERSION <= 5)
     stdDevImage->SetScalarTypeToDouble();
     stdDevImage->AllocateScalars();
+#else
+    stdDevImage->AllocateScalars(VTK_DOUBLE, 1);
+#endif
     stdDevImage->Update();
 
     double *ptrMean = static_cast<double *>(meanImage->GetScalarPointer() );

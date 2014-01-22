@@ -19,6 +19,7 @@
 
 // VTK includes
 #include <vtkImageAlgorithm.h>
+#include <vtkVersion.h>
 
 #define CONNECTIVITY_IDENTIFY 1
 #define CONNECTIVITY_REMOVE 2
@@ -89,7 +90,11 @@ protected:
   int Function;
   int SliceBySlice;
 
+#if (VTK_MAJOR_VERSION <= 5)
   void ExecuteData(vtkDataObject *);
+#else
+  void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *);
+#endif
 
 private:
   vtkImageConnectivity(const vtkImageConnectivity&);

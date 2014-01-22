@@ -217,6 +217,7 @@ class ThresholdEffectTool(Effect.EffectTool):
 
     # feedback actor
     self.cursorDummyImage = vtk.vtkImageData()
+    # need to use AllocateScalars(int dataType, int numComponents) to support VTK6
     self.cursorDummyImage.AllocateScalars()
     self.cursorMapper = vtk.vtkImageMapper()
     self.cursorMapper.SetInput( self.cursorDummyImage )

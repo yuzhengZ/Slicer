@@ -774,7 +774,12 @@ void vtkNRRDReader::AllocatePointData(vtkImageData *out, vtkInformation* outInfo
     switch (this->PointDataType) {
     case vtkDataSetAttributes::SCALARS:
        out->GetPointData()->SetScalars(pd);
+#if (VTK_MAJOR_VERSION <= 5)
        out->SetNumberOfScalarComponents(this->GetNumberOfComponents());
+#else
+       vtkDataObject::SetPointDataActiveScalarInfo(outInfo,
+         this->DataType, this->GetNumberOfComponents());
+#endif
        break;
     case vtkDataSetAttributes::VECTORS:
        out->GetPointData()->SetVectors(pd);

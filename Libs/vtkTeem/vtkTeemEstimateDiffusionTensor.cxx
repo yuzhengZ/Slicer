@@ -238,7 +238,12 @@ int vtkTeemEstimateDiffusionTensor::RequestInformation(
 // as well as scalars.  This gets called before multithreader starts
 // (after which we can't allocate, for example in ThreadedExecute).
 // Note we return to the regular pipeline at the end of this function.
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkTeemEstimateDiffusionTensor::ExecuteData(vtkDataObject *out)
+#else
+void vtkTeemEstimateDiffusionTensor::ExecuteDataWithInformation(
+        vtkDataObject *out, vtkInformation* outInfo)
+#endif
 {
   vtkImageData *output = vtkImageData::SafeDownCast(out);
   vtkImageData *inData = (vtkImageData *) this->GetInput();
@@ -276,12 +281,14 @@ void vtkTeemEstimateDiffusionTensor::ExecuteData(vtkDataObject *out)
 #if (VTK_MAJOR_VERSION <= 5)
   this->Baseline->SetExtent(output->GetUpdateExtent());
   this->AverageDWI->SetExtent(output->GetUpdateExtent());
+  this->Baseline->AllocateScalars();
+  this->AverageDWI->AllocateScalars();
 #else
   this->Baseline->SetExtent(this->GetUpdateExtent());
   this->AverageDWI->SetExtent(this->GetUpdateExtent());
+  this->Baseline->AllocateScalars(outInfo);
+  this->AverageDWI->AllocateScalars(outInfo);
 #endif
-  this->Baseline->AllocateScalars();
-  this->AverageDWI->AllocateScalars();
   this->Baseline->GetPointData()->GetScalars()->SetName("Baseline");
   this->AverageDWI->GetPointData()->GetScalars()->SetName("AverageDWI");
 

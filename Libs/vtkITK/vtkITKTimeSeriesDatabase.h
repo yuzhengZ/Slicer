@@ -23,6 +23,7 @@
 #include "itkTimeSeriesDatabase.h"
 #include "vtkImageImport.h"
 #include "itkVTKImageExport.h"
+#include <vtkVersion.h>
 
 #include "vtkITK.h"
 #include "vtkITKUtility.h"
@@ -91,7 +92,11 @@ protected:
   
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
   /// defined in the subclasses
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void ExecuteData(vtkDataObject *output);
+#else
+  virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo);
+#endif
 
 private:
   vtkITKTimeSeriesDatabase(const vtkITKTimeSeriesDatabase&);  /// Not implemented.

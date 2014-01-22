@@ -374,7 +374,11 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
   outData->SetOrigin(origin);
   outData->SetSpacing(spacing);
   outData->SetDimensions(dims);
+#if (VTK_MAJOR_VERSION <= 5)
   outData->AllocateScalars();
+#else
+  outData->AllocateScalars(outInfo);
+#endif
 
   input1->GetExtent(outExt);
 
@@ -413,7 +417,12 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
 
         std::cout<<" Setting to type "<<VTK_SHORT<<std::endl;
 
+#if (VTK_MAJOR_VERSION <= 5)
         outData->SetScalarType(VTK_SHORT);
+#else
+        vtkDataObject::SetPointDataActiveScalarInfo(
+          outInfo, VTK_SHORT, vtkImageData::GetNumberOfScalarComponents(outInfo));
+#endif
 
         imageCaster->SetOutputScalarTypeToShort();
 
@@ -436,7 +445,13 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
       else
         {
         std::cout<<" setting to type "<<input2->GetScalarType()<<std::endl;
+#if (VTK_MAJOR_VERSION <= 5)
         outData->SetScalarType(input2->GetScalarType());
+#else
+        vtkDataObject::SetPointDataActiveScalarInfo(
+          outInfo, input2->GetScalarType(),
+          vtkImageData::GetNumberOfScalarComponents(outInfo));
+#endif
         imageCaster->SetOutputScalarType(input2->GetScalarType() );
 
         if(input2->GetScalarType() == VTK_UNSIGNED_SHORT)
@@ -507,7 +522,12 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
         (input2->GetScalarType() != VTK_LONG) )
       {
 
-      outData->SetScalarType(VTK_SHORT);
+#if (VTK_MAJOR_VERSION <= 5)
+        outData->SetScalarType(VTK_SHORT);
+#else
+        vtkDataObject::SetPointDataActiveScalarInfo(
+          outInfo, VTK_SHORT, vtkImageData::GetNumberOfScalarComponents(outInfo));
+#endif
 
       vtkImageCast *imageCaster = vtkImageCast::New();
 #if (VTK_MAJOR_VERSION <= 5)
@@ -537,7 +557,13 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
       }
     else
       {
+#if (VTK_MAJOR_VERSION <= 5)
       outData->SetScalarType(input2->GetScalarType());
+#else
+      vtkDataObject::SetPointDataActiveScalarInfo(
+        outInfo, input2->GetScalarType(),
+        vtkImageData::GetNumberOfScalarComponents(outInfo));
+#endif
 
       if(input2->GetScalarType() == VTK_UNSIGNED_SHORT)
         {

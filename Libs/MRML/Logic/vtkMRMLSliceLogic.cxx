@@ -37,6 +37,7 @@
 #include <vtkImageData.h>
 #include <vtkImageMathematics.h>
 #include <vtkImageReslice.h>
+#include <vtkInformation.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -990,11 +991,14 @@ void vtkMRMLSliceLogic::UpdatePipeline()
 #if (VTK_MAJOR_VERSION <= 5)
       tempMath->SetInput1( foregroundImage );
       tempMath->SetInput2( backgroundImage );
+      tempMath->GetOutput()->SetScalarType(VTK_SHORT);
 #else
       tempMath->SetInput1Data( foregroundImage );
       tempMath->SetInput2Data( backgroundImage );
+      vtkInformation *tempMathOutInfo = tempMath->GetOutputInformation(0);
+      vtkDataObject::SetPointDataActiveScalarInfo(tempMathOutInfo, VTK_SHORT,
+        vtkImageData::GetNumberOfScalarComponents(tempMathOutInfo));
 #endif
-      tempMath->GetOutput()->SetScalarType(VTK_SHORT);
 
       vtkImageCast *tempCast = vtkImageCast::New();
       tempCast->SetInputConnection( tempMath->GetOutputPort() );
@@ -1022,11 +1026,14 @@ void vtkMRMLSliceLogic::UpdatePipeline()
 #if (VTK_MAJOR_VERSION <= 5)
       tempMathUVW->SetInput1( foregroundImageUVW );
       tempMathUVW->SetInput2( backgroundImageUVW );
+      tempMathUVW->GetOutput()->SetScalarType(VTK_SHORT);
 #else
       tempMathUVW->SetInput1Data( foregroundImageUVW );
       tempMathUVW->SetInput2Data( backgroundImageUVW );
+      vtkInformation *tempMathUVWOutInfo = tempMathUVW->GetOutputInformation(0);
+      vtkDataObject::SetPointDataActiveScalarInfo(tempMathUVWOutInfo, VTK_SHORT,
+        vtkImageData::GetNumberOfScalarComponents(tempMathUVWOutInfo));
 #endif
-      tempMathUVW->GetOutput()->SetScalarType(VTK_SHORT);
 
       vtkImageCast *tempCastUVW = vtkImageCast::New();
       tempCastUVW->SetInputConnection( tempMathUVW->GetOutputPort() );

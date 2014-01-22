@@ -94,9 +94,13 @@ void SetupImageData(vtkImageData* imageData)
   const int dimY = 3;
   const int dimZ = 3;
   imageData->SetDimensions(dimX, dimY, dimZ);
+#if (VTK_MAJOR_VERSION <= 5)
   imageData->SetScalarTypeToUnsignedChar();
   imageData->SetNumberOfScalarComponents(1);
   imageData->AllocateScalars();
+#else
+  imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+#endif
   unsigned char* ptr = reinterpret_cast<unsigned char*>(
     imageData->GetScalarPointer(0,0,0));
   for (int z = 0; z < dimZ; ++z)

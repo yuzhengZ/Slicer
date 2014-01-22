@@ -15,6 +15,7 @@
 // VTK includes
 #include <vtkImageData.h>
 #include <vtkImageAlgorithm.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <vector>
@@ -103,8 +104,12 @@ public:
 protected:
   vtkPichonFastMarching();
   ~vtkPichonFastMarching();
-  
+
+#if (VTK_MAJOR_VERSION <= 5)
   void ExecuteData(vtkDataObject *);
+#else
+  void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *);
+#endif
 
 
   friend void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,

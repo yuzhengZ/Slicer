@@ -827,6 +827,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
 // algorithm to fill the output from the input.
 // It just executes a switch statement to call the correct function for
 // the datas data types.
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkImageConnectivity::ExecuteData(vtkDataObject *)
 {
   vtkImageData *inData = vtkImageData::SafeDownCast(this->GetInput());
@@ -836,6 +837,15 @@ void vtkImageConnectivity::ExecuteData(vtkDataObject *)
 
   int outExt[6], s;
   outData->GetWholeExtent(outExt);
+#else
+void vtkImageConnectivity::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
+{
+  vtkImageData *inData = vtkImageData::SafeDownCast(this->GetInput());
+  vtkImageData *outData = this->AllocateOutputData(output, outInfo);
+
+  int outExt[6], s;
+  outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), outExt);
+#endif
   void *inPtr = inData->GetScalarPointerForExtent(outExt);
   void *outPtr = outData->GetScalarPointerForExtent(outExt);
 

@@ -154,7 +154,9 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   sceneViewNode->SetScreenShot(imageData.GetPointer());
   sceneViewNode->GetScreenShot()->SetSpacing(1.0, 1.0, 1.0);
   sceneViewNode->GetScreenShot()->SetOrigin(0.0, 0.0, 0.0);
+#if (VTK_MAJOR_VERSION <= 5)
   sceneViewNode->GetScreenShot()->SetScalarType(VTK_UNSIGNED_CHAR);
+#endif
 
   return result;
 }

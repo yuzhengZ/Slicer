@@ -19,6 +19,7 @@
 #include "vtkThreadedImageAlgorithm.h"
 #include "vtkDoubleArray.h"
 #include "vtkTransform.h"
+#include <vtkVersion.h>
 #include "teem/nrrd.h"
 
 /* avoid name conflicts with symbols from python */
@@ -179,7 +180,11 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkThreadedImageAl
   /// We override this in order to allocate output tensors
   /// before threading happens.  This replaces the superclass 
   /// vtkImageAlgorithm's Execute function.
+#if (VTK_MAJOR_VERSION <= 5)
   void ExecuteData(vtkDataObject *out);
+#else
+  void ExecuteDataWithInformation(vtkDataObject *out, vtkInformation *outInfo);
+#endif
 
 };
 

@@ -266,7 +266,8 @@ class LabelEffectLogic(Effect.EffectLogic):
     if not labelNode: return
     labelImage = labelNode.GetImageData()
     if not labelImage: return
-    imageData.SetScalarType(labelImage.GetScalarType()) 
+    # need to use AllocateScalars(int dataType, int numComponents) to support VTK6
+    imageData.SetScalarType(labelImage.GetScalarType())
     imageData.AllocateScalars()
 
     #

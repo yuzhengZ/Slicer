@@ -486,14 +486,16 @@ void vtkITKImageWriter::Write()
         typedef itk::DiffusionTensor3D<float> TensorPixelType;
         vtkNew<vtkImageData> outImage;
         outImage->SetDimensions(inputImage->GetDimensions());
-#if (VTK_MAJOR_VERSION <= 5)
-        outImage->SetWholeExtent(inputImage->GetWholeExtent());
-#endif
         outImage->SetOrigin(0, 0, 0);
         outImage->SetSpacing(1, 1, 1);
+#if (VTK_MAJOR_VERSION <= 5)
+        outImage->SetWholeExtent(inputImage->GetWholeExtent());
         outImage->SetNumberOfScalarComponents(6);
         outImage->SetScalarTypeToFloat();
         outImage->AllocateScalars();
+#else
+        outImage->AllocateScalars(VTK_FLOAT, 6);
+#endif
         vtkFloatArray* out = vtkFloatArray::SafeDownCast(outImage->GetPointData()->GetScalars());
         vtkFloatArray* in = vtkFloatArray::SafeDownCast(inputImage->GetPointData()->GetTensors());
         float inValue[9];

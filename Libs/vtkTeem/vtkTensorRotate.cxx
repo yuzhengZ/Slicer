@@ -72,7 +72,7 @@ int vtkTensorRotate::RequestInformation (
 #if (VTK_MAJOR_VERSION <= 5)
 vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
 #else
-vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out, vtkInformation *vtkNotUsed(outInfo))
+vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out, vtkInformation *outInfo)
 #endif
 { 
   vtkImageData *output = vtkImageData::SafeDownCast(out);
@@ -195,7 +195,11 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out, vtkInforma
 
   // Now create the scalars and tensors array that will hold the output data.
 //  output->CopyTypeSpecificInformation( input );
+#if (VTK_MAJOR_VERSION <= 5)
   output->AllocateScalars();
+#else
+  output->AllocateScalars(outInfo);
+#endif
   this->AllocateTensors(output);
 
   outArray = output->GetPointData()->GetScalars();

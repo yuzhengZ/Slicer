@@ -16,6 +16,7 @@
 #define __vtkITKArchetypeImageSeriesVectorReaderSeries_h
 
 #include "vtkITKArchetypeImageSeriesReader.h"
+#include <vtkVersion.h>
 namespace itk
 {
   class ProcessObject;
@@ -36,7 +37,11 @@ protected:
   vtkITKArchetypeImageSeriesVectorReaderSeries();
   ~vtkITKArchetypeImageSeriesVectorReaderSeries();
 
+#if (VTK_MAJOR_VERSION <= 5)
   void ExecuteData(vtkDataObject *data);
+#else
+  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo);
+#endif
 };
 
 #endif
