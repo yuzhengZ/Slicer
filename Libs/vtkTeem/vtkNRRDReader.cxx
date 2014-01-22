@@ -657,10 +657,11 @@ vtkImageData *vtkNRRDReader::AllocateOutputData(vtkDataObject *out, vtkInformati
   // before the execute.
   this->ExecuteInformation();
 
-  res->SetExtent(res->GetUpdateExtent());
 #if (VTK_MAJOR_VERSION <= 5)
   this->AllocatePointData(res);
+  res->SetExtent(res->GetUpdateExtent());
 #else
+  res->SetExtent(this->GetUpdateExtent());
   this->AllocatePointData(res, outInfo);
 #endif
 
@@ -868,15 +869,13 @@ vtkNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]
 // are assumed to be the same as the file extent/order.
 #if (VTK_MAJOR_VERSION <= 5)
 void vtkNRRDReader::ExecuteData(vtkDataObject *output)
-#else
-void vtkNRRDReader::ExecuteData(vtkDataObject *output, vtkInformation* outInfo)
-#endif
 {
-
   output->SetUpdateExtentToWholeExtent();
-#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *data = this->AllocateOutputData(output);
 #else
+void vtkNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
+{
+  this->SetUpdateExtentToWholeExtent();
   vtkImageData *data = this->AllocateOutputData(output, outInfo);
 #endif
 

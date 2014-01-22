@@ -40,6 +40,7 @@ Version:   $Revision$
 #include <vtkImageData.h>
 #include <vtkImageThreshold.h>
 #include <vtkImageToStructuredPoints.h>
+#include <vtkInformation.h>
 #include <vtkLookupTable.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
@@ -48,6 +49,7 @@ Version:   $Revision$
 #include <vtkReverseSense.h>
 #include <vtkSmartPointer.h>
 #include <vtkSmoothPolyDataFilter.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkStripper.h>
 #include <vtkThreshold.h>
 #include <vtkTransform.h>
@@ -466,7 +468,12 @@ int main(int argc, char * argv[])
 
     translator->Update();
     int extent[6];
+#if (VTK_MAJOR_VERSION <= 5)
     image->GetWholeExtent(extent);
+#else
+    ici->GetOutputInformation(0)->Get(
+      vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent);
+#endif
     // now set the output extent to the new size, padded by 2 on the
     // positive side
     padder->SetOutputWholeExtent(extent[0], extent[1] + 2,

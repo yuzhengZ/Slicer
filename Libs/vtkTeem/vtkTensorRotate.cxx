@@ -326,7 +326,11 @@ static void vtkTensorRotateExecute(vtkTensorRotate *self, int outExt[6],
 
 
   inData->GetIncrements(inInc);
+#if (VTK_MAJOR_VERSION <= 5)
   inData->GetUpdateExtent(inFullUpdateExt); //We are only working over the update extent
+#else
+  self->GetUpdateExtent(inFullUpdateExt);
+#endif
   ptId = ((outExt[0] - inFullUpdateExt[0]) * inInc[0]
         + (outExt[2] - inFullUpdateExt[2]) * inInc[1]
         + (outExt[4] - inFullUpdateExt[4]) * inInc[2]);

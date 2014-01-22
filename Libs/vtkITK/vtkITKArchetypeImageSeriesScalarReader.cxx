@@ -22,6 +22,8 @@
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itkOrientImageFilter.h>
@@ -68,9 +70,15 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
 // removed UpdateInformation: generates an error message
 //   from VTK and doesn't appear to be needed...
 //data->UpdateInformation();
+#if (VTK_MAJOR_VERSION <= 5)
   data->SetExtent(0,0,0,0,0,0);
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent());
+#else
+  data->AllocateScalars(outInfo);
+  data->SetExtent(outInfo->Get(
+    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wholeExtent));
+#endif
 
   /// SCALAR MACRO
 #define vtkITKExecuteDataFromSeries(typeN, type) \

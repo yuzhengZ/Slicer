@@ -24,6 +24,8 @@
 #include "vtkImageResample.h"
 #include "vtkImageAccumulate.h"
 #include "vtkImageGaussianSmooth.h"
+#include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkVersion.h>
 
 #include "itkPluginUtilities.h"
 #include "MRIBiasFieldCorrectionCLP.h"
@@ -84,7 +86,12 @@ int L1BiasFieldCorrection( int argc, char *argv[],
     double bounds[6], range[2];
 
     convertITKtoVTK->GetOutput()->GetDimensions(dim);
+#if (VTK_MAJOR_VERSION <= 5)
     convertITKtoVTK->GetOutput()->GetWholeExtent(wholeExtent);
+#else
+    convertITKtoVTK->GetOutputInformation(0)->Get(
+      vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wholeExtent);
+#endif
 
     convertITKtoVTK->GetOutput()->GetOrigin(origin);
     convertITKtoVTK->GetOutput()->GetSpacing(spacing);

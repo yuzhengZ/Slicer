@@ -22,6 +22,7 @@
 #include <vtkNew.h>
 #include <vtkPointData.h>
 #include <vtkPolyDataWriter.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkTimerLog.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkVersion.h>
@@ -512,15 +513,23 @@ void vtkSeedTracts::SeedStreamlinesInROI()
   // make sure we are creating objects with points
   this->UseVtkHyperStreamlinePoints();
  
-  int extent[6];
   double spacing[3];
-  
+
+  // extent is not used in the function?
+#if (VTK_MAJOR_VERSION <= 5)
+  int extent[6];
   this->InputTensorField->GetWholeExtent(extent);
+#endif
   this->InputTensorField->GetSpacing(spacing);
 
   // currently this filter is not multithreaded, though in the future 
   // it could be (especially if it inherits from an image filter class)
+#if (VTK_MAJOR_VERSION <= 5)
   this->InputROI->GetWholeExtent(inExt);
+#else
+  this->InputROIPipelineInfo->Get(
+    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
+#endif
 
   // find the region to loop over
   maxX = inExt[1] - inExt[0];
@@ -1007,7 +1016,12 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
 
   // currently this filter is not multithreaded, though in the future 
   // it could be (especially if it inherits from an image filter class)
+#if (VTK_MAJOR_VERSION <= 5)
   this->InputROI->GetWholeExtent(inExt);
+#else
+  this->InputROIPipelineInfo->Get(
+    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
+#endif
   this->InputROI->GetContinuousIncrements(inExt, inIncX, inIncY, inIncZ);
 
   // find the region to loop over

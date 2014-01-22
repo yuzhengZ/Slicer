@@ -18,6 +18,7 @@
 
 #include "vtkObjectFactory.h"
 
+#include <vtkInformation.h>
 #include "vtkPichonFastMarching.h"
 #include "vtkPointData.h"
 #include "vtkDataArray.h"

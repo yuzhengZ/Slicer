@@ -33,6 +33,7 @@
 // VTK includes
 #include <vtkTransform.h>
 #include <vtkImageData.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkVersion.h>
 
 //-----------------------------------------------------------------------------
@@ -175,15 +176,18 @@ bool qMRMLUtils::qImageToVtkImageData(const QImage& qImage, vtkImageData* vtkima
   int width = img.width();
   int numcomponents = img.hasAlphaChannel() ? 4 : 3;
 
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkimage->SetWholeExtent(0, width-1, 0, height-1, 0, 0);
-#endif
   vtkimage->SetSpacing(1.0, 1.0, 1.0);
   vtkimage->SetOrigin(0.0, 0.0, 0.0);
   vtkimage->SetNumberOfScalarComponents(numcomponents);
   vtkimage->SetScalarType(VTK_UNSIGNED_CHAR);
+#if (VTK_MAJOR_VERSION <= 5)
+  vtkimage->SetWholeExtent(0, width-1, 0, height-1, 0, 0);
   vtkimage->SetExtent(vtkimage->GetWholeExtent());
   vtkimage->AllocateScalars();
+#else
+  vtkimage->SetExtent(0, width-1, 0, height-1, 0, 0);
+  vtkimage->AllocateScalars(VTK_UNSIGNED_CHAR, numcomponents);
+#endif
   for(int i=0; i<height; i++)
     {
     unsigned char* row;

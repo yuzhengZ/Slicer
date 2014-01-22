@@ -19,9 +19,12 @@
 #include <vtkFloatArray.h>
 #include <vtkImageExport.h>
 #include <vtkImageFlip.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
 #include <vtkITKUtility.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkVersion.h>
 
 // VTKsys includes
@@ -340,7 +343,8 @@ void vtkITKImageWriter::Write()
   inputImage->SetUpdateExtent(inputImage->GetWholeExtent());
 #else
   this->UpdateInformation();
-  this->SetUpdateExtent(inputImage->GetWholeExtent());
+  this->SetUpdateExtent(this->GetOutputInformation(0)->Get(
+                        vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
 #endif
   int inputNumberOfScalarComponents = inputImage->GetNumberOfScalarComponents();
 

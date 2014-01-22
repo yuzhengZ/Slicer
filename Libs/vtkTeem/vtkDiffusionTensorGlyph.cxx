@@ -21,6 +21,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
+#include <vtkStreamingDemandDrivenPipeline.h>
 #include "vtkTransform.h"
 
 #include "vtkImageData.h"
@@ -234,7 +235,11 @@ int vtkDiffusionTensorGlyph::RequestData(
   int col = 0;
   // TODO: use UpdateExtent not WholeExtent
   int inWholeExtent[6];
+#if (VTK_MAJOR_VERSION <= 5)
   input->GetWholeExtent(inWholeExtent);
+#else
+  inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inWholeExtent);
+#endif
   int dimensions[3];
   dimensions[0] = inWholeExtent[1] - inWholeExtent[0] + 1;
   dimensions[1] = inWholeExtent[3] - inWholeExtent[2] + 1;

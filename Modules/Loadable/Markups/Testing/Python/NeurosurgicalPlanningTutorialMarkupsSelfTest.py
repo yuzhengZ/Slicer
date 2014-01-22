@@ -525,6 +525,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     parameters = {}
     parameters['InputVolume'] = dtiVolume.GetID()
     baselinelabel293 = slicer.mrmlScene.GetFirstNodeByName("BaselineVolume-region 1-label")
+    # need to set 'InputROIPipelineInfo' to support VTK6
     parameters['InputROI'] = baselinelabel293.GetID()
     fibers = slicer.vtkMRMLFiberBundleNode()
     slicer.mrmlScene.AddNode(fibers)

@@ -812,6 +812,9 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
     }
 
   vtkSmartPointer<vtkImageData> ROI;
+#if (VTK_MAJOR_VERSION > 5)
+  vtkSmartPointer<vtkInformation> ROIPipelineInfo;
+#endif
   vtkNew<vtkImageCast> imageCast;
   vtkNew<vtkDiffusionTensorMathematics> math;
   vtkNew<vtkImageThreshold> th;
@@ -874,6 +877,9 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
     th->SetOutputScalarTypeToShort();
     th->Update();
     ROI = th->GetOutput();
+#if (VTK_MAJOR_VERSION > 5)
+    ROIPipelineInfo = th->GetOutputInformation(0);
+#endif
 
     // Set up the matrix that will take points in ROI
     // to RAS space.  Code assumes this is world space
@@ -997,6 +1003,9 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
   // PENDING: Do merging with input ROI
 
   seed->SetInputROI(ROI);
+#if (VTK_MAJOR_VERSION > 5)
+  seed->SetInputROIPipelineInfo(ROIPipelineInfo);
+#endif
   seed->SetInputROIValue(ROIlabel);
   seed->UseStartingThresholdOn();
   seed->SetStartingThreshold(linearMeasureStart);

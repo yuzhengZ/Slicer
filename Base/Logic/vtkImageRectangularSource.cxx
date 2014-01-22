@@ -413,8 +413,6 @@ void vtkImageRectangularSource::ExecuteData(vtkDataObject *output)
   void *ptr;
 
   vtkImageData *data = this->AllocateOutputData(output);
-
-#if (VTK_MAJOR_VERSION <= 5)
   extent = this->GetOutput()->GetUpdateExtent();
 #else
 void vtkImageRectangularSource::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)

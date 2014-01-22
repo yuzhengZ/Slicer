@@ -17,6 +17,7 @@
 // VTK includes
 #include <vtkCellArray.h>
 #include <vtkFloatArray.h>
+#include <vtkInformation.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
 #include <vtkMath.h>
@@ -25,6 +26,7 @@
 #include <vtkPolyData.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkSmartPointer.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkTimerLog.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -120,7 +122,12 @@ int main( int argc, char * argv[] )
 
   // 2. Find polylines
   int inExt[6];
+#if (VTK_MAJOR_VERSION <= 5)
   imageCastLabel_A->GetOutput()->GetWholeExtent(inExt);
+#else
+  imageCastLabel_A->GetOutputInformation(0)->Get(
+    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
+#endif
 
   vtkPolyData *input = vtkPolyData::SafeDownCast(readerPD->GetOutput());
 

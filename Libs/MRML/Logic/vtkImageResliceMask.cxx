@@ -738,7 +738,11 @@ int vtkImageResliceMask::RequestInformation(
   if (this->InformationInput)
     {
     this->InformationInput->UpdateInformation();
+#if (VTK_MAJOR_VERSION <= 5)
     this->InformationInput->GetWholeExtent(inWholeExt);
+#else
+    inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inWholeExt);
+#endif
     this->InformationInput->GetSpacing(inSpacing);
     this->InformationInput->GetOrigin(inOrigin);
     }
@@ -3366,7 +3370,7 @@ vtkMatrix4x4 *vtkImageResliceMask::GetIndexMatrix(vtkInformation *inInfo,
 void vtkImageResliceMask::ThreadedRequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *vtkNotUsed(outputVector),
+  vtkInformationVector *outputVector,
   vtkImageData ***inData,
   vtkImageData **outData,
   int outExt[6], int id)
@@ -3409,9 +3413,17 @@ void vtkImageResliceMask::ThreadedRequestData(
   void *backgroundMaskPtr = outData[1]->GetScalarPointerForExtent(outExt);
 
   int wholeExtent0[6];
-  outData[0]->GetWholeExtent(wholeExtent0);
   int wholeExtent1[6];
+#if (VTK_MAJOR_VERSION <= 5)
+  outData[0]->GetWholeExtent(wholeExtent0);
   outData[1]->GetWholeExtent(wholeExtent1);
+#else
+  vtkInformation *firstOutInfo =  outputVector->GetInformationObject(0);
+  firstOutInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wholeExtent0);
+  vtkInformation *secondOutInfo =  outputVector->GetInformationObject(1);
+  secondOutInfo->Get(
+    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wholeExtent1);
+#endif
 
   assert( wholeExtent0[0] <= outExt[0] && wholeExtent0[1] >= outExt[1] &&
           wholeExtent0[2] <= outExt[2] && wholeExtent0[3] >= outExt[3] &&

@@ -10,6 +10,8 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkImageData.h"
+#include <vtkInformation.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 
 #include <limits.h>
 #include <assert.h>

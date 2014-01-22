@@ -46,6 +46,9 @@ int main( int argc, char * argv[] )
 
 
     vtkSmartPointer<vtkImageData> ROI;
+#if (VTK_MAJOR_VERSION > 5)
+    vtkSmartPointer<vtkInformation> ROIPipelineInfo;
+#endif
     vtkNew<vtkITKArchetypeImageSeriesScalarReader> reader2;
     vtkNew<vtkImageCast> imageCast;
     vtkNew<vtkDiffusionTensorMathematics> math;
@@ -74,6 +77,9 @@ int main( int argc, char * argv[] )
       imageCast->Update();
 
       ROI = imageCast->GetOutput();
+#if (VTK_MAJOR_VERSION > 5)
+      ROIPipelineInfo = imageCast->GetOutputInformation(0);
+#endif
 
       // Set up the matrix that will take points in ROI
       // to RAS space.  Code assumes this is world space
@@ -113,6 +119,9 @@ int main( int argc, char * argv[] )
       th->SetOutputScalarTypeToShort();
       th->Update();
       ROI = th->GetOutput();
+#if (VTK_MAJOR_VERSION > 5)
+      ROIPipelineInfo = th->GetOutputInformation(0);
+#endif
 
       // Set up the matrix that will take points in ROI
       // to RAS space.  Code assumes this is world space
@@ -198,6 +207,9 @@ int main( int argc, char * argv[] )
     // PENDING: Do merging with input ROI
 
     seed->SetInputROI(ROI);
+#if (VTK_MAJOR_VERSION > 5)
+    seed->SetInputROIPipelineInfo(ROIPipelineInfo);
+#endif
     seed->SetInputROIValue(ROIlabel);
     seed->UseStartingThresholdOn();
     seed->SetStartingThreshold(ClTh);
