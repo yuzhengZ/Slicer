@@ -7,6 +7,7 @@
 #include "vtkPointData.h"
 #include "vtkObjectFactory.h"
 #include "vtkInformation.h"
+#include <vtkVersion.h>
 
 class AttributeMapType: public std::map<std::string, std::string> {};
 
@@ -207,7 +208,11 @@ void vtkNRRDWriter::WriteData()
   int vtkType;
   
     // Fill in image information.
+#if (VTK_MAJOR_VERSION <= 5)
   this->GetInput()->UpdateInformation();
+#else
+  this->UpdateInformation();
+#endif
   
   //vtkImageData *input = this->GetInput();
 

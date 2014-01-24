@@ -737,10 +737,11 @@ int vtkImageResliceMask::RequestInformation(
 
   if (this->InformationInput)
     {
-    this->InformationInput->UpdateInformation();
 #if (VTK_MAJOR_VERSION <= 5)
+    this->InformationInput->UpdateInformation();
     this->InformationInput->GetWholeExtent(inWholeExt);
 #else
+    this->UpdateInformation();
     inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inWholeExt);
 #endif
     this->InformationInput->GetSpacing(inSpacing);

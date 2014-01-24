@@ -154,6 +154,7 @@ public:
 
   ///  Override vtkSource's Update so that we can access
   /// this class's GetOutput(). vtkSource's GetOutput is not virtual.
+#if (VTK_MAJOR_VERSION <= 5)
   void Update()
     {
       if (this->GetOutput(0))
@@ -165,6 +166,7 @@ public:
           }
         }
     }
+#endif
   void HandleProgressEvent ()
   {
     if ( this->m_Process )
