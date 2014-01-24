@@ -836,10 +836,17 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   // stuff the images.
 //  reader1->Update();
 //  reader2->Update();
+#if (VTK_MAJOR_VERSION <= 5)
   petVolume = reader1->GetOutput();
   petVolume->Update();
   voiVolume = reader2->GetOutput();
   voiVolume->Update();
+#else
+  reader1->Update();
+  petVolume = reader1->GetOutput();
+  reader2->Update();
+  voiVolume = reader2->GetOutput();
+#endif
 
 
   //
@@ -1424,10 +1431,11 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     vtkImageAccumulate *labelstat = vtkImageAccumulate::New();
 #if (VTK_MAJOR_VERSION <= 5)
     labelstat->SetInput(petVolume);
+    labelstat->SetStencil(stencil->GetOutput() );
 #else
     labelstat->SetInputData(petVolume);
+    labelstat->SetStencilData(stencil->GetOutput() );
 #endif
-    labelstat->SetStencil(stencil->GetOutput() );
     labelstat->Update();
 
     stencil->Delete();

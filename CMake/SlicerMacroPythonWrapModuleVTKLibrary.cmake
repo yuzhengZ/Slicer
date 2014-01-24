@@ -60,7 +60,9 @@ macro(SlicerMacroPythonWrapModuleVTKLibrary)
 
   set(VTK_PYTHON_WRAPPED_LIBRARIES)
   foreach(lib ${VTK_LIBRARIES})
-    list(APPEND VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
+    if(${lib} MATCHES "^vtk.+") # exclude system libraries
+      list(APPEND VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
+    endif()
   endforeach()
 
   set(Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES)

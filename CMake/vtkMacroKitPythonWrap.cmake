@@ -59,9 +59,23 @@ macro(vtkMacroKitPythonWrap)
 
     set(VTK_KIT_PYTHON_LIBRARIES)
     foreach(c ${VTK_LIBRARIES})
-      list(APPEND VTK_KIT_PYTHON_LIBRARIES ${c}PythonD)
+      if(${c} MATCHES "^vtk.+") # exclude system libraries
+        list(APPEND VTK_KIT_PYTHON_LIBRARIES ${c}PythonD)
+      endif()
     endforeach()
-    target_link_libraries(${MY_KIT_NAME}PythonD ${MY_KIT_NAME} vtkPythonCore ${VTK_PYTHON_LIBRARIES}  ${VTK_KIT_PYTHON_LIBRARIES} ${MY_KIT_PYTHON_LIBRARIES})
+    if(${VTK_VERSION_MAJOR} GREATER 5)
+      set(VTK_PYTHON_CORE vtkWrappingPythonCore)
+    else()
+      set(VTK_PYTHON_CORE vtkPythonCore)
+    endif()
+    target_link_libraries(
+      ${MY_KIT_NAME}PythonD
+      ${MY_KIT_NAME}
+      ${VTK_PYTHON_CORE}
+      ${VTK_PYTHON_LIBRARIES}
+      ${VTK_KIT_PYTHON_LIBRARIES}
+      ${MY_KIT_PYTHON_LIBRARIES}
+      )
 
     install(TARGETS ${MY_KIT_NAME}PythonD
       RUNTIME DESTINATION ${MY_KIT_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries

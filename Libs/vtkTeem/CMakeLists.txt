@@ -110,27 +110,27 @@ add_library(${lib_name} ${srcs})
 
 if(${VTK_VERSION_MAJOR} GREATER 5)
   set(VTK_LIBRARIES
-  vtkCommonCore
-  vtkCommonDataModel
-  vtkCommonExecutionModel
-  vtkCommonMath
-  vtkCommonSystem
-  vtkCommonTransforms
-  vtkFiltersCore
-  vtkFiltersFlowPaths
-  vtkFiltersGeneral
-  vtkIOCore
-  vtkIOImage
-  vtkIOLegacy
-  vtkImagingCore
+    vtkCommonCore
+    vtkCommonDataModel
+    vtkCommonExecutionModel
+    vtkCommonMath
+    vtkCommonSystem
+    vtkCommonTransforms
+    vtkFiltersCore
+    vtkFiltersFlowPaths
+    vtkFiltersGeneral
+    vtkIOCore
+    vtkIOImage
+    vtkIOLegacy
+    vtkImagingCore
   )
 else()
   set(VTK_LIBRARIES
-  vtkCommon
-  vtkFiltering
-  vtkGraphics
-  vtkIO
-  vtkImaging
+    vtkCommon
+    vtkFiltering
+    vtkGraphics
+    vtkIO
+    vtkImaging
   )
 endif()
 
