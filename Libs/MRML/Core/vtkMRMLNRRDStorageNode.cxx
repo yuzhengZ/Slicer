@@ -287,7 +287,11 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
 
   vtkNew<vtkImageChangeInformation> ici;
+#if (VTK_MAJOR_VERSION <= 5)
   ici->SetInput (reader->GetOutput());
+#else
+  ici->SetInputConnection(reader->GetOutputPort());
+#endif
   ici->SetOutputSpacing( 1, 1, 1 );
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();

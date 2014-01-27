@@ -548,8 +548,12 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     
     vtkNew<vtkITKImageWriter> writer;
     writer->SetFileName(fullName.c_str());
-  
+
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( volNode->GetImageData() );
+#else
+    writer->SetInputData( volNode->GetImageData() );
+#endif
     writer->SetUseCompression(this->GetUseCompression());
     if(this->WriteFileFormat)
       {
@@ -682,8 +686,11 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   // set up the writer and write
   vtkNew<vtkITKImageWriter> writer;
   writer->SetFileName(tempName.c_str());
-  
-  writer->SetInput( volNode->GetImageData() );
+#if (VTK_MAJOR_VERSION <= 5)
+    writer->SetInput( volNode->GetImageData() );
+#else
+    writer->SetInputData( volNode->GetImageData() );
+#endif
   writer->SetUseCompression(this->GetUseCompression());
   if(this->WriteFileFormat)
     {

@@ -426,7 +426,11 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
     //--- Triangle strips are broken up into triangle polygons.
     //--- Polygons are not automatically re-stripped.
     vtkNew<vtkPolyDataNormals> normals;
+#if (VTK_MAJOR_VERSION <= 5)
     normals->SetInput(poly.GetPointer());
+#else
+    normals->SetInputData(poly.GetPointer());
+#endif
     //--- NOTE: This assumes a completely closed surface
     //---(i.e. no boundary edges) and no non-manifold edges.
     //--- If these constraints do not hold, the AutoOrientNormals

@@ -457,8 +457,12 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
   vtkNew<vtkITKImageWriter> writer;
   writer->SetFileName(fullName.c_str());
-  
+
+#if (VTK_MAJOR_VERSION <= 5)
   writer->SetInput( volNode->GetImageData() );
+#else
+  writer->SetInputData( volNode->GetImageData() );
+#endif
   if(this->WriteFileFormat)
     {
     writer->SetImageIOClassName(

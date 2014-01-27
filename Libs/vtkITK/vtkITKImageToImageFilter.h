@@ -200,7 +200,11 @@ public:
     this->vtkCast = vtkImageCast::New();
     this->vtkExporter = vtkImageExport::New();
     this->vtkImporter = vtkImageImport::New();
+#if (VTK_MAJOR_VERSION <= 5)
     this->vtkExporter->SetInput ( this->vtkCast->GetOutput() );
+#else
+    this->vtkExporter->SetInputConnection( this->vtkCast->GetOutputPort() );
+#endif
     this->m_Process = NULL;
     this->m_ProgressCommand = MemberCommand::New();
     this->m_ProgressCommand->SetCallbackFunction ( this, &vtkITKImageToImageFilter::HandleProgressEvent );

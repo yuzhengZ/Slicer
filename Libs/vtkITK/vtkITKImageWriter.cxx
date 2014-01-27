@@ -150,13 +150,13 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   // set pipeline for the image
 #if (VTK_MAJOR_VERSION <= 5)
   vtkFlip->SetInput( inputImage );
+  vtkExporter->SetInput ( inputImage );
 #else
   vtkFlip->SetInputData( inputImage );
+  vtkExporter->SetInputData ( inputImage );
 #endif
   vtkFlip->SetFilteredAxis(1);
   vtkFlip->FlipAboutOriginOn();
-
-  vtkExporter->SetInput ( inputImage );
 
   ConnectPipelines(vtkExporter, itkImporter);
 
