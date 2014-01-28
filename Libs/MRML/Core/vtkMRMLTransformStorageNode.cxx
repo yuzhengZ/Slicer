@@ -552,7 +552,11 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
           }
         }
 
+#if (VTK_MAJOR_VERSION <= 5)
       vtkgrid->SetDisplacementGrid( vtkgridimage );
+#else
+      vtkgrid->SetDisplacementGridData( vtkgridimage );
+#endif
       vtkgridimage->Delete();
 
       // Set the matrix on the node

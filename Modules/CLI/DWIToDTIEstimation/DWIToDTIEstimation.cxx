@@ -148,10 +148,11 @@ int main( int argc, char * argv[] )
       tensorMask->SetMaskAlpha(0.0);
 #if (VTK_MAJOR_VERSION <= 5)
       tensorMask->SetInput(tensorImage);
+      tensorMask->SetMaskInput(mask.GetPointer());
 #else
       tensorMask->SetInputData(tensorImage);
+      tensorMask->SetMaskInputData(mask.GetPointer());
 #endif
-      tensorMask->SetMaskInput(mask.GetPointer());
       tensorMask->Update();
       tensorImage = tensorMask->GetOutput();
       }

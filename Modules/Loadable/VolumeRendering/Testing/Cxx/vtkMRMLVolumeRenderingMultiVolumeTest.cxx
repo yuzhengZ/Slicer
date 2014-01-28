@@ -283,10 +283,11 @@ int vtkMRMLVolumeRenderingMultiVolumeTest(int vtkNotUsed(argc),
     vtkNew<vtkImageDifference> diff;
 #if (VTK_MAJOR_VERSION <= 5)
     diff->SetInput(referenceScreenShot.GetPointer());
+    diff->SetImage(screenShotImage);
 #else
     diff->SetInputData(referenceScreenShot.GetPointer());
+    diff->SetImageData(screenShotImage);
 #endif
-    diff->SetImage(screenShotImage);
     diff->Update();
     double error = diff->GetThresholdedError();
     if (error > 0)

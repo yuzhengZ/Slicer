@@ -1050,7 +1050,9 @@ int main(int argc, char * argv[])
       imageThreshold->SetOutValue(0);
 
       imageThreshold->ThresholdBetween(i, i);
+#if (VTK_MAJOR_VERSION <= 5)
       (imageThreshold->GetOutput())->ReleaseDataFlagOn();
+#endif
       imageThreshold->ReleaseDataFlagOn();
 
       if (imageToStructuredPoints)
@@ -1110,7 +1112,9 @@ int main(int argc, char * argv[])
       // threshold->SetAttributeModeToUseCellData();
 
       threshold->ThresholdBetween(i, i);
+#if (VTK_MAJOR_VERSION <= 5)
       (threshold->GetOutput())->ReleaseDataFlagOn();
+#endif
       threshold->ReleaseDataFlagOn();
 
       if (geometryFilter)
@@ -1157,7 +1161,11 @@ int main(int argc, char * argv[])
       mcubes->ComputeScalarsOff();
       mcubes->ComputeGradientsOff();
       mcubes->ComputeNormalsOff();
+#if (VTK_MAJOR_VERSION <= 5)
       (mcubes->GetOutput())->ReleaseDataFlagOn();
+#else
+      mcubes->ReleaseDataFlagOn();
+#endif
       try
         {
         mcubes->Update();
@@ -1305,7 +1313,11 @@ int main(int argc, char * argv[])
       decimator->SetTargetReduction(Decimate);
       // decimator->SetInitialError(0.0002);
       // decimator->SetErrorIncrement(0.002);
+#if (VTK_MAJOR_VERSION <= 5)
       (decimator->GetOutput())->ReleaseDataFlagOff();
+#else
+      decimator->ReleaseDataFlagOff();
+#endif
 
       try
         {
@@ -1397,7 +1409,11 @@ int main(int argc, char * argv[])
           }
         reverser->SetInputConnection(decimator->GetOutputPort());
         reverser->ReverseNormalsOn();
+#if (VTK_MAJOR_VERSION <= 5)
         (reverser->GetOutput())->ReleaseDataFlagOn();
+#else
+        reverser->ReleaseDataFlagOn();
+#endif
         }
 
       if (JointSmoothing == 0)
@@ -1443,8 +1459,11 @@ int main(int argc, char * argv[])
           smootherSinc->SetNumberOfIterations(Smooth);
           smootherSinc->FeatureEdgeSmoothingOff();
           smootherSinc->BoundarySmoothingOff();
+#if (VTK_MAJOR_VERSION <= 5)
           (smootherSinc->GetOutput())->ReleaseDataFlagOn();
-          // smootherSinc->ReleaseDataFlagOn();
+#else
+          smootherSinc->ReleaseDataFlagOn();
+#endif
           try
             {
             smootherSinc->Update();
@@ -1495,8 +1514,11 @@ int main(int argc, char * argv[])
           smootherPoly->SetNumberOfIterations(Smooth);
           smootherPoly->FeatureEdgeSmoothingOff();
           smootherPoly->BoundarySmoothingOff();
+#if (VTK_MAJOR_VERSION <= 5)
           (smootherPoly->GetOutput())->ReleaseDataFlagOn();
-          // smootherPoly->ReleaseDataFlagOn();
+#else
+          smootherPoly->ReleaseDataFlagOn();
+#endif
           try
             {
             smootherPoly->Update();
@@ -1605,8 +1627,11 @@ int main(int argc, char * argv[])
         // transformIJKtoRAS->GetMatrix()->Print(std::cout);
         }
 
+#if (VTK_MAJOR_VERSION <= 5)
       (transformer->GetOutput())->ReleaseDataFlagOn();
-
+#else
+      transformer->ReleaseDataFlagOn();
+#endif
       if (normals)
         {
 #if (VTK_MAJOR_VERSION <= 5)
@@ -1641,7 +1666,11 @@ int main(int argc, char * argv[])
       normals->SetFeatureAngle(60);
       normals->SetSplitting(SplitNormals);
 
+#if (VTK_MAJOR_VERSION <= 5)
       (normals->GetOutput())->ReleaseDataFlagOn();
+#else
+      normals->ReleaseDataFlagOn();
+#endif
 
       if (stripper)
         {
@@ -1667,7 +1696,11 @@ int main(int argc, char * argv[])
 
       stripper->SetInputConnection(normals->GetOutputPort());
 
+#if (VTK_MAJOR_VERSION <= 5)
       (stripper->GetOutput())->ReleaseDataFlagOff();
+#else
+      stripper->ReleaseDataFlagOff();
+#endif
 
       // the poly data output from the stripper can be set as an input to a
       // model's polydata

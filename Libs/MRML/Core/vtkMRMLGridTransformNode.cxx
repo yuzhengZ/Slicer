@@ -224,7 +224,11 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
         }
       }
     }
+#if (VTK_MAJOR_VERSION <= 5)
   vtkgrid->SetDisplacementGrid(image.GetPointer());
+#else
+  vtkgrid->SetDisplacementGridData(image.GetPointer());
+#endif
   this->SetAndObserveWarpTransformToParent(vtkgrid.GetPointer());
 }
 
