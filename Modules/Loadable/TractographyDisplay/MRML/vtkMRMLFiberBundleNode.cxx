@@ -254,6 +254,7 @@ void vtkMRMLFiberBundleNode::UpdateReferenceID(const char *oldID, const char *ne
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkPolyData* vtkMRMLFiberBundleNode::GetFilteredPolyData()
 {
   if (this->SelectWithAnnotationNode)
@@ -265,6 +266,23 @@ vtkPolyData* vtkMRMLFiberBundleNode::GetFilteredPolyData()
     return this->CleanPolyDataPostSubsampling->GetOutput();
     }
 }
+#else
+vtkAlgorithm* vtkMRMLFiberBundleNode::GetFilteredPolyDataFilter()
+{
+  if (this->SelectWithAnnotationNode)
+    {
+    return this->CleanPolyDataPostROISelection;
+    }
+  else
+    {
+    return this->CleanPolyDataPostSubsampling;
+    }
+}
+vtkPolyData* vtkMRMLFiberBundleNode::GetFilteredPolyData()
+{
+  return vtkPolyData::SafeDownCast(this->GetFilteredPolyDataFilter()->GetOutputDataObject(0));
+}
+#endif
 
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::GetLineDisplayNode()
@@ -442,7 +460,11 @@ void vtkMRMLFiberBundleNode
 ::SetPolyDataToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode)
 {
   assert(modelDisplayNode->IsA("vtkMRMLFiberBundleDisplayNode"));
+#if (VTK_MAJOR_VERSION <= 5)
   modelDisplayNode->SetInputPolyData(this->GetFilteredPolyData());
+#else
+  modelDisplayNode->SetInputPolyData(this->GetFilteredPolyDataFilter());
+#endif
 }
 
 //----------------------------------------------------------------------------

@@ -1453,7 +1453,11 @@ void vtkMRMLSliceLogic::DeleteSliceModel()
     {
     this->SliceModelNode->SetAndObserveDisplayNodeID(0);
     this->SliceModelNode->SetAndObserveTransformNodeID(0);
+#if (VTK_MAJOR_VERSION <= 5)
     this->SliceModelNode->SetAndObservePolyData(0);
+#else
+    this->SliceModelNode->SetAndObservePolyFilterAndData(0);
+#endif
     }
   if (this->SliceModelDisplayNode != 0)
     {
@@ -1520,8 +1524,13 @@ void vtkMRMLSliceLogic::CreateSliceModel()
 
     // create plane slice
     vtkNew<vtkPlaneSource> planeSource;
+#if (VTK_MAJOR_VERSION <= 5)
     planeSource->GetOutput()->Update();
     this->SliceModelNode->SetAndObservePolyData(planeSource->GetOutput());
+#else
+    planeSource->Update();
+    this->SliceModelNode->SetAndObservePolyFilterAndData(planeSource.GetPointer());
+#endif
     this->SliceModelNode->SetDisableModifiedEvent(0);
 
     // create display node and set texture

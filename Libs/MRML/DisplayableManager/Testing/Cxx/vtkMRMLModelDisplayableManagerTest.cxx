@@ -95,7 +95,12 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
   vtkNew<vtkSphereSource> sphereSource;
   sphereSource->SetRadius(10.);
   sphereSource->Update();
+#if (VTK_MAJOR_VERSION <= 5)
   modelNode->SetAndObservePolyData(sphereSource->GetOutput());
+#else
+  modelNode->SetAndObservePolyFilterAndData(sphereSource.GetPointer());
+#endif
+
   scene->AddNode(modelNode.GetPointer());
 
   vtkNew<vtkMRMLModelDisplayNode> modelDisplayNode;

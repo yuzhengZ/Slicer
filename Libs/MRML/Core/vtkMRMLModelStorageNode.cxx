@@ -135,7 +135,11 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       vtkNew<vtkBYUReader> reader;
       reader->SetGeometryFileName(fullName.c_str());
       reader->Update();
+#if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
+#else
+      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
       }
     else if (extension == std::string(".vtk"))
       {
@@ -156,7 +160,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         unstructuredGridReader->Update();
         surfaceFilter->SetInputConnection(unstructuredGridReader->GetOutputPort());
         surfaceFilter->Update();
-        output = surfaceFilter->GetOutput();
+        output = reader->GetOutput();
         }
       else
         {
@@ -170,7 +174,11 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
       else
         {
+#if (VTK_MAJOR_VERSION <= 5)
         modelNode->SetAndObservePolyData(output);
+#else
+        modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
         }
       }
     else if (extension == std::string(".vtp"))
@@ -178,28 +186,43 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       vtkNew<vtkXMLPolyDataReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
+#if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
+#else
+      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
       }
     else if (extension == std::string(".stl"))
       {
       vtkNew<vtkSTLReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
+#if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
+      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
       }
     else if (extension == std::string(".ply"))
       {
       vtkNew<vtkPLYReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
+#if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
+#else
+      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
       }
     else if (extension == std::string(".obj"))
       {
       vtkNew<vtkOBJReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
+#if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
+#else
+      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
       }
     else if (extension == std::string(".meta"))  // model in meta format
       {

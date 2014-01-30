@@ -101,7 +101,11 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkPolyData* polyData)
   this->GetMRMLScene()->AddNode(display.GetPointer());
 
   vtkNew<vtkMRMLModelNode> model;
+#if (VTK_MAJOR_VERSION > 5)
   model->SetAndObservePolyData(polyData);
+#else
+  model->SetAndObservePolyFilterAndData(NULL, polyData);
+#endif
   model->SetAndObserveDisplayNodeID(display->GetID());
   this->GetMRMLScene()->AddNode(model.GetPointer());
 
@@ -444,7 +448,11 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
     normals->ConsistencyOn();
 
     normals->Update();
+#if (VTK_MAJOR_VERSION <= 5)
     modelOut->SetAndObservePolyData(normals->GetOutput());
+#else
+    modelOut->SetAndObservePolyFilterAndData(normals.GetPointer());
+#endif
    }
 
   modelOut->SetAndObserveTransformNodeID(mtnode == NULL ? NULL : mtnode->GetID());

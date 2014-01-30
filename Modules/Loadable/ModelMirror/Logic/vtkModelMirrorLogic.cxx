@@ -548,8 +548,15 @@ int vtkModelMirrorLogic::FlipNormals()
 #if (VTK_MAJOR_VERSION <= 5)
   normals->SetInput ( surface );
 #else
-  normals->SetInputConnection(
-    this->ModelMirrorNode->GetOutputModel()->GetPolyDataFilter()->GetOutputPort());
+  vtkAlgorithm *polyDataFilter = this->ModelMirrorNode->GetOutputModel()->GetPolyDataFilter();
+  if (polyDataFilter != NULL)
+    {
+    normals->SetInputConnection(polyDataFilter->GetOutputPort());
+    }
+  else
+    {
+    normals->SetInputData(surface);
+    }
 #endif
   //--- NOTE: This assumes a completely closed surface
   //---(i.e. no boundary edges) and no non-manifold edges.
@@ -580,7 +587,11 @@ int vtkModelMirrorLogic::FlipNormals()
     cleaner->Update();
 
     //--- refresh polydata
+#if (VTK_MAJOR_VERSION <= 5)
     this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyData ( cleaner->GetOutput() );
+#else
+    this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyFilterAndData ( cleaner );
+#endif
     cleaner->Delete();
     cleaner= NULL;
     }

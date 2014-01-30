@@ -47,12 +47,19 @@ vtkMRMLNodeNewMacro(vtkMRMLModelNode);
 vtkMRMLModelNode::vtkMRMLModelNode()
 {
   this->PolyData = NULL;
+#if (VTK_MAJOR_VERSION > 5)
+  this->PolyDataFilter = NULL;
+#endif
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLModelNode::~vtkMRMLModelNode()
 {
+#if (VTK_MAJOR_VERSION > 5)
   this->SetAndObservePolyData(NULL);
+#else
+  this->SetAndObservePolyFilterAndData(NULL);
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -67,6 +74,9 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
     // of restoring from SceneViews, where the nodes will not 
     // have bulk data.
     this->SetAndObservePolyData(modelNode->GetPolyData());
+#if (VTK_MAJOR_VERSION > 5)
+    this->SetAndObservePolyFilterAndData(modelNode->GetPolyDataFilter(), modelNode->GetPolyData());
+#endif
     }
   this->EndModify(disabledModify);
 }
@@ -141,6 +151,24 @@ void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *polyData)
   this->Modified();
   this->InvokeEvent( vtkMRMLModelNode::PolyDataModifiedEvent , this);
 }
+
+#if (VTK_MAJOR_VERSION > 5)
+void vtkMRMLModelNode::SetAndObservePolyFilterAndData(vtkAlgorithm *filter,
+                                                      vtkPolyData *polyData)
+{
+  if (filter != this->PolyDataFilter)
+    {
+    this->PolyDataFilter = filter;
+    }
+
+  vtkPolyData *data = polyData;
+  if (filter != NULL)
+    {
+    data = vtkPolyData::SafeDownCast(filter->GetOutputDataObject(0));
+    }
+  this->SetAndObservePolyData(data);
+}
+#endif
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::AddPointScalars(vtkDataArray *array)
@@ -286,7 +314,14 @@ int vtkMRMLModelNode::SetActivePointScalars(const char *scalarName, int attribut
     {
     return -1;
     }
+#if (VTK_MAJOR_VERSION <= 5)
   this->PolyData->Update();
+#else
+  if (this->PolyDataFilter != NULL)
+  {
+    this->PolyDataFilter->Update();
+  }
+#endif
   return this->PolyData->GetPointData()->SetActiveAttribute(
     scalarName, attributeType);
 }
@@ -497,14 +532,26 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
 #if (VTK_MAJOR_VERSION <= 5)
   transformFilter->SetInput(this->GetPolyData());
 #else
-  transformFilter->SetInputData(this->GetPolyData());
+  vtkAlgorithm *polyDataFilter = this->GetPolyDataFilter();
+  if(polyDataFilter != NULL)
+    {
+    transformFilter->SetInputConnection(polyDataFilter->GetOutputPort());
+    }
+  else
+    {
+    transformFilter->SetInputData(this->GetPolyData());
+    }
 #endif
 
   transformFilter->SetTransform(transform);
   transformFilter->Update();
 
+#if (VTK_MAJOR_VERSION <= 5)
   bool isInPipeline = !vtkTrivialProducer::SafeDownCast(
     this->GetPolyData()->GetProducerPort()->GetProducer());
+#else
+  bool isInPipeline = this->GetPolyDataFilter();
+#endif
   vtkSmartPointer<vtkPolyData> polyData;
   if (isInPipeline)
     {
@@ -517,7 +564,11 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   polyData->DeepCopy(transformFilter->GetOutput());
   if (isInPipeline)
     {
+#if (VTK_MAJOR_VERSION <= 5)
     this->SetAndObservePolyData(polyData);
+#else
+    this->SetAndObservePolyFilterAndData(transformFilter);
+#endif
     }
   transformFilter->Delete();
 }
@@ -644,7 +695,11 @@ void vtkMRMLModelNode
 ::SetPolyDataToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode)
 {
   assert(modelDisplayNode);
+#if (VTK_MAJOR_VERSION <= 5)
   modelDisplayNode->SetInputPolyData(this->PolyData);
+#else
+  modelDisplayNode->SetInputPolyData(this->GetPolyDataFilter());
+#endif
 }
 
 //---------------------------------------------------------------------------

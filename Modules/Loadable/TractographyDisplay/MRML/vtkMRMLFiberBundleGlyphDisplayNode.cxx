@@ -274,7 +274,11 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
         }
       else if (this->GetInputPolyData())
         {
+#if (VTK_MAJOR_VERSION <= 5)
         this->GetOutputPolyData()->Update();
+#else
+        this->GetOutputFilter()->Update();
+#endif
         this->GetOutputPolyData()->GetScalarRange(range);
         }
       }

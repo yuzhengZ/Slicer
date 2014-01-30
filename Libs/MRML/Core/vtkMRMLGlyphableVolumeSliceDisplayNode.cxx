@@ -172,12 +172,21 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSliceImagePort(vtkAlgorithmOutpu
 #endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLGlyphableVolumeSliceDisplayNode
 ::SetInputToPolyDataPipeline(vtkPolyData *vtkNotUsed(glyphPolyData))
 {
   vtkErrorMacro(<< this->GetClassName() <<" ("<<this
                     <<"): SetInputPolyData method should not be used");
 }
+#else
+void vtkMRMLGlyphableVolumeSliceDisplayNode
+::SetInputToPolyDataPipeline(vtkAlgorithm *vtkNotUsed(polyDataFilter), vtkPolyData *vtkNotUsed(glyphPolyData))
+{
+  vtkErrorMacro(<< this->GetClassName() <<" ("<<this
+                    <<"): SetInputPolyData method should not be used");
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetOutputPolyData()

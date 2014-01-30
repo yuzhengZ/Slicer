@@ -1578,7 +1578,11 @@ const char* vtkMRMLModelDisplayableManager
     vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
     if (modelDisplayNode && modelDisplayNode->GetOutputPolyData())
       {
+#if (VTK_MAJOR_VERSION <= 5)
       modelDisplayNode->GetOutputPolyData()->Update();
+#else
+      modelDisplayNode->GetOutputFilter()->Update();
+#endif
       }
     activeScalarName = displayNode->GetActiveScalarName();
     }
@@ -1590,7 +1594,16 @@ const char* vtkMRMLModelDisplayableManager
     {
     if (modelNode->GetPolyData())
       {
+#if (VTK_MAJOR_VERSION <= 5)
       modelNode->GetPolyData()->Update();
+#else
+     vtkAlgorithm *polyDataFilter = modelNode->GetPolyDataFilter();
+     if (polyDataFilter != NULL)
+       {
+       polyDataFilter->Update();
+       }
+#endif
+
       }
     activeScalarName =
       modelNode->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS);

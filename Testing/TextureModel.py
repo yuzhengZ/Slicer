@@ -29,6 +29,7 @@ def newPlane():
 
   # set up model node
   modelNode = Slicer.slicer.vtkMRMLModelNode()
+  # need to update this to support VTK 6
   modelNode.SetAndObservePolyData( plane.GetOutput() )
   modelNode.SetAndObserveDisplayNodeID( modelDisplayNode.GetID() )
   modelNode.SetAndObserveTransformNodeID( transformNode.GetID() )

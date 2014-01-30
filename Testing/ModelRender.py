@@ -15,6 +15,7 @@ def newSphere(name=''):
   modelDisplayNode.SetColor(random.random(), random.random(), random.random())
   Slicer.slicer.MRMLScene.AddNode(modelDisplayNode)
   modelNode = Slicer.slicer.vtkMRMLModelNode()
+  # need to update this to support VTK 6
   modelNode.SetAndObservePolyData( sphere.GetOutput() )
   modelNode.SetAndObserveDisplayNodeID( modelDisplayNode.GetID() )
   modelNode.SetName(name)
