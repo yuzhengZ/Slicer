@@ -436,7 +436,11 @@ int main(int argc, char * argv[])
   ici->Update();
 
   image = ici->GetOutput();
+#if (VTK_MAJOR_VERSION <= 5)
   image->Update();
+#else
+  ici->Update();
+#endif
 
   // add padding if flag is set
   if (Pad)
@@ -1706,7 +1710,11 @@ int main(int argc, char * argv[])
       // model's polydata
       try
         {
+#if (VTK_MAJOR_VERSION <= 5)
         (stripper->GetOutput())->Update();
+#else
+        stripper->Update();
+#endif
         }
       catch(...)
         {

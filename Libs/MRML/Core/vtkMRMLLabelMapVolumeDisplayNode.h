@@ -17,6 +17,7 @@
 
 #include "vtkMRMLVolumeDisplayNode.h"
 
+class vtkImageAlgorithm;
 class vtkImageMapToColors;
 
 /// \brief MRML node for representing a volume display attributes.
@@ -49,9 +50,15 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
 
   /// Get the pipeline input
   virtual vtkImageData* GetInputImageData();
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkImageAlgorithm* GetInputImageFilter();
+#endif
 
   /// Gets the pipeline output
   virtual vtkImageData* GetOutputImageData();
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkImageAlgorithm* GetOutputImageFilter();
+#endif
 
   virtual void UpdateImageDataPipeline();
 

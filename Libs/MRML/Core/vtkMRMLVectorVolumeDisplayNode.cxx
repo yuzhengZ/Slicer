@@ -91,16 +91,40 @@ void vtkMRMLVectorVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageD
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->ShiftScale->GetInput());
 }
+#else
+vtkImageAlgorithm* vtkMRMLVectorVolumeDisplayNode::GetInputImageFilter()
+{
+    return vtkImageAlgorithm::SafeDownCast(this->ShiftScale);
+}
+
+vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetInputImageData()
+{
+   return vtkImageData::SafeDownCast(this->GetInputImageFilter()->GetOutput());
+}
+#endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetOutputImageData()
 {
   return this->AppendComponents->GetOutput();
 }
+#else
+vtkImageAlgorithm* vtkMRMLVectorVolumeDisplayNode::GetOutputImageFilter()
+{
+    return this->AppendComponents;
+}
+
+vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetOutputImageData()
+{
+   return this->GetOutputImageFilter()->GetOutput();
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetScalarImageData()

@@ -19,6 +19,7 @@
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 
 // VTK includes
+class vtkImageAlgorithm;
 class vtkImageData;
 class vtkImageExtractComponents;
 
@@ -59,10 +60,15 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
   /// 
   /// Get the pipeline input
   virtual vtkImageData* GetInputImageData();
-
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkImageAlgorithm* GetInputImageFilter();
+#endif
   /// 
   /// Get the pipeline output
   virtual vtkImageData* GetOutputImageData();
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkImageAlgorithm* GetOutputImageFilter();
+#endif
 
   virtual void UpdateImageDataPipeline();
 

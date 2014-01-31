@@ -21,6 +21,7 @@ class vtkMRMLGlyphableVolumeSliceDisplayNode;
 
 class vtkDiffusionTensorMathematics;
 class vtkDiffusionTensorGlyph;
+class vtkImageAlgorithm;
 class vtkImageCast;
 class vtkImageData;
 class vtkImageExtractComponents;
@@ -145,9 +146,15 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   /// Get the input of the pipeline
   virtual vtkImageData* GetInputImageData();
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkImageAlgorithm* GetInputImageFilter();
+#endif
 
   /// Get the output of the pipeline
   virtual vtkImageData* GetOutputImageData();
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkImageAlgorithm* GetOutputImageFilter();
+#endif
 
   /// Reimplemented to return 0 when the background mask is not used.
   virtual vtkImageData* GetBackgroundImageData();

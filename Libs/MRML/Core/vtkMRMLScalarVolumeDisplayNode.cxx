@@ -194,16 +194,40 @@ vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageData()
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->MapToWindowLevelColors->GetInput());
 }
+#else
+vtkImageAlgorithm* vtkMRMLScalarVolumeDisplayNode::GetInputImageFilter()
+{
+  return vtkImageAlgorithm::SafeDownCast(this->MapToWindowLevelColors);
+}
+
+vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetInputImageData()
+{
+  return vtkImageData::SafeDownCast(this->GetInputImageFilter()->GetInput());
+}
+#endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetOutputImageData()
 {
   return this->AppendComponents->GetOutput();
 }
+#else
+vtkImageAlgorithm* vtkMRMLScalarVolumeDisplayNode::GetOutputImageFilter()
+{
+    return this->AppendComponents;
+}
+
+vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetOutputImageData()
+{
+   return this->GetOutputImageFilter()->GetOutput();
+}
+#endif
 
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
@@ -677,7 +701,11 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
     vtkDebugMacro( << "No valid image data, returning default values [0, 255]");
     return;
     }
+#if (VTK_MAJOR_VERSION <= 5)
   imageData->Update();
+#else
+  this->GetInputImageFilter()->Update();
+#endif
   imageData->GetScalarRange(range);
   if (imageData->GetNumberOfScalarComponents() >=3 &&
       fabs(range[0]) < 0.000001 && fabs(range[1]) < 0.000001) 

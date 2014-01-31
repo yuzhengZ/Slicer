@@ -446,10 +446,11 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
   ici->SetOutputSpacing(sp);
 #if (VTK_MAJOR_VERSION <= 5)
   ici->SetInput(volumeNode->GetImageData());
+  ici->GetOutput()->Update();
 #else
   ici->SetInputData(volumeNode->GetImageData());
+  ici->Update();
 #endif
-  ici->GetOutput()->Update();
 
   seed->SetInputTensorField(ici->GetOutput());
 
@@ -839,7 +840,11 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
     vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
     ici->SetOutputSpacing(sp);
     ici->SetInputConnection(imageCast->GetOutputPort());
+#if (VTK_MAJOR_VERSION <= 5)
     ici->GetOutput()->Update();
+#else
+    ici->Update();
+#endif
 
     ROI = ici->GetOutput();
 

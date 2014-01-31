@@ -30,6 +30,7 @@ Version:   $Revision$
 #include "ModuleDescriptionParser.h"
 #include "ModuleDescription.h"
 #include "vtkDebugLeaks.h"
+#include <vtkVersion.h>
 
 int main(int argc, char * argv[])
 {
@@ -107,8 +108,13 @@ int main(int argc, char * argv[])
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
 
+#if (VTK_MAJOR_VERSION <= 5)
   image = ici->GetOutput();
   image->Update();
+#else
+  ici->Update();
+  image = ici->GetOutput();
+#endif
 
   // Get the dimensions, marching cubes only works on 3d
   int extents[6];
@@ -149,7 +155,11 @@ int main(int argc, char * argv[])
   mcubes->ComputeScalarsOff();
   mcubes->ComputeGradientsOff();
   mcubes->ComputeNormalsOff();
+#if (VTK_MAJOR_VERSION <= 5)
   (mcubes->GetOutput() )->ReleaseDataFlagOn();
+#else
+  mcubes->ReleaseDataFlagOn();
+#endif
   mcubes->Update();
 
   if( debug )
@@ -170,7 +180,12 @@ int main(int argc, char * argv[])
 
   decimator->SetMaximumError(1);
   decimator->SetTargetReduction(Decimate);
+#if (VTK_MAJOR_VERSION <= 5)
   (decimator->GetOutput() )->ReleaseDataFlagOff();
+#else
+  decimator->ReleaseDataFlagOff();
+#endif
+
 
   std::cout << "Decimating ... \n";
   // TODO add progress to decimator
@@ -194,7 +209,11 @@ int main(int argc, char * argv[])
                                          1.0 / 7.0, 2.0 / 7.0);
     reverser->SetInputConnection(decimator->GetOutputPort() );
     reverser->ReverseNormalsOn();
+#if (VTK_MAJOR_VERSION <= 5)
     (reverser->GetOutput() )->ReleaseDataFlagOn();
+#else
+    reverser->ReleaseDataFlagOn();
+#endif
     // TODO: add progress
     }
 
@@ -220,7 +239,11 @@ int main(int argc, char * argv[])
   smootherSinc->SetNumberOfIterations(Smooth);
   smootherSinc->FeatureEdgeSmoothingOff();
   smootherSinc->BoundarySmoothingOff();
+#if (VTK_MAJOR_VERSION <= 5)
   (smootherSinc->GetOutput() )->ReleaseDataFlagOn();
+#else
+  smootherSinc->ReleaseDataFlagOn();
+#endif
 
   // TODO: insert progress
   std::cout << "Smoothing...\n";
@@ -248,7 +271,11 @@ int main(int argc, char * argv[])
     }
 
   // TODO: add progress
+#if (VTK_MAJOR_VERSION <= 5)
   (transformer->GetOutput() )->ReleaseDataFlagOn();
+#else
+  transformer->ReleaseDataFlagOn();
+#endif
 
   normals = vtkPolyDataNormals::New();
   vtkPluginFilterWatcher watchNormals(normals,
@@ -268,7 +295,11 @@ int main(int argc, char * argv[])
   normals->SetSplitting(SplitNormals);
   std::cout << "Splitting normals...\n";
   // TODO: add progress
+#if (VTK_MAJOR_VERSION <= 5)
   (normals->GetOutput() )->ReleaseDataFlagOn();
+#else
+  normals->ReleaseDataFlagOn();
+#endif
 
   stripper = vtkStripper::New();
   vtkPluginFilterWatcher watchStripper(stripper,
@@ -278,11 +309,19 @@ int main(int argc, char * argv[])
   stripper->SetInputConnection(normals->GetOutputPort() );
   std::cout << "Stripping...\n";
   // TODO: add progress
+#if (VTK_MAJOR_VERSION <= 5)
   (stripper->GetOutput() )->ReleaseDataFlagOff();
+#else
+  stripper->ReleaseDataFlagOff();
+#endif
+
 
   // the poly data output from the stripper can be set as an input to a model's polydata
+#if (VTK_MAJOR_VERSION <= 5)
   (stripper->GetOutput() )->Update();
-
+#else
+  stripper->Update();
+#endif
   // but for now we're just going to write it out
 
   writer = vtkXMLPolyDataWriter::New();

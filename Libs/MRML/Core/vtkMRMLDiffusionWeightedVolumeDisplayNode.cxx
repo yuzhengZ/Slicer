@@ -118,16 +118,40 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->ExtractComponent->GetInput());
 }
+#else
+vtkImageAlgorithm* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageFilter()
+{
+  return vtkImageAlgorithm::SafeDownCast(this->ExtractComponent);
+}
+
+vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageData()
+{
+  return vtkImageData::SafeDownCast(this->GetInputImageFilter()->GetInput());
+}
+#endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageData()
 {
   return this->AppendComponents->GetOutput();
 }
+#else
+vtkImageAlgorithm* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageFilter()
+{
+  return this->AppendComponents;
+}
+
+vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageData()
+{
+  return this->GetOutputImageFilter()->GetOutput();
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetScalarImageData()

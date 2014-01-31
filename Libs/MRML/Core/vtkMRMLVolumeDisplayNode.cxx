@@ -17,6 +17,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLVolumeNode.h"
 
 // VTK includes
+#include <vtkImageAlgorithm.h>
 #include <vtkCommand.h>
 #include <vtkImageData.h>
 
@@ -119,6 +120,14 @@ vtkImageData* vtkMRMLVolumeDisplayNode::GetInputImageData()
   return NULL;
 }
 
+#if (VTK_MAJOR_VERSION > 5)
+vtkImageAlgorithm* vtkMRMLVolumeDisplayNode::GetInputImageFilter()
+{
+  return NULL;
+}
+
+#endif
+
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::SetBackgroundImageData(vtkImageData* vtkNotUsed(imageData))
 {
@@ -135,6 +144,13 @@ vtkImageData* vtkMRMLVolumeDisplayNode::GetOutputImageData()
 {
   return NULL;
 }
+
+#if (VTK_MAJOR_VERSION > 5)
+vtkImageAlgorithm* vtkMRMLVolumeDisplayNode::GetOutputImageFilter()
+{
+  return NULL;
+}
+#endif
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::UpdateImageDataPipeline()
@@ -161,6 +177,11 @@ vtkImageData* vtkMRMLVolumeDisplayNode::GetUpToDateImageData()
     {
     return NULL;
     }
+#if (VTK_MAJOR_VERSION <= 5)
   imageData->Update();
+#else
+  this->GetOutputImageFilter()->Update();
+  imageData = this->GetOutputImageData();
+#endif
   return imageData;
 }

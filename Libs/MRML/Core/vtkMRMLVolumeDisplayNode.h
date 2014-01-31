@@ -21,6 +21,7 @@ class vtkMRMLScene;
 class vtkMRMLVolumeNode;
 
 // VTK includes
+class vtkImageAlgorithm;
 class vtkImageData;
 
 /// \brief MRML node for representing a volume display attributes.
@@ -87,9 +88,15 @@ public:
 
   /// Gets the pipeline input. To be reimplemented in subclasses.
   virtual vtkImageData* GetInputImageData();
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkImageAlgorithm* GetInputImageFilter();
+#endif
 
   /// Gets the pipeline output. To be reimplemented in subclasses.
   virtual vtkImageData* GetOutputImageData();
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkImageAlgorithm* GetOutputImageFilter();
+#endif
 
   /// 
   /// Update the pipeline based on this node attributes

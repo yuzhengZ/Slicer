@@ -19,6 +19,7 @@
 #include "vtkMRMLVolumeDisplayNode.h"
 
 // VTK includes
+class vtkImageAlgorithm;
 class vtkImageAccumulate;
 class vtkImageAppendComponents;
 class vtkImageBimodalAnalysis;
@@ -140,9 +141,15 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
 
   /// Gets the pipeline input
   virtual vtkImageData* GetInputImageData();
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkImageAlgorithm* GetInputImageFilter();
+#endif
 
   /// Gets the pipeline output
   virtual vtkImageData* GetOutputImageData();
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkImageAlgorithm* GetOutputImageFilter();
+#endif
 
   /// 
   /// Sets ImageData for background mask 

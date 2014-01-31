@@ -317,16 +317,39 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::SetInputToImageDataPipeline(vtkIma
 };
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->DTIMathematics->GetInput());
 }
+#else
+vtkImageAlgorithm* vtkMRMLDiffusionTensorVolumeDisplayNode::GetInputImageFilter()
+{
+  return vtkImageAlgorithm::SafeDownCast(this->DTIMathematics);
+}
+
+vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetInputImageData()
+{
+  return vtkImageData::SafeDownCast(this->GetInputImageFilter()->GetInput());
+}
+#endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageData()
 {
   return this->AppendComponents->GetOutput();
 }
+#else
+vtkImageAlgorithm* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageFilter()
+{
+  return this->AppendComponents;
+}
+vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageData()
+{
+  return this->GetOutputImageFilter()->GetOutput();
+}
+#endif
 
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetBackgroundImageData()

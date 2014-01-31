@@ -553,13 +553,21 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
 
   // Get the image data
   vtkImageData *input = this->GetNthInput(0);
+#if (VTK_MAJOR_VERSION <= 5)
   input->Update();
+#else
+  this->Update(0);
+#endif
   
   vtkImageData *input1 = this->GetNthInput(1);
   unsigned long input1MTime = this->SavedTextureMTime2nd.GetMTime();
   if (input1)
   {
+#if (VTK_MAJOR_VERSION <= 5)
     input1->Update();
+#else
+    this->Update(1);
+#endif
     input1MTime = input1->GetMTime();
   }
   
@@ -853,13 +861,21 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
 
   // Get the image data
   vtkImageData *input = this->GetNthInput(0);
+#if (VTK_MAJOR_VERSION <= 5)
   input->Update();
+#else
+  this->Update(0);
+#endif
   
   vtkImageData *input1 = this->GetNthInput(1);
   unsigned long input1MTime = this->SavedTextureMTime2nd.GetMTime();
   if (input1)
   {
+#if (VTK_MAJOR_VERSION <= 5)
     input1->Update();
+#else
+    this->Update(1);
+#endif
     input1MTime = input1->GetMTime();
   }
   
