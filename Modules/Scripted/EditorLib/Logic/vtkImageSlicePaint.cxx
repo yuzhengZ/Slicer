@@ -57,6 +57,9 @@ vtkImageSlicePaint::~vtkImageSlicePaint()
   this->SetMaskImage (NULL);
   this->SetBackgroundImage (NULL);
   this->SetWorkingImage (NULL);
+#if (VTK_MAJOR_VERSION > 5)
+  this->SetWorkingImageFilter (NULL);
+#endif
   this->SetExtractImage (NULL);
   this->SetReplaceImage (NULL);
 
@@ -402,7 +405,11 @@ void vtkImageSlicePaint::Paint()
     vtkErrorMacro (<< "Working image cannot be NULL\n");
     return;
     }
+#if (VTK_MAJOR_VERSION <= 5)
   this->GetWorkingImage()->Update();
+#else
+  this->GetWorkingImageFilter()->Update();
+#endif
 
   switch (this->GetWorkingImage()->GetScalarType())
     {

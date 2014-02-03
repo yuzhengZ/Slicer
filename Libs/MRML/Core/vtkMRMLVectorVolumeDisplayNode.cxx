@@ -68,45 +68,40 @@ vtkMRMLVectorVolumeDisplayNode::~vtkMRMLVectorVolumeDisplayNode()
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLVectorVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *imageData)
 {
-#if (VTK_MAJOR_VERSION <= 5)
   this->ShiftScale->SetInput( imageData );
   this->RGBToHSI->SetInput( imageData );
-#else
-  this->ShiftScale->SetInputData( imageData );
-  this->RGBToHSI->SetInputData( imageData );
-#endif
 }
+#else
+void vtkMRMLVectorVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort)
+{
+  this->ShiftScale->SetInputConnection(imageDataPort);
+  this->RGBToHSI->SetInputConnection(imageDataPort);
+}
+#endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLVectorVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageData)
 {
   /// TODO: what is this for?  The comment above is unhelpful!
-#if (VTK_MAJOR_VERSION <= 5)
   this->ResliceAlphaCast->SetInput(imageData);
-#else
-  this->ResliceAlphaCast->SetInputData(imageData);
-#endif
 }
+#else
+void vtkMRMLVectorVolumeDisplayNode::SetBackgroundImageDataPort(vtkAlgorithmOutput *imageDataPort)
+{
+  /// TODO: what is this for?  The comment above is unhelpful!
+  this->ResliceAlphaCast->SetInputConnection(imageDataPort);
+}
+#endif
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->ShiftScale->GetInput());
 }
-#else
-vtkImageAlgorithm* vtkMRMLVectorVolumeDisplayNode::GetInputImageFilter()
-{
-    return vtkImageAlgorithm::SafeDownCast(this->ShiftScale);
-}
-
-vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetInputImageData()
-{
-   return vtkImageData::SafeDownCast(this->GetInputImageFilter()->GetOutput());
-}
-#endif
 
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
@@ -115,14 +110,9 @@ vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetOutputImageData()
   return this->AppendComponents->GetOutput();
 }
 #else
-vtkImageAlgorithm* vtkMRMLVectorVolumeDisplayNode::GetOutputImageFilter()
+vtkAlgorithmOutput* vtkMRMLVectorVolumeDisplayNode::GetOutputImageDataPort()
 {
-    return this->AppendComponents;
-}
-
-vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetOutputImageData()
-{
-   return this->GetOutputImageFilter()->GetOutput();
+  return this->AppendComponents->GetOutputPort();
 }
 #endif
 

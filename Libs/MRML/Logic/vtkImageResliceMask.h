@@ -17,10 +17,12 @@
 #define __vtkImageResliceMask_h
 
 #include "vtkMRMLLogicWin32Header.h"
+#include <vtkVersion.h>
 
 // VTK includes
 #include <vtkImageReslice.h> // for VTK_RESLICE_NEAREST, LINEAR, CUBIC
 #include <vtkThreadedImageAlgorithm.h>
+class vtkAlgorithmOutput;
 class vtkAbstractTransform;
 class vtkImageData;
 class vtkImageStencilData;
@@ -288,11 +290,15 @@ public:
   /// 
   /// Use a stencil to limit the calculations to a specific region of
   /// the output.  Portions of the output that are 'outside' the stencil
-  /// will be cleared to the background color.  
+  /// will be cleared to the background color.
   void SetStencil(vtkImageStencilData *stencil);
   vtkImageStencilData *GetStencil();
 
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *GetBackgroundMask();
+#else
+  vtkAlgorithmOutput *GetBackgroundMaskPort();
+#endif
 protected:
   vtkImageResliceMask();
   ~vtkImageResliceMask();

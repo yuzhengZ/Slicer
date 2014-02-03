@@ -46,18 +46,20 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
   virtual void SetDefaultColorMap();
 
   /// Set the pipeline input
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputImageData(vtkImageData *imageData);
+#else
+  virtual void SetInputImageDataPort(vtkAlgorithmOutput *imageDataPort);
+#endif
 
   /// Get the pipeline input
   virtual vtkImageData* GetInputImageData();
-#if (VTK_MAJOR_VERSION > 5)
-  virtual vtkImageAlgorithm* GetInputImageFilter();
-#endif
 
   /// Gets the pipeline output
+#if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetOutputImageData();
-#if (VTK_MAJOR_VERSION > 5)
-  virtual vtkImageAlgorithm* GetOutputImageFilter();
+#else
+  virtual vtkAlgorithmOutput* GetOutputImageDataPort();
 #endif
 
   virtual void UpdateImageDataPipeline();

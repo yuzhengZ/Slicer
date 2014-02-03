@@ -35,6 +35,7 @@
 #include "vtkMRMLInteractionNode.h"
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
 #include <vtkCellArray.h>
 #include <vtkClipPolyData.h>
@@ -42,6 +43,7 @@
 #include <vtkDataSetAttributes.h>
 #include <vtkImageActor.h>
 #include <vtkImageData.h>
+#include <vtkImageMapper3D.h>
 #include <vtkImplicitBoolean.h>
 #include <vtkLookupTable.h>
 #include <vtkMatrix4x4.h>
@@ -1512,8 +1514,11 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         actor->GetProperty()->SetSpecularPower(modelDisplayNode->GetPower());
         actor->GetProperty()->SetEdgeVisibility(modelDisplayNode->GetEdgeVisibility());
         actor->GetProperty()->SetEdgeColor(modelDisplayNode->GetEdgeColor());
-
+#if (VTK_MAJOR_VERSION <= 5)
         if (modelDisplayNode->GetTextureImageData() != 0)
+#else
+        if (modelDisplayNode->GetTextureImageDataPort() != 0)
+#endif
           {
           if (actor->GetTexture() == 0)
             {
@@ -1524,7 +1529,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 #if (VTK_MAJOR_VERSION <= 5)
           actor->GetTexture()->SetInput(modelDisplayNode->GetTextureImageData());
 #else
-          actor->GetTexture()->SetInputData(modelDisplayNode->GetTextureImageData());
+          actor->GetTexture()->SetInputConnection(modelDisplayNode->GetTextureImageDataPort());
 #endif
           actor->GetTexture()->SetInterpolate(modelDisplayNode->GetInterpolateTexture());
           actor->GetProperty()->SetColor(1., 1., 1.);
@@ -1536,22 +1541,25 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         }
       else if (imageActor)
         {
+#if (VTK_MAJOR_VERSION <= 5)
         if (modelDisplayNode->GetTextureImageData() != 0)
           {
-#if (VTK_MAJOR_VERSION <= 5)
           imageActor->SetInput(modelDisplayNode->GetTextureImageData());
-#else
-          imageActor->SetInputData(modelDisplayNode->GetTextureImageData());
-#endif
           }
         else
           {
-#if (VTK_MAJOR_VERSION <= 5)
           imageActor->SetInput(0);
-#else
-          imageActor->SetInputData(0);
-#endif
           }
+#else
+        if (modelDisplayNode->GetTextureImageDataPort() != 0)
+          {
+          imageActor->GetMapper()->SetInputConnection(modelDisplayNode->GetTextureImageDataPort());
+          }
+        else
+          {
+          imageActor->GetMapper()->SetInputConnection(0);
+          }
+#endif
         imageActor->SetDisplayExtent(-1, 0, 0, 0, 0, 0);
         }
       }

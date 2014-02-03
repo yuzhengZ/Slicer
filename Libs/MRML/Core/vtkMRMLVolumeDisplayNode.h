@@ -21,6 +21,8 @@ class vtkMRMLScene;
 class vtkMRMLVolumeNode;
 
 // VTK includes
+class vtkAlgorithm;
+class vtkAlgorithmOutput;
 class vtkImageAlgorithm;
 class vtkImageData;
 
@@ -63,7 +65,11 @@ public:
   /// Must be reimplemented in deriving class if they need it.
   /// GetBackgroundImageData() returns 0 if the background image data
   /// is not used.
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetBackgroundImageData(vtkImageData * vtkNotUsed(imageData));
+#else
+  virtual void SetBackgroundImageDataPort(vtkAlgorithmOutput * vtkNotUsed(imageDataPort));
+#endif
   virtual vtkImageData* GetBackgroundImageData();
 
   /// Returns the output of the pipeline if there is a not a null input.
@@ -72,30 +78,38 @@ public:
   /// up-to-date. You can call Update() on the returned vtkImageData or use
   /// GetUpToDateImageData() instead.
   /// \sa GetUpToDateImageData()
+#if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetImageData();
+#else
+  virtual vtkAlgorithmOutput* GetImageDataPort();
+#endif
 
   /// Gets ImageData and ensure it's up-to-date by calling Update() on the
   /// pipeline.
   /// Please note that it can be slow, depending on the filters in
   /// the pipeline and the dimension of the input data.
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* GetUpToDateImageData();
+#endif
 
   /// Set the pipeline input.
   /// Filters can be applied to the input image data. The output image data
   /// is the one used by the mappers.
   /// It internally calls SetInputImageDataPipeline that can be reimplemented.
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputImageData(vtkImageData *imageData);
+#else
+  virtual void SetInputImageDataPort(vtkAlgorithmOutput *imageDataPort);
+#endif
 
   /// Gets the pipeline input. To be reimplemented in subclasses.
   virtual vtkImageData* GetInputImageData();
-#if (VTK_MAJOR_VERSION > 5)
-  virtual vtkImageAlgorithm* GetInputImageFilter();
-#endif
 
   /// Gets the pipeline output. To be reimplemented in subclasses.
+#if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetOutputImageData();
-#if (VTK_MAJOR_VERSION > 5)
-  virtual vtkImageAlgorithm* GetOutputImageFilter();
+#else
+  virtual vtkAlgorithmOutput* GetOutputImageDataPort();
 #endif
 
   /// 
@@ -121,7 +135,11 @@ protected:
   vtkMRMLVolumeDisplayNode(const vtkMRMLVolumeDisplayNode&);
   void operator=(const vtkMRMLVolumeDisplayNode&);
   
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
+#else
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort);
+#endif
 };
 
 #endif

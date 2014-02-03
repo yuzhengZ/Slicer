@@ -26,8 +26,11 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
+#include <vtkAlgorithm.h>
 #include <vtkDataSetAttributes.h>
 #include <vtkImageData.h>
+#include <vtkImageAlgorithm.h>
+#include <vtkInformation.h>
 #include <vtkNew.h>
 #include <vtkTrivialProducer.h>
 
@@ -44,15 +47,15 @@ bool isImageDataValid(vtkImageData* imageData)
     {
     return false;
     }
+  vtkInformation* info = NULL;
 #if (VTK_MAJOR_VERSION <= 5)
   imageData->GetProducerPort();
-  vtkInformation* info = imageData->GetPipelineInformation();
+  info = imageData->GetPipelineInformation();
 #else
-  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+  vtkNew<vtkTrivialProducer> tp;
   tp->SetOutput(imageData);
-  vtkInformation* info = tp->GetOutputInformation(0);
+  info = tp->GetOutputInformation(0);
 #endif
-
   if (!info)
     {
     return false;

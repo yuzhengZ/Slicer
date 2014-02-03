@@ -646,6 +646,8 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     self.painter.SetBackgroundImage(backgroundImage)
     self.painter.SetBackgroundIJKToWorld(backgroundIJKToRAS)
     self.painter.SetWorkingImage(labelImage)
+    #  VTK 6
+    # self.painter.SetWorkingImageFilter( labelImageFilter )
     self.painter.SetWorkingIJKToWorld(labelIJKToRAS)
     self.painter.SetTopLeft( tl[0], tl[1], tl[2] )
     self.painter.SetTopRight( tr[0], tr[1], tr[2] )

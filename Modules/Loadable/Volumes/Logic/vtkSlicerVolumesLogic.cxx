@@ -768,10 +768,11 @@ vtkSlicerVolumesLogic::CreateAndAddLabelVolume(vtkMRMLScene *scene,
   thresh->SetOutputScalarType (VTK_SHORT);
 #if (VTK_MAJOR_VERSION <= 5)
   thresh->SetInput( volumeNode->GetImageData() );
-#else
-  thresh->SetInputData( volumeNode->GetImageData() );
-#endif
   thresh->GetOutput()->Update();
+#else
+  thresh->SetInputData(volumeNode->GetImageData());
+  thresh->Update();
+#endif
 
   vtkNew<vtkImageData> imageData;
   imageData->DeepCopy( thresh->GetOutput() );
@@ -851,11 +852,10 @@ vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
   thresh->SetOutputScalarType (VTK_SHORT);
 #if (VTK_MAJOR_VERSION <= 5)
   thresh->SetInput( templateNode->GetImageData() );
-#else
-  thresh->SetInputData( templateNode->GetImageData() );
-#endif
   thresh->GetOutput()->Update();
+#else
   labelNode->SetAndObserveImageData( thresh->GetOutput() );
+#endif
 
   return labelNode;
 }

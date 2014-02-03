@@ -20,6 +20,7 @@
 class vtkMRMLVolumeDisplayNode;
 
 // VTK includes
+class vtkAlgorithm;
 class vtkImageData;
 class vtkMatrix4x4;
 

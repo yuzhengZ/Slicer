@@ -60,14 +60,12 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
   /// 
   /// Get the pipeline input
   virtual vtkImageData* GetInputImageData();
-#if (VTK_MAJOR_VERSION > 5)
-  virtual vtkImageAlgorithm* GetInputImageFilter();
-#endif
   /// 
   /// Get the pipeline output
+#if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetOutputImageData();
-#if (VTK_MAJOR_VERSION > 5)
-  virtual vtkImageAlgorithm* GetOutputImageFilter();
+#else
+  virtual vtkAlgorithmOutput* GetOutputImageDataPort();
 #endif
 
   virtual void UpdateImageDataPipeline();
@@ -89,7 +87,11 @@ protected:
 
   /// 
   /// Set the input of the pipeline
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
+#else
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort);
+#endif
 
   virtual vtkImageData* GetScalarImageData();
 

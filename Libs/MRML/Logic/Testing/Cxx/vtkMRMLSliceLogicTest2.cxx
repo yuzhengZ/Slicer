@@ -29,6 +29,7 @@
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageData.h>
 #include <vtkImageCast.h>
@@ -112,7 +113,11 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   
   //sliceLayerLogic->SetVolumeNode(scalarNode);
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
+#if (VTK_MAJOR_VERSION <= 5)
   sliceLogic->GetImageData();
+#else
+  sliceLogic->GetImageDataPort();
+#endif
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
   vtkMRMLScalarVolumeDisplayNode* displayNode2 = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sliceLayerLogic->GetVolumeDisplayNode());
 
@@ -133,7 +138,11 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
     std::cout << "vtkMRMLSliceLogic::UpdatePipeline(): " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
     timerLog->StartTimer();
     sliceLayerLogic->UpdateImageDisplay();
+#if (VTK_MAJOR_VERSION <= 5)
     sliceLayerLogic->GetImageData();
+#else
+    sliceLayerLogic->GetImageDataPort();
+#endif
     timerLog->StopTimer();
     std::cout << "vtkMRMLSliceLayerLogic::UpdateImageData(): " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
     }
@@ -186,7 +195,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
   resliceAlphaCast->SetInput(reslice->GetBackgroundMask());
 #else
-  resliceAlphaCast->SetInputData(reslice->GetBackgroundMask());
+  resliceAlphaCast->SetInputConnection(reslice->GetBackgroundMaskPort());
 #endif
   resliceAlphaCast->SetOutputScalarTypeToUnsignedChar();
   
@@ -237,9 +246,9 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
   viewer->SetInput(sliceLogic->GetImageData());
 #else
-  viewer->SetInputData(sliceLogic->GetImageData());
+  viewer->SetInputConnection(sliceLogic->GetImageDataPort());
 #endif
-  //viewer->SetInputConnection(appendComponents->GetOutputPort());
+  //viewer->SetInput(appendComponents->GetOutput());
   
   // Renderer, RenderWindow and Interactor
   vtkRenderWindow* rw = viewer->GetRenderWindow();
@@ -248,7 +257,6 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   
   vtkRenderWindowInteractor* ri = vtkRenderWindowInteractor::New();
   viewer->SetupInteractor(ri);
-  
   rw->Render();
   if (argc > 2 && std::string(argv[2]) == "-I")
     {

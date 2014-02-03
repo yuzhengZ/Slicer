@@ -137,23 +137,29 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
                                    void * /*callData*/ );
 
   /// Set the pipeline input
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputImageData(vtkImageData *imageData);
+#else
+  virtual void SetInputImageDataPort(vtkAlgorithmOutput *imageDataPort);
+#endif
 
   /// Gets the pipeline input
   virtual vtkImageData* GetInputImageData();
-#if (VTK_MAJOR_VERSION > 5)
-  virtual vtkImageAlgorithm* GetInputImageFilter();
-#endif
 
   /// Gets the pipeline output
+#if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetOutputImageData();
-#if (VTK_MAJOR_VERSION > 5)
-  virtual vtkImageAlgorithm* GetOutputImageFilter();
+#else
+  virtual vtkAlgorithmOutput* GetOutputImageDataPort();
 #endif
 
   /// 
-  /// Sets ImageData for background mask 
+  /// Sets ImageData for background mask
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetBackgroundImageData(vtkImageData *imageData);
+#else
+  virtual void SetBackgroundImageDataPort(vtkAlgorithmOutput *imageDataPort);
+#endif
   virtual vtkImageData* GetBackgroundImageData();
 
   /// 
@@ -200,8 +206,15 @@ protected:
   /// Return the image data with scalar type, it can be in the middle of the
   /// pipeline, it's typically the input of the threshold/windowlevel filters
   virtual vtkImageData* GetScalarImageData();
-  
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkImageAlgorithm* GetInputImageFilter();
+#endif
+
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToImageDataPipeline(vtkImageData* input);
+#else
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort);
+#endif
 
   /// 
   /// To hold preset values for window and level, so can restore this display

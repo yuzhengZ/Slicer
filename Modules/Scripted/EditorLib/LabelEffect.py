@@ -423,6 +423,8 @@ class LabelEffectLogic(Effect.EffectLogic):
     self.painter.SetBackgroundImage( backgroundImage )
     self.painter.SetBackgroundIJKToWorld( backgroundIJKToRAS )
     self.painter.SetWorkingImage( labelImage )
+    #  VTK 6
+    # self.painter.SetWorkingImageFilter( labelImageFilter )
     self.painter.SetWorkingIJKToWorld( labelIJKToRAS )
     self.painter.SetMaskImage( mask )
     self.painter.SetExtractImage( self.extractImage )

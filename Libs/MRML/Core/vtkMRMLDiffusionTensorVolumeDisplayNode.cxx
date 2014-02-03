@@ -303,37 +303,26 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRML
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLDiffusionTensorVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *imageData)
 {
-#if (VTK_MAJOR_VERSION <= 5)
   this->DTIMathematics->SetInput(imageData);
   this->DTIMathematicsAlpha->SetInput(0, imageData);
   //this->ShiftScale->SetInput(0, imageData );
+}
 #else
-  this->DTIMathematics->SetInputData(imageData);
-  this->DTIMathematicsAlpha->SetInputData(0, imageData);
-  //this->ShiftScale->SetInputData(0, imageData );
+void vtkMRMLDiffusionTensorVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort)
+{
+  this->DTIMathematics->SetInputConnection(imageDataPort);
+  this->DTIMathematicsAlpha->SetInputConnection(imageDataPort);
+}
 #endif
-};
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->DTIMathematics->GetInput());
 }
-#else
-vtkImageAlgorithm* vtkMRMLDiffusionTensorVolumeDisplayNode::GetInputImageFilter()
-{
-  return vtkImageAlgorithm::SafeDownCast(this->DTIMathematics);
-}
-
-vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetInputImageData()
-{
-  return vtkImageData::SafeDownCast(this->GetInputImageFilter()->GetInput());
-}
-#endif
-
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageData()
@@ -341,13 +330,9 @@ vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageData()
   return this->AppendComponents->GetOutput();
 }
 #else
-vtkImageAlgorithm* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageFilter()
+vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageDataPort()
 {
-  return this->AppendComponents;
-}
-vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageData()
-{
-  return this->GetOutputImageFilter()->GetOutput();
+  return this->AppendComponents->GetOutputPort();
 }
 #endif
 

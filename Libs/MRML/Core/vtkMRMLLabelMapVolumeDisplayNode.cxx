@@ -66,56 +66,40 @@ void vtkMRMLLabelMapVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
-{
-#if (VTK_MAJOR_VERSION <= 5)
-  this->MapToColors->SetInput(imageData);
-#else
-  this->MapToColors->SetInputData(imageData);
-#endif
-}
-
-//---------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->MapToColors->GetInput());
 }
-#else
-vtkImageAlgorithm* vtkMRMLLabelMapVolumeDisplayNode::GetInputImageFilter()
-{
-  return vtkImageAlgorithm::SafeDownCast(this->MapToColors);
-}
 
-vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetInputImageData()
+//---------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
+void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
 {
-  return vtkImageData::SafeDownCast(this->GetInputImageFilter()->GetInput());
+  this->MapToColors->SetInput(imageData);
+}
+#else
+void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageDataPort(vtkAlgorithmOutput *imageDataPort)
+{
+  this->MapToColors->SetInputConnection(imageDataPort);
 }
 #endif
 
 //---------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageData()
+#else
+vtkAlgorithmOutput* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageDataPort()
+#endif
 {
   assert(!this->MapToColors->GetLookupTable() ||
          !this->MapToColors->GetLookupTable()->IsA("vtkLookupTable") ||
          vtkLookupTable::SafeDownCast(this->MapToColors->GetLookupTable())->GetNumberOfTableValues());
+#if (VTK_MAJOR_VERSION <= 5)
   return this->MapToColors->GetOutput();
-}
 #else
-vtkImageAlgorithm* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageFilter()
-{
-    assert(!this->MapToColors->GetLookupTable() ||
-           !this->MapToColors->GetLookupTable()->IsA("vtkLookupTable") ||
-           vtkLookupTable::SafeDownCast(this->MapToColors->GetLookupTable())->GetNumberOfTableValues());
-    return this->MapToColors;
-}
-
-vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageData()
-{
-   return this->GetOutputImageFilter()->GetOutput();
-}
+  return this->MapToColors->GetOutputPort();
 #endif
+}
 
 //---------------------------------------------------------------------------
 void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()

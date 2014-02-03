@@ -18,6 +18,7 @@ def newPlane():
   # set up display node that includes the texture
   modelDisplayNode = Slicer.slicer.vtkMRMLModelDisplayNode()
   modelDisplayNode.SetBackfaceCulling(0)
+# VTK 6 TODO
   modelDisplayNode.SetAndObserveTextureImageData(imageSource.GetOutput())
   Slicer.slicer.MRMLScene.AddNode(modelDisplayNode)
 

@@ -101,7 +101,12 @@ vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, c
   //
   // get the output slice and put it into the render window
   //
+  // vtkImageData *slice = 0;
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *slice = sliceLogic->GetImageData();
+#else
+  vtkAlgorithmOutput *slicePort = sliceLogic->GetImageDataPort();
+#endif
 
   vtkImageMapper *mapper = vtkImageMapper::New();
   mapper->SetColorWindow( 255. );
@@ -109,7 +114,7 @@ vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, c
 #if (VTK_MAJOR_VERSION <= 5)
   mapper->SetInput( slice );
 #else
-  mapper->SetInputData( slice );
+  mapper->SetInputConnection( slicePort );
 #endif
   vtkActor2D *actor = vtkActor2D::New();
   actor->SetMapper( mapper );

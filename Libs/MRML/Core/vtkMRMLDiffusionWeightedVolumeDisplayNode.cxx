@@ -107,33 +107,25 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLDiffusionWeightedVolumeDisplayNode
 ::SetInputToImageDataPipeline(vtkImageData *imageData)
 {
-#if (VTK_MAJOR_VERSION <= 5)
   this->ExtractComponent->SetInput(imageData);
-#else
-  this->ExtractComponent->SetInputData(imageData);
-#endif
 }
+#else
+void vtkMRMLDiffusionWeightedVolumeDisplayNode
+::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort)
+{
+  this->ExtractComponent->SetInputConnection(imageDataPort);
+}
+#endif
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->ExtractComponent->GetInput());
 }
-#else
-vtkImageAlgorithm* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageFilter()
-{
-  return vtkImageAlgorithm::SafeDownCast(this->ExtractComponent);
-}
-
-vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageData()
-{
-  return vtkImageData::SafeDownCast(this->GetInputImageFilter()->GetInput());
-}
-#endif
 
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
@@ -142,14 +134,9 @@ vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageData()
   return this->AppendComponents->GetOutput();
 }
 #else
-vtkImageAlgorithm* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageFilter()
+vtkAlgorithmOutput* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageDataPort()
 {
-  return this->AppendComponents;
-}
-
-vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageData()
-{
-  return this->GetOutputImageFilter()->GetOutput();
+  return this->AppendComponents->GetOutputPort();
 }
 #endif
 

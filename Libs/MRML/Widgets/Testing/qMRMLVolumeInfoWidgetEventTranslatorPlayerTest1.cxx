@@ -86,7 +86,6 @@ int qMRMLVolumeInfoWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 #else
   imageData->AllocateScalars(VTK_UNSIGNED_SHORT, 1); // allocate storage for image data
 #endif
-
   volumeNode->SetAndObserveImageData(imageData.GetPointer());
   volumeNode->SetSpacing(2., 2., 512.);
   volumeNode->SetOrigin(0, 0, 0);

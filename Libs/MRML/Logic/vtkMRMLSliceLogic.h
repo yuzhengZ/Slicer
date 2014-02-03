@@ -30,6 +30,7 @@ class vtkMRMLSliceLayerLogic;
 class vtkMRMLSliceNode;
 class vtkMRMLVolumeNode;
 
+class vtkAlgorithmOutput;
 class vtkCollection;
 class vtkImageBlend;
 class vtkTransform;
@@ -156,7 +157,10 @@ public:
   /// 
   /// the tail of the pipeline
   /// -- returns NULL if none of the inputs exist
-  vtkImageData *GetImageData();
+//  vtkImageData *GetImageData();
+#if (VTK_MAJOR_VERSION > 5)
+  vtkAlgorithmOutput *GetImageDataPort();
+#endif
 
   /// 
   /// update the pipeline to reflect the current state of the nodes
@@ -388,7 +392,11 @@ protected:
   vtkImageBlend *   Blend;
   vtkImageBlend *   BlendUVW;
   vtkImageReslice * ExtractModelTexture;
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *    ImageData;
+#else
+  vtkAlgorithmOutput *    ImageDataPort;
+#endif
   vtkTransform *    ActiveSliceTransform;
 
   vtkPolyDataCollection * PolyDataCollection;

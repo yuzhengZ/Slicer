@@ -57,7 +57,7 @@ bool isImageDataValid(vtkImageData* imageData)
     {
     return false;
     }
-  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+  vtkNew<vtkTrivialProducer> tp;
   tp->SetOutput(imageData);
   vtkInformation* info = tp->GetExecutive()->GetOutputInformation(0);
   if (!info)

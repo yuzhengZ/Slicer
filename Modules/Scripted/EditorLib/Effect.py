@@ -365,6 +365,8 @@ class EffectLogic(object):
       return imageData
     elif self.scope == "Visible":
       self.scopedSlicePaint.SetWorkingImage( imageData )
+      #  VTK 6
+      # self.scopedSlicePaint.SetWorkingImageFilter( imageDataFilter )
       self.scopedSlicePaint.SetExtractImage( self.scopedImageBuffer )
       self.getVisibleCorners( layerLogic, self.scopedSlicePaint )
       self.scopedSlicePaint.Paint()
@@ -402,6 +404,8 @@ class EffectLogic(object):
     if self.scope == "All":
       targetImage.DeepCopy( self.scopedImageBuffer )
     elif self.scope == "Visible":
+      #  VTK 6
+      # self.scopedSlicePaint.SetWorkingImageFilter( targetImageFilter )
       self.scopedSlicePaint.SetWorkingImage( targetImage )
       self.scopedSlicePaint.SetReplaceImage( self.scopedImageBuffer )
       self.getVisibleCorners( layerLogic, self.scopedSlicePaint )

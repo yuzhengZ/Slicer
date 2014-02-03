@@ -29,6 +29,7 @@
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkImageData.h>
 #include <vtkImageViewer2.h>
 #include <vtkNew.h>
@@ -117,7 +118,12 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
   vtkMRMLDisplayNode* displayNode = scalarNode->GetDisplayNode();
   //sliceLayerLogic->SetVolumeNode(scalarNode);
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* img = sliceLogic->GetImageData();
+#else
+  vtkAlgorithmOutput* imgPort = sliceLogic->GetImageDataPort();
+  vtkImageData* img = vtkImageData::SafeDownCast(imgPort->GetProducer()->GetOutputDataObject(0));
+#endif
   int* dims = img->GetDimensions();
   std::cout << "Logic dimension"  << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
@@ -136,7 +142,7 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
   viewer->SetInput(sliceLogic->GetImageData());
 #else
-  viewer->SetInputData(sliceLogic->GetImageData());
+  viewer->SetInputConnection(sliceLogic->GetImageDataPort());
 #endif
   //viewer->SetInputConnection(appendComponents->GetOutputPort());
   

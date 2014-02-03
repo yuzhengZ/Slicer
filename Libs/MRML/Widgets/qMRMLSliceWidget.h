@@ -23,6 +23,7 @@
 
 // CTK includes
 #include <ctkPimpl.h>
+#include <vtkVersion.h>
 
 // qMRMLWidget includes
 #include "qMRMLWidget.h"
@@ -39,6 +40,7 @@ class vtkMRMLSliceLogic;
 class vtkMRMLSliceNode;
 class vtkMRMLSliceCompositeNode;
 
+class vtkAlgorithmOutput;
 class vtkImageData;
 class vtkInteractorObserver;
 class vtkCornerAnnotation;
@@ -71,7 +73,11 @@ public:
 
   /// \sa qMRMLSliceControllerWidget::imageData()
   /// \sa setImageData();
+#if (VTK_MAJOR_VERSION <= 5)
   Q_INVOKABLE vtkImageData* imageData()const;
+#else
+  Q_INVOKABLE vtkAlgorithmOutput* imageDataPort()const;
+#endif
 
   /// \sa qMRMLSliceControllerWidget::mrmlSliceCompositeNode()
   Q_INVOKABLE vtkMRMLSliceCompositeNode* mrmlSliceCompositeNode()const;
@@ -129,7 +135,11 @@ public slots:
 
   /// \sa qMRMLSliceControllerWidget::setImageData()
   /// \sa imageData()
+#if (VTK_MAJOR_VERSION <= 5)
   void setImageData(vtkImageData* newImageData);
+#else
+  void setImageDataPort(vtkAlgorithmOutput* newImageDataPort);
+#endif
   
   /// \sa qMRMLSliceControllerWidget::setSliceOrientation()
   /// \sa sliceOrientation()

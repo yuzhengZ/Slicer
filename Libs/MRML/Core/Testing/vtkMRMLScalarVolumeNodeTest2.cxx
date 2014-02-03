@@ -46,6 +46,7 @@ int vtkMRMLScalarVolumeNodeTest2(int , char * [] )
   vtkNew<vtkMRMLScene> scene;
 
   vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
+
   volumeNode->SetAndObserveImageData(imageData.GetPointer());
   scene->AddNode(volumeNode.GetPointer());
 

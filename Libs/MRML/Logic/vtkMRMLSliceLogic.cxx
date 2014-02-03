@@ -29,6 +29,7 @@
 #include <vtkMRMLSliceCompositeNode.h>
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkImageBlend.h>
@@ -85,7 +86,11 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
 
   this->ExtractModelTexture = vtkImageReslice::New();
   this->ExtractModelTexture->SetOutputDimensionality (2);
+#if (VTK_MAJOR_VERSION <= 5)
+  this->ExtractModelTexture->SetInput(BlendUVW->GetOutput());
+#else
   this->ExtractModelTexture->SetInputConnection(BlendUVW->GetOutputPort());
+#endif
 
   this->ActiveSliceTransform = vtkTransform::New();
   this->PolyDataCollection = vtkPolyDataCollection::New();
@@ -97,7 +102,11 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
   this->Name = 0;
   this->SetName("");
   this->SliceModelDisplayNode = 0;
+#if (VTK_MAJOR_VERSION <= 5)
   this->ImageData = 0;
+#else
+  this->ImageDataPort = 0;
+#endif
   this->SliceSpacing[0] = this->SliceSpacing[1] = this->SliceSpacing[2] = 1;
   this->AddingSliceModelNodes = false;
 }
@@ -108,11 +117,18 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
   this->SetName(0);
   this->SetSliceNode(0);
 
+#if (VTK_MAJOR_VERSION <= 5)
   if (this->ImageData)
     {
   //  this->ImageData->Delete();
     this->ImageData = 0;
     }
+#else
+  if (this->ImageDataPort)
+    {
+    this->ImageDataPort = 0;
+    }
+#endif
 
   if (this->Blend)
     {
@@ -578,7 +594,11 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetModelDisplayNode();
     if ( modelDisplayNode )
       {
+#if (VTK_MAJOR_VERSION <= 5)
       if (this->LabelLayer && this->LabelLayer->GetImageDataUVW())
+#else
+      if (this->LabelLayer && this->LabelLayer->GetImageDataPortUVW())
+#endif
         {
         modelDisplayNode->SetInterpolateTexture(0);
         }
@@ -787,6 +807,7 @@ void vtkMRMLSliceLogic
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData * vtkMRMLSliceLogic::GetImageData()
 {
    if ( (this->GetBackgroundLayer() != 0 && this->GetBackgroundLayer()->GetImageData() != 0) ||
@@ -800,19 +821,35 @@ vtkImageData * vtkMRMLSliceLogic::GetImageData()
     return 0;
     }
 }
+#else
+vtkAlgorithmOutput * vtkMRMLSliceLogic::GetImageDataPort()
+{
+   if ( (this->GetBackgroundLayer() != 0 && this->GetBackgroundLayer()->GetImageDataPort() != 0) ||
+       (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageDataPort() != 0) ||
+       (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageDataPort() != 0) )
+    {
+    return this->ImageDataPort;
+    }
+   else
+    {
+    return 0;
+    }
+}
+#endif
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdateImageData ()
 {
+#if (VTK_MAJOR_VERSION <= 5)
   if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
-    {
-    this->ExtractModelTexture->SetInputConnection( this->Blend->GetOutputPort() );
-    this->ImageData = this->Blend->GetOutput();
-    }
-  else
-    {
-    this->ExtractModelTexture->SetInputConnection( this->BlendUVW->GetOutputPort() );
-    }
+      {
+      this->ExtractModelTexture->SetInput( this->Blend->GetOutput() );
+      this->ImageData = this->Blend->GetOutput();
+      }
+    else
+      {
+      this->ExtractModelTexture->SetInput( this->BlendUVW->GetOutput() );
+      }
 
   // It seems very strange that the imagedata can be null.
   // It should probably be always a valid imagedata with invalid bounds if needed
@@ -826,44 +863,74 @@ void vtkMRMLSliceLogic::UpdateImageData ()
       //this->Blend->Update();
       }
     //this->ImageData = this->Blend->GetOutput();
-    if (this->ImageData== 0 || this->Blend->GetOutput()->GetMTime() > this->ImageData->GetMTime())
+        if (this->ImageData== 0 || this->Blend->GetOutput()->GetMTime() > this->ImageData->GetMTime())
+          {
+          // Pipeline driven, no need to copy image data.
+          //if (this->ImageData== 0)
+          //  {
+          //  this->ImageData = vtkImageData::New();
+          //  }
+          //this->ImageData->DeepCopy( this->Blend->GetOutputPort());
+                this->ImageData = this->Blend->GetOutput();
+          //this->ExtractModelTexture->SetInput( this->ImageData );
+          // Doesn't seem needed, not sure though.
+          //this->ActiveSliceTransform->Identity();
+          //this->ActiveSliceTransform->Translate(0, 0, this->SliceNode->GetActiveSlice() );
+          //this->ExtractModelTexture->SetResliceTransform( this->ActiveSliceTransform );
+          }
+        }
+      else
+        {
+        //if (this->ImageData)
+        //  {
+        //  this->ImageData->Delete();
+        //  }
+        this->ImageData=0;
+        if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
+          {
+          this->ExtractModelTexture->SetInput( this->ImageData );
+          }
+        else
+          {
+          this->ExtractModelTexture->SetInput( this->BlendUVW->GetOutput() );
+          }
+        }
+#else
+  if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
+    {
+    this->ExtractModelTexture->SetInputConnection( this->Blend->GetOutputPort() );
+    this->ImageDataPort = this->Blend->GetOutputPort();
+    }
+  else
+    {
+    this->ExtractModelTexture->SetInputConnection( this->BlendUVW->GetOutputPort() );
+    }
+  // It seems very strange that the imagedata can be null.
+  // It should probably be always a valid imagedata with invalid bounds if needed
+
+  if ( (this->GetBackgroundLayer() != 0 && this->GetBackgroundLayer()->GetImageDataPort() != 0) ||
+       (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageDataPort() != 0) ||
+       (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageDataPort() != 0) )
+    {
+    if (this->ImageDataPort == 0 || this->Blend->GetOutputPort()->GetMTime() > this->ImageDataPort->GetMTime())
       {
-      // Pipeline driven, no need to copy image data.
-      //if (this->ImageData== 0)
-      //  {
-      //  this->ImageData = vtkImageData::New();
-      //  }
-      //this->ImageData->DeepCopy( this->Blend->GetOutputPort());
-      this->ImageData = this->Blend->GetOutput();
-      //this->ExtractModelTexture->SetInput( this->ImageData );
-      // Doesn't seem needed, not sure though.
-      //this->ActiveSliceTransform->Identity();
-      //this->ActiveSliceTransform->Translate(0, 0, this->SliceNode->GetActiveSlice() );
-      //this->ExtractModelTexture->SetResliceTransform( this->ActiveSliceTransform );
+      this->ImageDataPort = this->Blend->GetOutputPort();
       }
     }
   else
     {
-    //if (this->ImageData)
-    //  {
-    //  this->ImageData->Delete();
-    //  }
-    this->ImageData=0;
+    this->ImageDataPort = 0;
     if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
       {
-#if (VTK_MAJOR_VERSION <= 5)
-      this->ExtractModelTexture->SetInput( this->ImageData );
-#else
-      this->ExtractModelTexture->SetInputData( this->ImageData );
-#endif
+      this->ExtractModelTexture->SetInputConnection( this->ImageDataPort );
       }
     else
       {
       this->ExtractModelTexture->SetInputConnection( this->BlendUVW->GetOutputPort() );
       }
     }
+#endif
 }
-
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdatePipeline()
 {
@@ -954,15 +1021,27 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     bool alphaBlending = (sliceCompositing == vtkMRMLSliceCompositeNode::Alpha ||
                           sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha);
 
+#if (VTK_MAJOR_VERSION <= 5)
     vtkImageData* backgroundImage = this->BackgroundLayer ? this->BackgroundLayer->GetImageData() : 0;
     vtkImageData* foregroundImage = this->ForegroundLayer ? this->ForegroundLayer->GetImageData() : 0;
 
     vtkImageData* backgroundImageUVW = this->BackgroundLayer ? this->BackgroundLayer->GetImageDataUVW() : 0;
     vtkImageData* foregroundImageUVW = this->ForegroundLayer ? this->ForegroundLayer->GetImageDataUVW() : 0;
+#else
+    vtkAlgorithmOutput* backgroundImagePort = this->BackgroundLayer ? this->BackgroundLayer->GetImageDataPort() : 0;
+    vtkAlgorithmOutput* foregroundImagePort = this->ForegroundLayer ? this->ForegroundLayer->GetImageDataPort() : 0;
+
+    vtkAlgorithmOutput* backgroundImagePortUVW = this->BackgroundLayer ? this->BackgroundLayer->GetImageDataPortUVW() : 0;
+    vtkAlgorithmOutput* foregroundImagePortUVW = this->ForegroundLayer ? this->ForegroundLayer->GetImageDataPortUVW() : 0;
+#endif
 
     if (!alphaBlending)
       {
+#if (VTK_MAJOR_VERSION <= 5)
       if (!backgroundImage || !foregroundImage)
+#else
+      if (!backgroundImagePort || !foregroundImagePort)
+#endif
         {
         // not enough inputs for add/subtract, so use alpha blending
         // pipeline
@@ -993,18 +1072,26 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       tempMath->SetInput2( backgroundImage );
       tempMath->GetOutput()->SetScalarType(VTK_SHORT);
 #else
-      tempMath->SetInput1Data( foregroundImage );
-      tempMath->SetInput2Data( backgroundImage );
+      tempMath->SetInputConnection(0, foregroundImagePort );
+      tempMath->SetInputConnection(1, backgroundImagePort );
       vtkInformation *tempMathOutInfo = tempMath->GetOutputInformation(0);
       vtkDataObject::SetPointDataActiveScalarInfo(tempMathOutInfo, VTK_SHORT,
         vtkImageData::GetNumberOfScalarComponents(tempMathOutInfo));
 #endif
 
       vtkImageCast *tempCast = vtkImageCast::New();
+#if (VTK_MAJOR_VERSION <= 5)
+      tempCast->SetInput( tempMath->GetOutput() );
+#else
       tempCast->SetInputConnection( tempMath->GetOutputPort() );
+#endif
       tempCast->SetOutputScalarTypeToUnsignedChar();
 
-      this->Blend->SetInputConnection( layerIndex, tempCast->GetOutputPort() );
+#if (VTK_MAJOR_VERSION <= 5)
+      this->Blend->SetInput( layerIndex, tempCast->GetOutput() );
+#else
+      this->Blend->SetInputConnection( tempCast->GetOutputPort() );
+#endif
       this->Blend->SetOpacity( layerIndex++, 1.0 );
 
       tempMath->Delete();  // Blend may still be holding a reference
@@ -1027,19 +1114,12 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       tempMathUVW->SetInput1( foregroundImageUVW );
       tempMathUVW->SetInput2( backgroundImageUVW );
       tempMathUVW->GetOutput()->SetScalarType(VTK_SHORT);
-#else
-      tempMathUVW->SetInput1Data( foregroundImageUVW );
-      tempMathUVW->SetInput2Data( backgroundImageUVW );
-      vtkInformation *tempMathUVWOutInfo = tempMathUVW->GetOutputInformation(0);
-      vtkDataObject::SetPointDataActiveScalarInfo(tempMathUVWOutInfo, VTK_SHORT,
-        vtkImageData::GetNumberOfScalarComponents(tempMathUVWOutInfo));
-#endif
 
       vtkImageCast *tempCastUVW = vtkImageCast::New();
-      tempCastUVW->SetInputConnection( tempMathUVW->GetOutputPort() );
+      tempCastUVW->SetInput( tempMathUVW->GetOutput() );
       tempCastUVW->SetOutputScalarTypeToUnsignedChar();
 
-      this->BlendUVW->SetInputConnection( layerIndexUVW, tempCastUVW->GetOutputPort() );
+      this->BlendUVW->SetInput( layerIndexUVW, tempCastUVW->GetOutput() );
       this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
 
       tempMathUVW->Delete();  // Blend may still be holding a reference
@@ -1051,38 +1131,22 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         {
         if ( backgroundImage )
           {
-#if (VTK_MAJOR_VERSION <= 5)
           this->Blend->SetInput( layerIndex, backgroundImage );
-#else
-          this->Blend->SetInputData( layerIndex, backgroundImage );
-#endif
           this->Blend->SetOpacity( layerIndex++, 1.0 );
           }
         if ( foregroundImage )
           {
-#if (VTK_MAJOR_VERSION <= 5)
           this->Blend->SetInput( layerIndex, foregroundImage );
-#else
-          this->Blend->SetInputData( layerIndex, foregroundImage );
-#endif
           this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
         if ( backgroundImageUVW )
           {
-#if (VTK_MAJOR_VERSION <= 5)
           this->BlendUVW->SetInput( layerIndexUVW, backgroundImageUVW );
-#else
-          this->BlendUVW->SetInputData( layerIndexUVW, backgroundImageUVW );
-#endif
           this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
           }
         if ( foregroundImageUVW )
           {
-#if (VTK_MAJOR_VERSION <= 5)
           this->BlendUVW->SetInput( layerIndexUVW, foregroundImageUVW );
-#else
-          this->BlendUVW->SetInputData( layerIndexUVW, foregroundImageUVW );
-#endif
           this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
         }
@@ -1090,38 +1154,22 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         {
         if ( foregroundImage )
           {
-#if (VTK_MAJOR_VERSION <= 5)
           this->Blend->SetInput( layerIndex, foregroundImage );
-#else
-          this->Blend->SetInputData( layerIndex, foregroundImage );
-#endif
           this->Blend->SetOpacity( layerIndex++, 1.0 );
           }
         if ( backgroundImage )
           {
-#if (VTK_MAJOR_VERSION <= 5)
           this->Blend->SetInput( layerIndex, backgroundImage );
-#else
-          this->Blend->SetInputData( layerIndex, backgroundImage );
-#endif
           this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
         if ( foregroundImageUVW )
           {
-#if (VTK_MAJOR_VERSION <= 5)
           this->BlendUVW->SetInput( layerIndexUVW, foregroundImageUVW );
-#else
-          this->BlendUVW->SetInputData( layerIndexUVW, foregroundImageUVW );
-#endif
           this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
           }
         if ( backgroundImageUVW )
           {
-#if (VTK_MAJOR_VERSION <= 5)
           this->BlendUVW->SetInput( layerIndexUVW, backgroundImageUVW );
-#else
-          this->BlendUVW->SetInputData( layerIndexUVW, backgroundImageUVW );
-#endif
           this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
 
@@ -1132,40 +1180,117 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     vtkImageData* labelImageUVW = this->LabelLayer ? this->LabelLayer->GetImageDataUVW() : 0;
     if ( labelImage )
       {
-#if (VTK_MAJOR_VERSION <= 5)
+
       this->Blend->SetInput( layerIndex, labelImage );
-#else
-      this->Blend->SetInputData( layerIndex, labelImage );
-#endif
       this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
       }
     if ( labelImageUVW )
       {
-#if (VTK_MAJOR_VERSION <= 5)
       this->BlendUVW->SetInput( layerIndexUVW, labelImageUVW );
-#else
-      this->BlendUVW->SetInputData( layerIndexUVW, labelImageUVW );
-#endif
       this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetLabelOpacity() );
       }
     while (this->Blend->GetNumberOfInputs() > layerIndex)
       {
       // it decreases the number of inputs
-#if (VTK_MAJOR_VERSION <= 5)
       this->Blend->SetInput(this->Blend->GetNumberOfInputs() - 1, 0);
-#else
-      this->Blend->SetInputData(this->Blend->GetNumberOfInputs() - 1, 0);
-#endif
       }
     while (this->BlendUVW->GetNumberOfInputs() > layerIndexUVW)
       {
       // it decreases the number of inputs
-#if (VTK_MAJOR_VERSION <= 5)
       this->BlendUVW->SetInput(this->BlendUVW->GetNumberOfInputs() - 1, 0);
-#else
-      this->BlendUVW->SetInputData(this->BlendUVW->GetNumberOfInputs() - 1, 0);
-#endif
       }
+#else
+      tempMathUVW->SetInputConnection(0, foregroundImagePortUVW );
+      tempMathUVW->SetInputConnection(1, backgroundImagePortUVW );
+      vtkInformation *tempMathUVWOutInfo = tempMathUVW->GetOutputInformation(0);
+      vtkDataObject::SetPointDataActiveScalarInfo(tempMathUVWOutInfo, VTK_SHORT,
+        vtkImageData::GetNumberOfScalarComponents(tempMathUVWOutInfo));
+
+      vtkImageCast *tempCastUVW = vtkImageCast::New();
+      tempCastUVW->SetInputConnection( tempMathUVW->GetOutputPort() );
+      tempCastUVW->SetOutputScalarTypeToUnsignedChar();
+
+      this->BlendUVW->AddInputConnection( tempCastUVW->GetOutputPort() );
+      this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
+
+      tempMathUVW->Delete();  // Blend may still be holding a reference
+      tempCastUVW->Delete();  // Blend may still be holding a reference
+      }
+    else
+      {
+      this->Blend->RemoveAllInputs();
+      this->BlendUVW->RemoveAllInputs();
+      if (sliceCompositing ==  vtkMRMLSliceCompositeNode::Alpha)
+        {
+        if ( backgroundImagePort )
+          {
+          this->Blend->AddInputConnection( backgroundImagePort );
+          this->Blend->SetOpacity( layerIndex++, 1.0 );
+          }
+        if ( foregroundImagePort )
+          {
+          this->Blend->AddInputConnection( foregroundImagePort );
+          this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+          }
+        if ( backgroundImagePortUVW )
+          {
+          this->BlendUVW->AddInputConnection( backgroundImagePortUVW );
+          this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
+          }
+        if ( foregroundImagePortUVW )
+          {
+          this->BlendUVW->AddInputConnection( foregroundImagePortUVW );
+          this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetForegroundOpacity() );
+          }
+        }
+      else if (sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha)
+        {
+        if ( foregroundImagePort )
+          {
+          this->Blend->AddInputConnection( foregroundImagePort );
+          this->Blend->SetOpacity( layerIndex++, 1.0 );
+          }
+        if ( backgroundImagePort )
+          {
+          this->Blend->AddInputConnection( backgroundImagePort );
+          this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+          }
+        if ( foregroundImagePortUVW )
+          {
+          this->BlendUVW->AddInputConnection( foregroundImagePortUVW );
+          this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
+          }
+        if ( backgroundImagePortUVW )
+          {
+          this->BlendUVW->AddInputConnection( backgroundImagePortUVW );
+          this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetForegroundOpacity() );
+          }
+        }
+      }
+    // always blending the label layer
+    vtkAlgorithmOutput* labelImagePort = this->LabelLayer ? this->LabelLayer->GetImageDataPort() : 0;
+    vtkAlgorithmOutput* labelImagePortUVW = this->LabelLayer ? this->LabelLayer->GetImageDataPortUVW() : 0;
+    if ( labelImagePort )
+      {
+      this->Blend->AddInputConnection( labelImagePort );
+      this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
+      }
+    if ( labelImagePortUVW )
+      {
+      this->BlendUVW->AddInputConnection( labelImagePortUVW );
+      this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetLabelOpacity() );
+      }
+    while (this->Blend->GetNumberOfInputConnections(0) > layerIndex)
+      {
+      // it decreases the number of inputs
+      this->Blend->RemoveInputConnection(0, this->Blend->GetNumberOfInputConnections(0) - 1);
+      }
+    while (this->BlendUVW->GetNumberOfInputConnections(0) > layerIndexUVW)
+      {
+      // it decreases the number of inputs
+      this->BlendUVW->RemoveInputConnection(0, this->BlendUVW->GetNumberOfInputConnections(0) - 1);
+      }
+#endif
     if (this->Blend->GetMTime() > oldBlendMTime)
       {
       modified = 1;
@@ -1184,6 +1309,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         {
         displayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
         }
+#if (VTK_MAJOR_VERSION <= 5)
       if ( (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
           !((backgroundImageUVW != 0) || (foregroundImageUVW != 0) || (labelImageUVW != 0) ) ) ||
           (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView &&
@@ -1197,7 +1323,21 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         //this->ExtractModelTexture->Update();
         displayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
         }
-        if ( this->LabelLayer && this->LabelLayer->GetImageData())
+      if ( this->LabelLayer && this->LabelLayer->GetImageData())
+#else
+      if ( (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
+          !((backgroundImagePortUVW != 0) || (foregroundImagePortUVW != 0) || (labelImagePortUVW != 0) ) ) ||
+          (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView &&
+          !((backgroundImagePort != 0) || (foregroundImagePort != 0) || (labelImagePort != 0) ) ))
+        {
+        displayNode->SetAndObserveTextureImageDataPort(0);
+        }
+      else if (displayNode->GetTextureImageDataPort() != this->ExtractModelTexture->GetOutputPort())
+        {
+        displayNode->SetAndObserveTextureImageDataPort(this->ExtractModelTexture->GetOutputPort());
+        }
+        if ( this->LabelLayer && this->LabelLayer->GetImageDataPort())
+#endif
           {
           modelDisplayNode->SetInterpolateTexture(0);
           }
@@ -1317,7 +1457,11 @@ void vtkMRMLSliceLogic::DeleteSliceModel()
     }
   if (this->SliceModelDisplayNode != 0)
     {
+#if (VTK_MAJOR_VERSION <= 5)
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(0);
+#else
+    this->SliceModelDisplayNode->SetAndObserveTextureImageDataPort(0);
+#endif
     }
 
   // Remove Nodes
@@ -1397,7 +1541,11 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetAmbient(1);
     this->SliceModelDisplayNode->SetBackfaceCulling(0);
     this->SliceModelDisplayNode->SetDiffuse(0);
+#if (VTK_MAJOR_VERSION <= 5)
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
+#else
+    this->SliceModelDisplayNode->SetAndObserveTextureImageDataPort(this->ExtractModelTexture->GetOutputPort());
+#endif
     this->SliceModelDisplayNode->SetSaveWithScene(0);
     this->SliceModelDisplayNode->SetDisableModifiedEvent(0);
 
@@ -1432,7 +1580,11 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->GetMRMLScene()->AddNode(this->SliceModelNode);
     this->AddingSliceModelNodes = false;
     this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
+#if (VTK_MAJOR_VERSION <= 5)
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
+#else
+    this->SliceModelDisplayNode->SetAndObserveTextureImageDataPort(this->ExtractModelTexture->GetOutputPort());
+#endif
     this->SliceModelNode->SetAndObserveTransformNodeID(this->SliceModelTransformNode->GetID());
     }
 

@@ -695,10 +695,17 @@ void vtkImageResliceMask::GetAutoCroppedOutputBounds(vtkInformation *inInfo,
     }
 }
  
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData *vtkImageResliceMask::GetBackgroundMask()
 {
   return this->GetOutput(1);
 }
+#else
+vtkAlgorithmOutput *vtkImageResliceMask::GetBackgroundMaskPort()
+{
+  return this->GetOutputPort(1);
+}
+#endif
 
 
 /*
