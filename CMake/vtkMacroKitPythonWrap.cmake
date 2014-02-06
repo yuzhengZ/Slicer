@@ -57,6 +57,45 @@ macro(vtkMacroKitPythonWrap)
     # the shared library containing the wrappers for this kit.
     add_library(${MY_KIT_NAME}PythonD ${KitPython_SRCS} ${MY_KIT_PYTHON_EXTRA_SRCS})
 
+    # Not all the vtk libraries have their python wrapping
+    if(${VTK_VERSION_MAJOR} GREATER 5)
+       set(VTK_NO_PYTHON_WRAP_LIBRARIES
+         vtksys
+         vtkexpat
+         vtkjsoncpp
+         vtkexoIIc
+         vtkNetCDF
+         vtkNetCDF_cxx
+         vtkhdf5_hl
+         vtkhdf5
+         vtkalglib
+         vtkDICOMParser
+         vtkmetaio
+         vtkjpeg
+         vtktiff
+         vtkfreetype
+         vtkftgl
+         vtkgl2ps
+         vtksqlite
+         vtkoggtheora
+         vtkWrappingPythonCore
+         vtkWrappingTools
+         vtkGUISupportQt
+         vtklibxml2
+         vtkproj4
+         vtkViewsQt
+         vtkGUISupportQtWebkit
+         vtkGUISupportQtSQL
+         vtkRenderingFreeTypeFontConfig
+         vtkGUISupportQtOpenGL
+         )
+       else()
+         set(VTK_NO_PYTHON_WRAP_LIBRARIES "")
+       endif()
+    foreach(lib ${VTK_NO_PYTHON_WRAP_LIBRARIES})
+      list(REMOVE_ITEM VTK_LIBRARIES ${lib})
+    endforeach()
+
     set(VTK_KIT_PYTHON_LIBRARIES)
     foreach(c ${VTK_LIBRARIES})
       if(${c} MATCHES "^vtk.+") # exclude system libraries
