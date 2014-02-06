@@ -137,6 +137,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -DVTK_WRAP_PYTHON:BOOL=${VTK_WRAP_PYTHON}
       -DVTK_INSTALL_LIB_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
       -DVTK_Group_Qt:BOOL=ON
+      -DVTK_USE_SYSTEM_PNG:BOOL=ON
       -DVTK_USE_SYSTEM_ZLIB:BOOL=ON
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
@@ -149,19 +150,19 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   set(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
   set(VTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 
-  set(PNG_INCLUDE_DIR ${VTK_SOURCE_DIR}/ThirdParty/png/vtkpng)
+#  set(PNG_INCLUDE_DIR ${VTK_SOURCE_DIR}/ThirdParty/png/vtkpng)
 
-  set(PNG_LIBRARY_DIR ${VTK_DIR}/lib)
-  if(CMAKE_CONFIGURATION_TYPES)
-    set(PNG_LIBRARY_DIR ${PNG_LIBRARY_DIR}/${CMAKE_CFG_INTDIR})
-  endif()
-  if(WIN32)
-    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/vtkpng-6.0.lib)
-  elseif(APPLE)
-    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/libvtkpng-6.0.dylib)
-  else()
-    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/libvtkpng-6.0.so)
-  endif()
+#  set(PNG_LIBRARY_DIR ${VTK_DIR}/lib)
+#  if(CMAKE_CONFIGURATION_TYPES)
+#    set(PNG_LIBRARY_DIR ${PNG_LIBRARY_DIR}/${CMAKE_CFG_INTDIR})
+#  endif()
+#  if(WIN32)
+#    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/vtkpng-6.0.lib)
+#  elseif(APPLE)
+#    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/libvtkpng-6.0.dylib)
+#  else()
+#    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/libvtkpng-6.0.so)
+#  endif()
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
