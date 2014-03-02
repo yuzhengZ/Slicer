@@ -52,7 +52,7 @@ bool isImageDataValid(vtkImageData* imageData)
   imageData->GetProducerPort();
   info = imageData->GetPipelineInformation();
 #else
-  vtkNew<vtkTrivialProducer> tp;
+  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
   tp->SetOutput(imageData);
   info = tp->GetOutputInformation(0);
 #endif

@@ -880,6 +880,7 @@ void vtkNRRDReader::ExecuteData(vtkDataObject *output)
 #else
 void vtkNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
 {
+  this->UpdateInformation();
   this->SetUpdateExtentToWholeExtent();
   vtkImageData *data = this->AllocateOutputData(output, outInfo);
 #endif

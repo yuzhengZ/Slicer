@@ -42,14 +42,7 @@ public:
 
   /// Set and observe poly data for this model. It should be the output
   /// polydata of the model node.
-#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputPolyData(vtkPolyData* polydata);
-# else
-  virtual void SetInputPolyData(vtkAlgorithm* polyDataFilter, vtkPolyData* polydata);
-  virtual void SetInputPolyData(vtkAlgorithm* polyDataFilter) {
-      return SetInputPolyData(polyDataFilter, NULL); }
-  virtual vtkAlgorithm* GetInputFilter();
-#endif
 
   /// Return the polydata that was set by SetInputPolyData()
   /// \sa GetOutputPolyData()
@@ -63,9 +56,10 @@ public:
   /// In all other cases, GetOutputPort() should be reimplemented.
   /// \sa GetInputPolyData(), GetOutputPort()
   virtual vtkPolyData* GetOutputPolyData();
-#if (VTK_MAJOR_VERSION > 5)
-  virtual vtkAlgorithm* GetOutputFilter();
-#endif
+
+  /// Return the polydata that is processed by the display node.
+  /// This is the polydata that needs to be connected with the mappers.
+  virtual vtkAlgorithmOutput* GetOutputPort();
 
   /// Reimplemented to update pipeline with new value
   /// \sa SetActiveAttributeLocation()
@@ -89,15 +83,7 @@ protected:
                                  void *callData);
 
   /// To be reimplemented in subclasses if the input of the pipeline changes
-#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToPolyDataPipeline(vtkPolyData* polyData);
-#else
-  virtual void SetInputToPolyDataPipeline(vtkAlgorithm* polyDataFilter, vtkPolyData* polyData);
-#endif
-
-  /// Return the polydata that is processed by the display node.
-  /// This is the polydata that needs to be connected with the mappers.
-  virtual vtkAlgorithmOutput* GetOutputPort();
 
   /// Filter that changes the active scalar of the input polydata
   /// using the ActiveScalarName and ActiveAttributeLocation properties.

@@ -1098,7 +1098,6 @@ void vtkMRMLNode::UpdateNodeReferences(const char* referenceRole)
     {
     this->UpdateNthNodeReference(referenceRole, i);
     }
-
   this->EndModify(wasModifying);
 }
 
@@ -1388,8 +1387,7 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
 void vtkMRMLNode::SetAndObserveNthNodeReference(const char* referenceRole, int n, vtkMRMLNode *referencedNode, vtkIntArray *events)
 {
   std::vector< vtkMRMLNodeReference *> &references = this->NodeReferences[std::string(referenceRole)];
-    
-  
+
   vtkMRMLNode *oldReferencedNode = references[n]->ReferencedNode;
 
   if (events)

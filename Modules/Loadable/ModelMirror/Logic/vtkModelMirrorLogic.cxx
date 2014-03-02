@@ -235,7 +235,11 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
     mpolys->DeepCopy ( surface );
     if ( mpolys )
       {
+#if (VTK_MAJOR_VERSION <= 5)
       this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyData (mpolys );
+#else
+      this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyDataPort (this->ModelMirrorNode->GetInputModel()->GetPolyDataPort() );
+#endif
       }
     mpolys->Delete();
     mpolys = NULL;
@@ -548,15 +552,7 @@ int vtkModelMirrorLogic::FlipNormals()
 #if (VTK_MAJOR_VERSION <= 5)
   normals->SetInput ( surface );
 #else
-  vtkAlgorithm *polyDataFilter = this->ModelMirrorNode->GetOutputModel()->GetPolyDataFilter();
-  if (polyDataFilter != NULL)
-    {
-    normals->SetInputConnection(polyDataFilter->GetOutputPort());
-    }
-  else
-    {
-    normals->SetInputData(surface);
-    }
+  normals->SetInputConnection(this->ModelMirrorNode->GetOutputModel()->GetPolyDataPort());
 #endif
   //--- NOTE: This assumes a completely closed surface
   //---(i.e. no boundary edges) and no non-manifold edges.
@@ -590,7 +586,7 @@ int vtkModelMirrorLogic::FlipNormals()
 #if (VTK_MAJOR_VERSION <= 5)
     this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyData ( cleaner->GetOutput() );
 #else
-    this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyFilterAndData ( cleaner );
+    this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyDataPort( cleaner->GetOutputPort() );
 #endif
     cleaner->Delete();
     cleaner= NULL;

@@ -244,7 +244,6 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
     }
 
   int numStorageNodes = this->GetNumberOfNodeReferences(this->GetStorageNodeReferenceRole());
-
   vtkDebugMacro("UpdateScene: going through the storage node ids: " <<  numStorageNodes);
   for (int i=0; i < numStorageNodes; i++)
     {

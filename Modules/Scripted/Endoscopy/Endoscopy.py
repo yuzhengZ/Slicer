@@ -449,7 +449,6 @@ class EndoscopyPathModel:
     model.SetAndObserveDisplayNodeID(modelDisplay.GetID())
 
     # Add to scene
-#VTK6 TODO
     modelDisplay.SetInputPolyData(model.GetPolyData())
     scene.AddNode(model)
 

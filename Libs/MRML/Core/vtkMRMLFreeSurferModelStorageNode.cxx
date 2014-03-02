@@ -150,7 +150,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
         modelNode->SetAndObservePolyData(stripper->GetOutput());
 #else
-        modelNode->SetAndObservePolyFilterAndData(stripper);
+        modelNode->SetAndObservePolyDataPort(stripper->GetOutputPort());
 #endif
         }
       }
@@ -168,7 +168,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
         modelNode->SetAndObservePolyData(normals->GetOutput());
 #else
-        modelNode->SetAndObservePolyFilterAndData(normals);
+        modelNode->SetAndObservePolyDataPort(normals->GetOutputPort());
 #endif
         }
       }

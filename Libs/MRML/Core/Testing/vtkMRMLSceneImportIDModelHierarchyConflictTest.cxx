@@ -24,6 +24,7 @@
 // STD includes
 #include <vtkNew.h>
 #include <vtkPolyData.h>
+#include <vtkTrivialProducer.h>
 
 bool ImportIDModelHierarchyConflictTest();
 bool ImportModelHierarchyTwiceTest();
@@ -52,7 +53,14 @@ bool ImportIDModelHierarchyConflictTest()
 
   // add poly data
   vtkNew<vtkPolyData> polyData;
+#if (VTK_MAJOR_VERSION <= 5)
   modelNode->SetAndObservePolyData(polyData.GetPointer());
+#else
+  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+  tp->SetOutput(polyData.GetPointer());
+  modelNode->SetAndObservePolyDataPort(tp->GetOutputPort());
+#endif
+
   std::cout << "Polydata pointer = " << polyData.GetPointer() << std::endl;
 
   // Add display node

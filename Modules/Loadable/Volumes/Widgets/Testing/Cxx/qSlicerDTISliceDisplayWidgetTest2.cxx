@@ -78,7 +78,7 @@ int qSlicerDTISliceDisplayWidgetTest2( int argc, char * argv[] )
 #if (VTK_MAJOR_VERSION <= 5)
   displayNode->SetSliceImage(volumeNode->GetImageData());
 #else
-  vtkNew<vtkTrivialProducer> tp;
+  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
   tp->SetOutput(volumeNode->GetImageData());
   displayNode->SetSliceImagePort(tp->GetOutputPort());
 #endif

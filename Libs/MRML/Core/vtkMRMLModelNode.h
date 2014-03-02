@@ -21,7 +21,7 @@ class vtkMRMLModelDisplayNode;
 class vtkMRMLStorageNode;
 
 // VTK includes
-class vtkAlgorithm;
+class vtkAlgorithmOutput;
 class vtkAssignAttributes;
 class vtkDataArray;
 class vtkPolyData;
@@ -64,13 +64,13 @@ public:
   vtkMRMLModelDisplayNode* GetModelDisplayNode();
 
   /// Set and observe poly data for this model
+#if (VTK_MAJOR_VERSION <= 5)
   vtkGetObjectMacro(PolyData, vtkPolyData);
   virtual void SetAndObservePolyData(vtkPolyData *PolyData);
-#if (VTK_MAJOR_VERSION > 5)
-  vtkGetObjectMacro(PolyDataFilter, vtkAlgorithm);
-  virtual void SetAndObservePolyFilterAndData(vtkAlgorithm *filter, vtkPolyData *PolyData);
-  virtual void SetAndObservePolyFilterAndData(vtkAlgorithm *filter) {
-      return SetAndObservePolyFilterAndData(filter, NULL); }
+#else
+  virtual vtkPolyData *GetPolyData();
+  vtkGetObjectMacro(PolyDataPort, vtkAlgorithmOutput);
+  virtual void SetAndObservePolyDataPort(vtkAlgorithmOutput *PolyDataPort);
 #endif
 
   /// PolyDataModifiedEvent is fired when PolyData is changed.
@@ -206,10 +206,11 @@ protected:
   virtual void SetPolyDataToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode);
 
   /// Data
+#if (VTK_MAJOR_VERSION <= 5)
   vtkPolyData *PolyData;
-
-  /// Filter
-  vtkAlgorithm *PolyDataFilter;
+#else
+  vtkAlgorithmOutput *PolyDataPort;
+#endif
 };
 
 #endif

@@ -427,7 +427,7 @@ void qMRMLVolumeInfoWidget::setNumberOfScalars(int number)
 #if (VTK_MAJOR_VERSION <= 5)
   imageData->SetNumberOfScalarComponents(number);
 #else
-  vtkNew<vtkTrivialProducer> tp;
+  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
   tp->SetOutput(imageData);
   vtkInformation* outInfo = tp->GetOutputInformation(0);
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo,
@@ -448,7 +448,7 @@ void qMRMLVolumeInfoWidget::setScalarType(int index)
 #if (VTK_MAJOR_VERSION <= 5)
   imageData->SetScalarType(type);
 #else
-  vtkNew<vtkTrivialProducer> tp;
+  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
   tp->SetOutput(imageData);
   vtkInformation* outInfo = tp->GetOutputInformation(0);
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, type,

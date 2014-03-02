@@ -41,6 +41,7 @@
 #include <vtkPointData.h>
 #include <vtkSeedTracts.h>
 #include <vtkSmartPointer.h>
+#include <vtkTrivialProducer.h>
 #include <vtkVersion.h>
 
 // STD includes
@@ -627,7 +628,13 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
       dnodes[i]->DisableModifiedEventOff();
       }
 
+#if (VTK_MAJOR_VERSION <= 5)
     fiberNode->SetAndObservePolyData(outFibers.GetPointer());
+#else
+    vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+    tp->SetOutput(outFibers.GetPointer());
+    fiberNode->SetAndObservePolyDataPort(tp->GetOutputPort());
+#endif
 
     fiberNode->EndModify(wasModifying);
 

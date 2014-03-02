@@ -29,6 +29,7 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkSmartPointer.h>
 #include <vtkTagTable.h>
+#include <vtkTrivialProducer.h>
 
 /// ITK includes
 #include <itksys/Directory.hxx>
@@ -104,7 +105,9 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkPolyData* polyData)
 #if (VTK_MAJOR_VERSION > 5)
   model->SetAndObservePolyData(polyData);
 #else
-  model->SetAndObservePolyFilterAndData(NULL, polyData);
+  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+  tp->SetOutput(polyData);
+  model->SetAndObservePolyDataPort(tp->GetOutputPort());
 #endif
   model->SetAndObserveDisplayNodeID(display->GetID());
   this->GetMRMLScene()->AddNode(model.GetPointer());
@@ -413,7 +416,13 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
     }
 
   vtkNew<vtkPolyData> poly;
+#if (VTK_MAJOR_VERSION <= 5)
   modelOut->SetAndObservePolyData(poly.GetPointer());
+#else
+  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+  tp->SetOutput(poly.GetPointer());
+  modelOut->SetAndObservePolyDataPort(tp->GetOutputPort());
+#endif
 
   poly->DeepCopy(modelNode->GetPolyData());
 
@@ -451,7 +460,7 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
 #if (VTK_MAJOR_VERSION <= 5)
     modelOut->SetAndObservePolyData(normals->GetOutput());
 #else
-    modelOut->SetAndObservePolyFilterAndData(normals.GetPointer());
+    modelOut->SetAndObservePolyDataPort(normals->GetOutputPort());
 #endif
    }
 

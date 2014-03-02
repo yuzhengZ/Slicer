@@ -1456,7 +1456,7 @@ void vtkMRMLSliceLogic::DeleteSliceModel()
 #if (VTK_MAJOR_VERSION <= 5)
     this->SliceModelNode->SetAndObservePolyData(0);
 #else
-    this->SliceModelNode->SetAndObservePolyFilterAndData(0);
+    this->SliceModelNode->SetAndObservePolyDataPort(0);
 #endif
     }
   if (this->SliceModelDisplayNode != 0)
@@ -1529,7 +1529,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelNode->SetAndObservePolyData(planeSource->GetOutput());
 #else
     planeSource->Update();
-    this->SliceModelNode->SetAndObservePolyFilterAndData(planeSource.GetPointer());
+    this->SliceModelNode->SetAndObservePolyDataPort(planeSource->GetOutputPort());
 #endif
     this->SliceModelNode->SetDisableModifiedEvent(0);
 

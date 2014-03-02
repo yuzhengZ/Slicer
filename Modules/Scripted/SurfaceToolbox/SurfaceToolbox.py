@@ -457,6 +457,7 @@ class SurfaceToolboxLogic:
       connectivity.Update()
       surface = connectivity.GetOutput()
 
+# VTK6 TODO
     state.outputModelNode.SetAndObservePolyData(surface)
 
     return True

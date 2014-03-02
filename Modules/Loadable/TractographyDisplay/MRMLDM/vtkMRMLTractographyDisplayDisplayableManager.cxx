@@ -46,6 +46,7 @@
 #include "vtkRenderer.h"
 #include "vtkPolyData.h"
 #include "vtkPointData.h"
+#include <vtkTrivialProducer.h>
 
 // ITKSys includes
 //#include <itksys/SystemTools.hxx>
@@ -305,7 +306,13 @@ void vtkMRMLTractographyDisplayDisplayableManager::DeletePickedFibers(vtkMRMLFib
       }
     }
   polyData->RemoveDeletedCells();
+#if (VTK_MAJOR_VERSION <= 5)
   fiberBundleNode->SetAndObservePolyData(polyData);
+#else
+  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+  tp->SetOutput(polyData);
+  fiberBundleNode->SetAndObservePolyDataPort(tp->GetOutputPort());
+#endif
   polyData->Delete();
 
   fiberBundleNode->SetEnableShuffleIDs(shuffleIDs);
@@ -383,7 +390,13 @@ void vtkMRMLTractographyDisplayDisplayableManager::SelectPickedFibers(vtkMRMLFib
       }
     }//for (unsigned int i=0; i<cellIDs.size(); i++)
 
+#if (VTK_MAJOR_VERSION <= 5)
   fiberBundleNode->SetAndObservePolyData(polyData);
+#else
+  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+  tp->SetOutput(polyData);
+  fiberBundleNode->SetAndObservePolyDataPort(tp->GetOutputPort());
+#endif
   polyData->Delete();
 
   fiberBundleNode->SetEnableShuffleIDs(shuffleIDs);

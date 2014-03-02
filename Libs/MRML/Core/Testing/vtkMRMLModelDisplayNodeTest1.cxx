@@ -17,9 +17,10 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
+#include <vtkTrivialProducer.h>
 #include <vtkNew.h>
 #include <vtkPolyData.h>
-
 //---------------------------------------------------------------------------
 bool TestSetPolyData(bool observePolyDataBeforeObserveDisplay,
                      bool observeDisplayBeforeAddToScene);
@@ -55,7 +56,13 @@ bool TestSetPolyData(bool observePolyDataBeforeObserveDisplay,
   vtkNew<vtkPolyData> polyData;
   if (observePolyDataBeforeObserveDisplay)
     {
+#if (VTK_MAJOR_VERSION <= 5)
     model->SetAndObservePolyData(polyData.GetPointer());
+#else
+    vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+    tp->SetOutput(polyData.GetPointer());
+    model->SetAndObservePolyDataPort(tp->GetOutputPort());
+#endif
     }
 
   vtkNew<vtkMRMLModelDisplayNode> display;
@@ -63,16 +70,23 @@ bool TestSetPolyData(bool observePolyDataBeforeObserveDisplay,
     {
     scene->AddNode(display.GetPointer());
     }
-
   model->SetAndObserveDisplayNodeID("vtkMRMLModelDisplayNode1");
   if (!observePolyDataBeforeObserveDisplay)
     {
+#if (VTK_MAJOR_VERSION <= 5)
     model->SetAndObservePolyData(polyData.GetPointer());
+#else
+    vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+    tp->SetOutput(polyData.GetPointer());
+    model->SetAndObservePolyDataPort(tp->GetOutputPort());
+#endif
     }
   if (observeDisplayBeforeAddToScene)
     {
     scene->AddNode(display.GetPointer());
+    std::cout << " &&&&&&&&&&&&" << __FILE__ << " " << __LINE__ << std::endl;
     model->UpdateScene(scene.GetPointer());
+    std::cout << " &&&&&&&&&&&&" << __FILE__ << " " << __LINE__ << std::endl;
     }
   if (display->GetInputPolyData() != model->GetPolyData())
     {

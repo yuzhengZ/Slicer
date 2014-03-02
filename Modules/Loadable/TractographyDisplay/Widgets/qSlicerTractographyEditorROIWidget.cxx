@@ -348,7 +348,7 @@ void qSlicerTractographyEditorROIWidget::createNewBundleFromSelection()
     fiberBundleFromSelection->SetAndObservePolyData(FilteredPolyData);
     FilteredPolyData->Delete();
 #else
-    fiberBundleFromSelection->SetAndObservePolyFilterAndData(d->FiberBundleNode->GetFilteredPolyDataFilter());
+    fiberBundleFromSelection->SetAndObservePolyDataPort(d->FiberBundleNode->GetFilteredPolyDataPort());
 #endif
 
     if (!fiberBundleFromSelection->GetDisplayNode())
@@ -408,7 +408,7 @@ void qSlicerTractographyEditorROIWidget::updateBundleFromSelection()
       d->FiberBundleNode->SetAndObservePolyData(FilteredPolyData);
       FilteredPolyData->Delete();
 #else
-      d->FiberBundleNode->SetAndObservePolyFilterAndData(d->FiberBundleNode->GetFilteredPolyDataFilter());
+      d->FiberBundleNode->SetAndObservePolyDataPort(d->FiberBundleNode->GetFilteredPolyDataPort());
 #endif
       d->FiberBundleNode->SetSubsamplingRatio(1);
     }

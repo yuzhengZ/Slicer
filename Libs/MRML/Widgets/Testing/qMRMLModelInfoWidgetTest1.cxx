@@ -31,6 +31,8 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
+#include <vtkNew.h>
+#include <vtkTrivialProducer.h>
 
 // STD includes
 
@@ -41,7 +43,13 @@ int qMRMLModelInfoWidgetTest1(int argc, char * argv [] )
   vtkSmartPointer< vtkMRMLModelNode > modelNode = vtkSmartPointer< vtkMRMLModelNode >::New();
 
   vtkSmartPointer< vtkPolyData > polyData = vtkSmartPointer< vtkPolyData >::New();
+#if (VTK_MAJOR_VERSION <= 5)
   modelNode->SetAndObservePolyData(polyData);
+#else
+  vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+  tp->SetOutput(polyData);
+  modelNode->SetAndObservePolyDataPort(tp->GetOutputPort());
+#endif
 
   qMRMLModelInfoWidget modelInfo;
   modelInfo.setMRMLModelNode(modelNode);

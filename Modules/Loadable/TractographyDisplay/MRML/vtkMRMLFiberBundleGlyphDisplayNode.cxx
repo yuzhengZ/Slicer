@@ -21,6 +21,7 @@ Version:   $Revision: 1.3 $
 #include "vtkDiffusionTensorGlyph.h"
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
 #include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
@@ -277,7 +278,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
 #if (VTK_MAJOR_VERSION <= 5)
         this->GetOutputPolyData()->Update();
 #else
-        this->GetOutputFilter()->Update();
+        this->GetOutputPort()->GetProducer()->Update();
 #endif
         this->GetOutputPolyData()->GetScalarRange(range);
         }

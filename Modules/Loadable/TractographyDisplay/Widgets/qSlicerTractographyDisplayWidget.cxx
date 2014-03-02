@@ -6,6 +6,7 @@
 
 // MRML includes
 #include <vtkAlgorithm.h>
+#include <vtkAlgorithmOutput.h>
 #include <vtkDataSet.h>
 #include <vtkPolyData.h>
 #include <vtkPointData.h>
@@ -596,7 +597,7 @@ void qSlicerTractographyDisplayWidget::updateScalarRange()
 #if (VTK_MAJOR_VERSION <= 5)
  d->FiberBundleDisplayNode->GetOutputPolyData()->Update();
 #else
- d->FiberBundleDisplayNode->GetOutputFilter()->Update();
+ d->FiberBundleDisplayNode->GetOutputPort()->GetProducer()->Update();
 #endif
  d->FiberBundleDisplayNode->GetScalarRange(range);
  if (d->FiberBundleDisplayNode->GetAutoScalarRange())

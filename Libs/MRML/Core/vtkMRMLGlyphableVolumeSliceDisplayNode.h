@@ -20,6 +20,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLModelDisplayNode.h"
 
+class vtkAlgorithmOutput;
 class vtkTransform;
 class vtkTransformPolyDataFilter;
 class vtkMatrix4x4;
@@ -190,11 +191,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   void operator= ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
 
   /// Ignore input polydata as it takes a volume slice as input.
-#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToPolyDataPipeline(vtkPolyData *glyphPolyData);
-#else
-  virtual void SetInputToPolyDataPipeline(vtkAlgorithm* polyDataFilter, vtkPolyData *glyphPolyData);
-#endif
 
   /// Return the output of the glyph producer for the input image data.
   /// The output is connected as the input of the slice transform.

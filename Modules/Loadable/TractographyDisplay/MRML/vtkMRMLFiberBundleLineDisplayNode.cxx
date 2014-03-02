@@ -22,11 +22,15 @@ Version:   $Revision: 1.3 $
 #include "vtkPolyDataTensorToColor.h"
 
 // VTK includes
+#include <vtkAlgorithm.h>
+#include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCellData.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
+#include <vtkTrivialProducer.h>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLFiberBundleLineDisplayNode);
@@ -279,7 +283,7 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
 #if (VTK_MAJOR_VERSION <= 5)
           this->GetOutputPolyData()->Update();
 #else
-          this->GetOutputFilter()->Update();
+          this->GetOutputPort()->GetProducer()->Update();
 #endif
           this->GetOutputPolyData()->GetScalarRange(range);
           }
@@ -296,7 +300,9 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
 #if (VTK_MAJOR_VERSION <= 5)
         this->GetInputPolyData()->Update();
 #else
-        this->GetInputFilter()->Update();
+        vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+        tp->SetOutput(this->GetInputPolyData());
+        tp->Update();
 #endif
         this->GetInputPolyData()->GetScalarRange(range);
         }

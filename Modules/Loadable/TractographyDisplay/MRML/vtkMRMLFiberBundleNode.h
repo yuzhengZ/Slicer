@@ -28,6 +28,7 @@
 // Tractography includes
 #include "vtkSlicerTractographyDisplayModuleMRMLExport.h"
 
+class vtkAlgorithmOutput;
 class vtkMRMLFiberBundleDisplayNode;
 class vtkExtractSelectedPolyDataIds;
 class vtkMRMLAnnotationNode;
@@ -147,14 +148,22 @@ public:
     this->SetSelectionWithAnnotationNodeMode(NegativeAnnotationNodeSelection);
   }
 
+#if (VTK_MAJOR_VERSION <= 5)
+  //BTX
   virtual void SetAndObservePolyData(vtkPolyData* polyData);
-
+  //ETX
+#else
+  virtual void SetAndObservePolyDataPort(vtkAlgorithmOutput* polyDataPort);
+#endif
 
   ///
   /// Gets the subsampled PolyData converted from the real data in the node
+#if (VTK_MAJOR_VERSION <= 5)
+  //BTX
   virtual vtkPolyData* GetFilteredPolyData();
-#if (VTK_MAJOR_VERSION > 5)
-  virtual vtkAlgorithm* GetFilteredPolyDataFilter();
+  //ETX
+#else
+  virtual vtkAlgorithmOutput* GetFilteredPolyDataPort();
 #endif
 
   ///

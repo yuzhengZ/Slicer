@@ -712,7 +712,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
 
       if (image)
         {
-          vtkNew<vtkTrivialProducer> tp;
+          vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
           tp->SetOutput(image);
           vtkDataObject::SetPointDataActiveScalarInfo(
             tp->GetOutputInformation(0),

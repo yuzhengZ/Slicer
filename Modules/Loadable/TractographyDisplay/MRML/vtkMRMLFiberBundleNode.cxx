@@ -13,6 +13,8 @@ Version:   $Revision: 1.3 $
 =========================================================================auto=*/
 
 // VTK includes
+#include <vtkAlgorithm.h>
+#include <vtkAlgorithmOutput.h>
 #include <vtkCleanPolyData.h>
 #include <vtkCommand.h>
 #include <vtkExtractPolyDataGeometry.h>
@@ -267,20 +269,16 @@ vtkPolyData* vtkMRMLFiberBundleNode::GetFilteredPolyData()
     }
 }
 #else
-vtkAlgorithm* vtkMRMLFiberBundleNode::GetFilteredPolyDataFilter()
+vtkAlgorithmOutput* vtkMRMLFiberBundleNode::GetFilteredPolyDataPort()
 {
   if (this->SelectWithAnnotationNode)
     {
-    return this->CleanPolyDataPostROISelection;
+    return this->CleanPolyDataPostROISelection->GetOutputPort();
     }
   else
     {
-    return this->CleanPolyDataPostSubsampling;
+    return this->CleanPolyDataPostSubsampling->GetOutputPort();
     }
-}
-vtkPolyData* vtkMRMLFiberBundleNode::GetFilteredPolyData()
-{
-  return vtkPolyData::SafeDownCast(this->GetFilteredPolyDataFilter()->GetOutputDataObject(0));
 }
 #endif
 
@@ -406,14 +404,20 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddGlyphDisplayNode()
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLFiberBundleNode::SetAndObservePolyData(vtkPolyData* polyData)
 {
-#if (VTK_MAJOR_VERSION <= 5)
   this->ExtractSelectedPolyDataIds->SetInput(0, polyData);
-#else
-  this->ExtractSelectedPolyDataIds->SetInputData(0, polyData);
-#endif
   this->Superclass::SetAndObservePolyData(polyData);
+
+#else
+void vtkMRMLFiberBundleNode::SetAndObservePolyDataPort(vtkAlgorithmOutput* polyDataPort)
+{
+  this->ExtractSelectedPolyDataIds->SetInputConnection(0, polyDataPort);
+  this->Superclass::SetAndObservePolyDataPort(polyDataPort);
+
+  vtkPolyData *polyData = vtkPolyData::SafeDownCast(polyDataPort->GetProducer()->GetOutputDataObject(polyDataPort->GetIndex()));
+#endif
 
   if (polyData)
     {
@@ -460,11 +464,9 @@ void vtkMRMLFiberBundleNode
 ::SetPolyDataToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode)
 {
   assert(modelDisplayNode->IsA("vtkMRMLFiberBundleDisplayNode"));
-#if (VTK_MAJOR_VERSION <= 5)
-  modelDisplayNode->SetInputPolyData(this->GetFilteredPolyData());
-#else
-  modelDisplayNode->SetInputPolyData(this->GetFilteredPolyDataFilter());
-#endif
+  vtkPolyData *polyData = vtkPolyData::SafeDownCast(this->GetFilteredPolyDataPort()->GetProducer()->GetOutputDataObject(
+                                                   this->GetFilteredPolyDataPort()->GetIndex()));
+  modelDisplayNode->SetInputPolyData(polyData);
 }
 
 //----------------------------------------------------------------------------

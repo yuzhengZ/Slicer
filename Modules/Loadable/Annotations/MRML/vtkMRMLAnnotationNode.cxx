@@ -13,6 +13,9 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkStringArray.h>
+#include <vtkNew.h>
+#include <vtkTrivialProducer.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <sstream>
@@ -180,7 +183,13 @@ void vtkMRMLAnnotationNode::Copy(vtkMRMLNode *anode)
     // point coordinates are over written by current scene changes
     vtkPolyData *poly = vtkPolyData::New();
     poly->DeepCopy(node->GetPolyData());
-    this->SetAndObservePolyData(poly);
+#if (VTK_MAJOR_VERSION <= 5)
+      this->SetAndObservePolyData(poly);
+#else
+      vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+      tp->SetOutput(poly);
+      this->SetAndObservePolyDataPort(tp->GetOutputPort());
+#endif
     //poly->ReleaseData();
     poly->Delete();
     }
@@ -294,7 +303,13 @@ void vtkMRMLAnnotationNode::CreatePolyData()
   if (!this->GetPolyData())
     {
       vtkPolyData *poly = vtkPolyData::New();
+#if (VTK_MAJOR_VERSION <= 5)
       this->SetAndObservePolyData(poly);
+#else
+      vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
+      tp->SetOutput(poly);
+      this->SetAndObservePolyDataPort(tp->GetOutputPort());
+#endif
       // Releasing data for pipeline parallism.
       // Filters will know it is empty. 
       poly->ReleaseData();

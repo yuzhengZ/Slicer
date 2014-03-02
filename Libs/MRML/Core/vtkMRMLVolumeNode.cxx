@@ -702,7 +702,7 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
 #if (VTK_MAJOR_VERSION <= 5)
       dnode->SetInputImageData(imageData);
 #else
-      vtkNew<vtkTrivialProducer> tp;
+      vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
       tp->SetOutput(imageData);
       dnode->SetInputImageDataPort(tp->GetOutputPort());
 #endif
@@ -743,7 +743,7 @@ void vtkMRMLVolumeNode::UpdateDisplayNodeImageData(vtkMRMLDisplayNode* dNode)
 #if (VTK_MAJOR_VERSION <= 5)
     vNode->SetInputImageData(this->ImageData);
 #else
-    vtkNew<vtkTrivialProducer> tp;
+    vtkSmartPointer<vtkTrivialProducer> tp = vtkSmartPointer<vtkTrivialProducer>::New();
     tp->SetOutput(this->ImageData);
     vNode->SetInputImageDataPort(tp->GetOutputPort());
 #endif
