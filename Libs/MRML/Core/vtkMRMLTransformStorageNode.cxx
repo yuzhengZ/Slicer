@@ -30,6 +30,7 @@ Version:   $Revision: 1.2 $
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itkTransformFileWriter.h>
@@ -522,9 +523,13 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
 
       vtkgridimage->SetDimensions( Ni, Nj, Nk );
-      vtkgridimage->SetNumberOfScalarComponents( Nc );
+#if (VTK_MAJOR_VERSION <= 5)
       vtkgridimage->SetScalarTypeToDouble();
+      vtkgridimage->SetNumberOfScalarComponents( Nc );
       vtkgridimage->AllocateScalars();
+#else
+      vtkgridimage->AllocateScalars(VTK_DOUBLE, Nc);
+#endif
 
       // convert from LPS to RAS
       double* dataPtr = reinterpret_cast<double*>(vtkgridimage->GetScalarPointer());
@@ -547,7 +552,11 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
           }
         }
 
+#if (VTK_MAJOR_VERSION <= 5)
       vtkgrid->SetDisplacementGrid( vtkgridimage );
+#else
+      vtkgrid->SetDisplacementGridData( vtkgridimage );
+#endif
       vtkgridimage->Delete();
 
       // Set the matrix on the node

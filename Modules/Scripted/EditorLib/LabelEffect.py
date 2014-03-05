@@ -266,7 +266,8 @@ class LabelEffectLogic(Effect.EffectLogic):
     if not labelNode: return
     labelImage = labelNode.GetImageData()
     if not labelImage: return
-    imageData.SetScalarType(labelImage.GetScalarType()) 
+# VTK6 TODO - need to use AllocateScalars(int dataType, int numComponents)
+    imageData.SetScalarType(labelImage.GetScalarType())
     imageData.AllocateScalars()
 
     #
@@ -422,6 +423,7 @@ class LabelEffectLogic(Effect.EffectLogic):
     self.painter.SetBackgroundImage( backgroundImage )
     self.painter.SetBackgroundIJKToWorld( backgroundIJKToRAS )
     self.painter.SetWorkingImage( labelImage )
+#  VTK6 TODO - self.painter.SetWorkingImageFilter( labelImageFilter )
     self.painter.SetWorkingIJKToWorld( labelIJKToRAS )
     self.painter.SetMaskImage( mask )
     self.painter.SetExtractImage( self.extractImage )

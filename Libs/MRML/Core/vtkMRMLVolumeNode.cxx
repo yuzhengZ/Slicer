@@ -24,6 +24,8 @@ Version:   $Revision: 1.14 $
 #include <vtkMathUtilities.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkSmartPointer.h>
+#include <vtkTrivialProducer.h>
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLVolumeNode, ImageData, vtkImageData);
@@ -696,7 +698,13 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
       this->GetNthDisplayNode(i));
     if (dnode)
       {
+#if (VTK_MAJOR_VERSION <= 5)
       dnode->SetInputImageData(imageData);
+#else
+      vtkNew<vtkTrivialProducer> tp;
+      tp->SetOutput(imageData);
+      dnode->SetInputImageDataPort(tp->GetOutputPort());
+#endif
       }
     }
 
@@ -709,6 +717,7 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
   this->SetImageData(imageData);
   this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
 }
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
@@ -730,7 +739,13 @@ void vtkMRMLVolumeNode::UpdateDisplayNodeImageData(vtkMRMLDisplayNode* dNode)
   vtkMRMLVolumeDisplayNode* vNode = vtkMRMLVolumeDisplayNode::SafeDownCast(dNode);
   if (vNode)
     {
+#if (VTK_MAJOR_VERSION <= 5)
     vNode->SetInputImageData(this->ImageData);
+#else
+    vtkNew<vtkTrivialProducer> tp;
+    tp->SetOutput(this->ImageData);
+    vNode->SetInputImageDataPort(tp->GetOutputPort());
+#endif
     }
 }
 

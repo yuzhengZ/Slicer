@@ -23,6 +23,7 @@
 #include "vtkImageAlgorithm.h"
 #include "vtkImageCast.h"
 #include "vtkImageData.h"
+#include <vtkVersion.h>
 
 #include "vtkITK.h"
 
@@ -137,7 +138,11 @@ public:
   /// Set the Input of the filter.
   virtual void SetInput(vtkImageData *Input)
   {
+#if (VTK_MAJOR_VERSION <= 5)
     this->vtkCast->SetInput(Input);
+#else
+    this->vtkCast->SetInputData(Input);
+#endif
   };
 
   /// 
@@ -149,6 +154,7 @@ public:
 
   ///  Override vtkSource's Update so that we can access
   /// this class's GetOutput(). vtkSource's GetOutput is not virtual.
+#if (VTK_MAJOR_VERSION <= 5)
   void Update()
     {
       if (this->GetOutput(0))
@@ -160,6 +166,7 @@ public:
           }
         }
     }
+#endif
   void HandleProgressEvent ()
   {
     if ( this->m_Process )
@@ -193,7 +200,11 @@ public:
     this->vtkCast = vtkImageCast::New();
     this->vtkExporter = vtkImageExport::New();
     this->vtkImporter = vtkImageImport::New();
+#if (VTK_MAJOR_VERSION <= 5)
     this->vtkExporter->SetInput ( this->vtkCast->GetOutput() );
+#else
+    this->vtkExporter->SetInputConnection( this->vtkCast->GetOutputPort() );
+#endif
     this->m_Process = NULL;
     this->m_ProgressCommand = MemberCommand::New();
     this->m_ProgressCommand->SetCallbackFunction ( this, &vtkITKImageToImageFilter::HandleProgressEvent );

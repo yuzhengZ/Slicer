@@ -24,6 +24,7 @@ Version:   $Revision: 1.3 $
 #include <vtkAssignAttribute.h>
 #include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLFiberBundleGlyphDisplayNode);
@@ -151,7 +152,11 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
         DiffusionTensorDisplayNode->GetLineGlyphResolution());
       this->DiffusionTensorGlyphFilter->SetScaleFactor(
         DiffusionTensorDisplayNode->GetGlyphScaleFactor( ) );
+#if (VTK_MAJOR_VERSION <= 5)
       this->DiffusionTensorGlyphFilter->SetSource(
+#else
+      this->DiffusionTensorGlyphFilter->SetSourceData(
+#endif
         DiffusionTensorDisplayNode->GetGlyphSource( ) );
 
       vtkDebugMacro("setting glyph geometry" << DiffusionTensorDisplayNode->GetGlyphGeometry( ) );
@@ -269,7 +274,11 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
         }
       else if (this->GetInputPolyData())
         {
+#if (VTK_MAJOR_VERSION <= 5)
         this->GetOutputPolyData()->Update();
+#else
+        this->GetOutputFilter()->Update();
+#endif
         this->GetOutputPolyData()->GetScalarRange(range);
         }
       }

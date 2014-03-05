@@ -325,7 +325,11 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
         }
       else if (this->GetInputPolyData())
         {
+#if (VTK_MAJOR_VERSION <= 5)
         this->GetOutputPolyData()->Update();
+#else
+        this->GetOutputFilter()->Update();
+#endif
         this->GetOutputPolyData()->GetScalarRange(range);
         }
       }
@@ -338,7 +342,11 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
     else if (this->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeScalarData &&
              this->GetInputPolyData())
       {
+#if (VTK_MAJOR_VERSION <= 5)
       this->GetInputPolyData()->Update();
+#else
+      this->GetInputFilter()->Update();
+#endif
       this->GetInputPolyData()->GetScalarRange(range);
       }
     //this->ScalarRange[0] = range[0];

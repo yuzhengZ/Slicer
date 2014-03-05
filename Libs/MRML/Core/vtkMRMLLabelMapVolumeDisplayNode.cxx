@@ -21,6 +21,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageMapToColors.h>
 #include <vtkLookupTable.h>
 #include <vtkObjectFactory.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <cassert>
@@ -65,10 +66,17 @@ void vtkMRMLLabelMapVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
 {
   this->MapToColors->SetInput(imageData);
 }
+#else
+void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageDataPort(vtkAlgorithmOutput *imageDataPort)
+{
+  this->MapToColors->SetInputConnection(imageDataPort);
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetInputImageData()
@@ -77,12 +85,20 @@ vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetInputImageData()
 }
 
 //---------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageData()
+#else
+vtkAlgorithmOutput* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageDataPort()
+#endif
 {
   assert(!this->MapToColors->GetLookupTable() ||
          !this->MapToColors->GetLookupTable()->IsA("vtkLookupTable") ||
          vtkLookupTable::SafeDownCast(this->MapToColors->GetLookupTable())->GetNumberOfTableValues());
+#if (VTK_MAJOR_VERSION <= 5)
   return this->MapToColors->GetOutput();
+#else
+  return this->MapToColors->GetOutputPort();
+#endif
 }
 
 //---------------------------------------------------------------------------

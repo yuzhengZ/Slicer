@@ -19,6 +19,7 @@
 #include "vtkPointData.h"
 #include "vtkImageData.h"
 #include "vtkFloatArray.h"
+#include <vtkVersion.h>
 
 
 #define VTKEPS 10e-12
@@ -216,12 +217,18 @@ int vtkTeemEstimateDiffusionTensor::RequestInformation(
   // We output one scalar components: baseline (for legacy issues)
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, scalarType, 1);
 
+#if (VTK_MAJOR_VERSION <= 5)
   this->Baseline->CopyTypeSpecificInformation( this->GetInput() );
   this->AverageDWI->CopyTypeSpecificInformation( this->GetInput() );
   this->Baseline->SetScalarType(scalarType);
   this->AverageDWI->SetScalarType(scalarType);
   this->Baseline->SetNumberOfScalarComponents(1);
   this->AverageDWI->SetNumberOfScalarComponents(1);
+#else
+//  this->Baseline->CopyTypeSpecificInformation( this->GetInput() );
+//  this->Baseline->CopyTypeSpecificInformation( this->GetInput() );
+#endif
+
   return 1;
 
 }
@@ -231,7 +238,12 @@ int vtkTeemEstimateDiffusionTensor::RequestInformation(
 // as well as scalars.  This gets called before multithreader starts
 // (after which we can't allocate, for example in ThreadedExecute).
 // Note we return to the regular pipeline at the end of this function.
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkTeemEstimateDiffusionTensor::ExecuteData(vtkDataObject *out)
+#else
+void vtkTeemEstimateDiffusionTensor::ExecuteDataWithInformation(
+        vtkDataObject *out, vtkInformation* outInfo)
+#endif
 {
   vtkImageData *output = vtkImageData::SafeDownCast(out);
   vtkImageData *inData = (vtkImageData *) this->GetInput();
@@ -250,7 +262,11 @@ void vtkTeemEstimateDiffusionTensor::ExecuteData(vtkDataObject *out)
     }  
   
   // set extent so we know how many tensors to allocate
+#if (VTK_MAJOR_VERSION <= 5)
   output->SetExtent(output->GetUpdateExtent());
+#else
+  output->SetExtent(this->GetUpdateExtent());
+#endif
 
   // allocate output tensors
   vtkFloatArray* data = vtkFloatArray::New();
@@ -262,10 +278,17 @@ void vtkTeemEstimateDiffusionTensor::ExecuteData(vtkDataObject *out)
   data->Delete();
 
   // Allocate baseline and averageDWI images
+#if (VTK_MAJOR_VERSION <= 5)
   this->Baseline->SetExtent(output->GetUpdateExtent());
   this->AverageDWI->SetExtent(output->GetUpdateExtent());
   this->Baseline->AllocateScalars();
   this->AverageDWI->AllocateScalars();
+#else
+  this->Baseline->SetExtent(this->GetUpdateExtent());
+  this->AverageDWI->SetExtent(this->GetUpdateExtent());
+  this->Baseline->AllocateScalars(outInfo);
+  this->AverageDWI->AllocateScalars(outInfo);
+#endif
   this->Baseline->GetPointData()->GetScalars()->SetName("Baseline");
   this->AverageDWI->GetPointData()->GetScalars()->SetName("AverageDWI");
 
@@ -332,7 +355,11 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
   vtkIdType *outInc;
   int *outFullUpdateExt;
   outInc = self->GetOutput()->GetIncrements();
+#if (VTK_MAJOR_VERSION <= 5)
   outFullUpdateExt = self->GetOutput()->GetUpdateExtent(); //We are only working over the update extent
+#else
+  outFullUpdateExt = self->GetUpdateExtent(); //We are only working over the update extent
+#endif
   ptId = ((outExt[0] - outFullUpdateExt[0]) * outInc[0]
          + (outExt[2] - outFullUpdateExt[2]) * outInc[1]
          + (outExt[4] - outFullUpdateExt[4]) * outInc[2]);
